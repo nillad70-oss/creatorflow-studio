@@ -152,7 +152,7 @@ export default function Landing() {
         {/* ── Hero ── */}
         <section className="relative pt-32 pb-24 px-6 overflow-hidden">
           {/* Background glow */}
-          <div className="absolute inset-0 bg-electric-glow pointer-events-none" />
+          <div className="absolute inset-0 pointer-events-none opacity-30" style={{background: 'radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.12) 0%, transparent 60%)'}} />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-electric/5 blur-[120px] pointer-events-none" />
 
           <div className="relative max-w-4xl mx-auto text-center">
