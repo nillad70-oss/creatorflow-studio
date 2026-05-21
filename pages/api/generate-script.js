@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-opus-4-5',
         max_tokens: 1500,
         system: systemPrompt,
         messages: [{ role: 'user', content: `Write a ${script_mode || 'educational'} script about: "${topic}" for ${audience || 'general audience'} on ${platform || 'instagram'}. Tone: ${tone || 'conversational'}` }],
