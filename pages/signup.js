@@ -63,8 +63,13 @@ export default function Signup() {
       })
     }
 
-    setSuccess(true)
-    setLoading(false)
+    // If email confirmation is off, redirect straight to onboarding
+if (data.session) {
+  router.push('/onboarding')
+} else {
+  setSuccess(true)
+}
+setLoading(false)
   }
 
   return (
