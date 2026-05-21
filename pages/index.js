@@ -375,7 +375,7 @@ export default function Landing() {
                       )}
                     </div>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-4xl text-primary font-light">${plan.price}</span>
+                      <span className="text-4xl text-void font-light">${plan.price}</span>
                       <span className="text-secondary text-sm">{plan.period}</span>
                     </div>
                     {plan.yearlyNote && (
@@ -422,7 +422,7 @@ export default function Landing() {
               <br />
               <em className="text-electric-glow italic">Let's help you say it.</em>
             </h2>
-            <p className="text-secondary text-lg font-light mb-10">
+            <p className="text-void text-lg font-light mb-10">
               Join creators who stopped overthinking, stopped retaking, and started flowing.
             </p>
             <Link href="/signup" className="btn-electric px-10 py-4 rounded-xl text-base font-medium inline-block">
