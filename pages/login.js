@@ -23,10 +23,32 @@ export default function Login() {
     setLoading(true)
 
     const supabase = createClient()
-    const { error: authError } = await supabase.auth.signInWithPassword({
-      email: form.email,
+    const handleLogin = async (e) => {
+  e.preventDefault()
+  setError('')
+  setLoading(true)
+
+  try {
+    const supabase = createClient()
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email: form.email.trim(),
       password: form.password,
     })
+
+    if (authError) {
+      setError(authError.message)
+      setLoading(false)
+      return
+    }
+
+    if (data.session) {
+      window.location.href = '/dashboard'
+    }
+  } catch (err) {
+    setError('Connection error. Please try again.')
+    setLoading(false)
+  }
+}
 
     if (authError) {
       if (authError.message.includes('Invalid login credentials')) {
