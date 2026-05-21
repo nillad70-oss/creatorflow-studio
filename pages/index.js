@@ -93,12 +93,26 @@ const PLANS = [
     cta: "Start Free Trial",
     href: "/signup?plan=pro",
     highlight: true,
+    priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID,
   },
 ]
 
 // ── Component ──
 export default function Landing() {
   const [activeTestimonial, setActiveTestimonial] = useState(0)
+  const handleCheckout = async (priceId) => {
+  if (!priceId) {
+    window.location.href = '/signup'
+    return
+  }
+  const res = await fetch('/api/stripe/checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ priceId }),
+  })
+  const data = await res.json()
+  if (data.url) window.location.href = data.url
+}
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -393,16 +407,16 @@ export default function Landing() {
                     ))}
                   </ul>
 
-                  <Link
-                    href={plan.href}
-                    className={`w-full py-3 rounded-xl text-sm font-medium text-center block transition-all duration-200 ${
-                      plan.highlight
-                        ? 'btn-electric'
-                        : 'btn-ghost'
-                    }`}
-                  >
-                    {plan.cta}
-                  </Link>
+                  <button
+  onClick={() => handleCheckout(plan.priceId)}
+  className={`w-full py-3 rounded-xl text-sm ${
+    plan.highlight
+      ? 'btn-electric'
+      : 'btn-ghost'
+  }`}
+>
+  {plan.cta}
+</button>
                 </div>
               ))}
             </div>
