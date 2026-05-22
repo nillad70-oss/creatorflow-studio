@@ -66,9 +66,13 @@ export default function Signup() {
     // If email confirmation is off, redirect straight to onboarding
 if (data.session) {
   router.push('/onboarding')
+} else if (data.user) {
+  router.push('/login?email=' + encodeURIComponent(form.email))
+}
 } else {
   setSuccess(true)
 }
+
 setLoading(false)
   }
 
