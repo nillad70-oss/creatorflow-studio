@@ -36,7 +36,7 @@ export default function Billing() {
               onClick={() => handleCheckout(process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID)}
               className="btn-electric w-full py-3 rounded-xl text-sm"
             >
-              Start Free Trial
+              Subscribe Now
             </button>
           </div>
 
@@ -55,7 +55,7 @@ export default function Billing() {
               onClick={() => handleCheckout(process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID)}
               className="btn-electric w-full py-3 rounded-xl text-sm"
             >
-              Start Free Trial
+              Subscribe Now
             </button>
           </div>
         </div>
