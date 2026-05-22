@@ -393,7 +393,7 @@ export default function Landing() {
                       )}
                     </div>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-4xl text-void font-light">${plan.price}</span>
+                      <span className="text-4xl text-primary font-light">${plan.price}</span>
                       <span className="text-secondary text-sm">{plan.period}</span>
                     </div>
                     {plan.yearlyNote && (
