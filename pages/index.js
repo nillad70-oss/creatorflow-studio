@@ -61,26 +61,10 @@ const FEATURES = [
 
 const PLANS = [
   {
-    name: "Free",
-    price: "0",
-    period: "",
-    desc: "Start flowing",
-    features: [
-      "5 AI scripts per month",
-      "Flow Teleprompter™",
-      "5 content ideas",
-      "Basic creator library",
-    ],
-    cta: "Start Free",
-    href: "/signup",
-    highlight: false,
-  },
-  {
-    name: "Pro",
+    name: "Monthly",
     price: "17",
     period: "/month",
     desc: "3-day free trial",
-    yearlyNote: "or $12/mo billed yearly",
     features: [
       "Unlimited AI scripts",
       "Unlimited teleprompter",
@@ -92,8 +76,28 @@ const PLANS = [
     ],
     cta: "Start Free Trial",
     href: "/signup?plan=pro",
-    highlight: true,
+    highlight: false,
     priceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID,
+  },
+  {
+    name: "Annual",
+    price: "144",
+    period: "/year",
+    desc: "3-day free trial",
+    yearlyNote: "Just $12/mo — save $60",
+    highlight: true,
+    features: [
+      "Unlimited AI scripts",
+      "Unlimited teleprompter",
+      "30-day content calendar",
+      "AI captions export",
+      "Premium script modes",
+      "Creator voice profiles",
+      "Priority support",
+    ],
+    cta: "Start Free Trial",
+    href: "/signup?plan=pro",
+    priceId: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRICE_ID,
   },
 ]
 
