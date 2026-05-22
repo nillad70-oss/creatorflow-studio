@@ -11,6 +11,7 @@ export default function Teleprompter() {
   const [fontSize, setFontSize] = useState(32)
   const [mirror, setMirror] = useState(false)
   const [cameraActive, setCameraActive] = useState(false)
+  const [controlsCollapsed, setControlsCollapsed] = useState(false)
   const [isRecording, setIsRecording] = useState(false)
   const [countdown, setCountdown] = useState(null)
   const scrollRef = useRef(null)
@@ -106,14 +107,14 @@ export default function Teleprompter() {
           a.href = url; a.download = 'creatorflow-recording.webm'; a.click()
           URL.revokeObjectURL(url)
         }
-        recorder.start(); setIsRecording(true); setIsPlaying(true)
+        recorder.start(); setIsRecording(true); setIsPlaying(true); setControlsCollapsed(true)
       } else { setCountdown(count) }
     }, 1000)
   }
 
   const stopRecording = () => {
     if (mediaRecorderRef.current) mediaRecorderRef.current.stop()
-    setIsRecording(false); setIsPlaying(false)
+    setIsRecording(false); setIsPlaying(false); setControlsCollapsed(false)
   }
 
   return (
