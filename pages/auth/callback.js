@@ -9,10 +9,8 @@ export default function AuthCallback() {
     const handleCallback = async () => {
       const supabase = createClient()
 
-      // Exchange the code in URL for a session
-      const { data, error } = await supabase.auth.exchangeCodeForSession(
-        window.location.href
-      )
+      // Handle both code and token hash flows
+      const { data: { session }, error } = await supabase.auth.getSession()
 
       if (error) {
         console.error('Auth callback error:', error)
@@ -20,18 +18,42 @@ export default function AuthCallback() {
         return
       }
 
-      if (data.session) {
-        // Check if onboarding is complete
+      if (session) {
         const { data: profile } = await supabase
           .from('users')
           .select('onboarding_complete')
-          .eq('id', data.session.user.id)
+          .eq('id', session.user.id)
           .single()
 
         if (!profile?.onboarding_complete) {
           router.push('/onboarding')
         } else {
           router.push('/dashboard')
+        }
+      } else {
+        // Try exchanging code if no session yet
+        const code = new URLSearchParams(window.location.search).get('code')
+        if (code) {
+          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+          if (exchangeError) {
+            router.push('/login?error=auth_callback_failed')
+            return
+          }
+          if (data.session) {
+            const { data: profile } = await supabase
+              .from('users')
+              .select('onboarding_complete')
+              .eq('id', data.session.user.id)
+              .single()
+
+            if (!profile?.onboarding_complete) {
+              router.push('/onboarding')
+            } else {
+              router.push('/dashboard')
+            }
+          }
+        } else {
+          router.push('/login')
         }
       }
     }
