@@ -1,6 +1,8 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/router'
+import { createClient } from '../lib/supabase/client'
 
 export default function Teleprompter() {
   const [script, setScript] = useState('')
