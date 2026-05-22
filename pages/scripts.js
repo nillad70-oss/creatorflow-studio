@@ -24,7 +24,7 @@ export default function Scripts() {
   const [savedScripts, setSavedScripts] = useState([])
 
   // Form state
-  const [topic, setTopic] = useState('')
+  const [topic, setTopic] = useState(typeof window !== 'undefined' ? localStorage.getItem('script_topic') || '' : '')
   const [scriptMode, setScriptMode] = useState('educational')
 
   // Generated script
