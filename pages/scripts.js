@@ -324,6 +324,15 @@ export default function Scripts() {
                   </div>
 
                   {/* Pacing tips */}
+                  {generatedScript.hashtags && (
+                    <div className="glass rounded-2xl p-5 mb-3">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Hashtags</span>
+                        <span className="text-tertiary text-xs">— SEO tags</span>
+                      </div>
+                      <p className="text-primary text-sm leading-relaxed">{Array.isArray(generatedScript.hashtags) ? generatedScript.hashtags.join(" ") : generatedScript.hashtags}</p>
+                    </div>
+                  )}
                   {generatedScript.pacing && (
                     <div className="glass rounded-2xl p-5 bg-white/2">
                       <div className="flex items-center gap-2 mb-3">
