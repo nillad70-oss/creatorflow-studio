@@ -120,7 +120,7 @@ export default function Teleprompter() {
   return (
     <>
       <Head>
-        <title>Flow Teleprompter - CreatorFlow Studio</title>
+        <title>Flow Teleprompter™ — CreatorFlow Studio™</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <style>{`html { scroll-behavior: auto !important; }`}</style>
       </Head>
