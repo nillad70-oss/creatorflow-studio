@@ -105,17 +105,7 @@ const PLANS = [
 export default function Landing() {
   const [activeTestimonial, setActiveTestimonial] = useState(0)
   const handleCheckout = async (priceId) => {
-  if (!priceId) {
-    window.location.href = '/signup'
-    return
-  }
-  const res = await fetch('/api/stripe/checkout', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ priceId }),
-  })
-  const data = await res.json()
-  if (data.url) window.location.href = data.url
+  window.location.href = '/signup?plan=pro'
 }
   const [mounted, setMounted] = useState(false)
 
