@@ -20,11 +20,25 @@ export default function Teleprompter() {
   const speedRef = useRef(3)
 
   useEffect(() => {
-    const saved = localStorage.getItem('teleprompter_script')
-    if (saved) {
-      setScript(saved)
-      localStorage.removeItem('teleprompter_script')
+    const loadScript = async () => {
+      const params = new URLSearchParams(window.location.search)
+      const scriptId = params.get('script')
+      if (scriptId) {
+        const supabase = createClient()
+        const { data } = await supabase.from('scripts').select('*').eq('id', scriptId).single()
+        if (data) {
+          const text = [data.hook, data.body, data.cta].filter(Boolean).join('\n\n')
+          setScript(text)
+          return
+        }
+      }
+      const saved = localStorage.getItem('teleprompter_script')
+      if (saved) {
+        setScript(saved)
+        localStorage.removeItem('teleprompter_script')
+      }
     }
+    loadScript()
   }, [])
 
   useEffect(() => { playingRef.current = isPlaying }, [isPlaying])
