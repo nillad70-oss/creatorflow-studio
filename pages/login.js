@@ -2,9 +2,11 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
 import { createClient } from '../lib/supabase/client'
+import { useRouter } from 'next/router'
 
-export default function Login() {
-  const [email, setEmail] = useState('')
+export default function Login() {const router = useRouter()
+const { email: emailParam } = router.query
+const [email, setEmail] = useState(emailParam || '')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
