@@ -5,15 +5,21 @@ import { useState, useEffect, useRef } from 'react'
 export default function Teleprompter() {
   const [script, setScript] = useState('')
   const [isPlaying, setIsPlaying] = useState(false)
-  const [speed, setSpeed] = useState(2)
+  const [speed, setSpeed] = useState(3)
   const [fontSize, setFontSize] = useState(32)
   const [mirror, setMirror] = useState(false)
-  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [cameraActive, setCameraActive] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
+  const [countdown, setCountdown] = useState(null)
   const scrollRef = useRef(null)
-  const intervalRef = useRef(null)
+  const videoRef = useRef(null)
+  const mediaRecorderRef = useRef(null)
+  const chunksRef = useRef([])
+  const streamRef = useRef(null)
+  const playingRef = useRef(false)
+  const speedRef = useRef(3)
 
   useEffect(() => {
-    // Load script from localStorage if coming from scripts page
     const saved = localStorage.getItem('teleprompter_script')
     if (saved) {
       setScript(saved)
@@ -21,213 +27,180 @@ export default function Teleprompter() {
     }
   }, [])
 
+  useEffect(() => { playingRef.current = isPlaying }, [isPlaying])
+  useEffect(() => { speedRef.current = speed }, [speed])
+
   useEffect(() => {
-    if (isPlaying) {
-      intervalRef.current = setInterval(() => {
-        if (scrollRef.current) {
-          scrollRef.current.scrollTop += speed
-          // Stop at end
-          if (scrollRef.current.scrollTop + scrollRef.current.clientHeight >= scrollRef.current.scrollHeight) {
-            setIsPlaying(false)
-          }
-        }
-      }, 50)
-    } else {
-      clearInterval(intervalRef.current)
+    if (!isPlaying) return
+    let id
+    const step = () => {
+      const el = scrollRef.current
+      if (!el || !playingRef.current) return
+      el.scrollTop = el.scrollTop + speedRef.current * 0.2
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
+        setIsPlaying(false)
+        return
+      }
+      id = requestAnimationFrame(step)
     }
-    return () => clearInterval(intervalRef.current)
-  }, [isPlaying, speed])
+    id = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(id)
+  }, [isPlaying])
 
-  const togglePlay = () => setIsPlaying(!isPlaying)
-
+  const togglePlay = () => setIsPlaying(p => !p)
   const resetScroll = () => {
     setIsPlaying(false)
     if (scrollRef.current) scrollRef.current.scrollTop = 0
   }
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen()
-      setIsFullscreen(true)
-    } else {
-      document.exitFullscreen()
-      setIsFullscreen(false)
-    }
+  const startCamera = async () => {
+    try {
+      if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop())
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: true
+      })
+      streamRef.current = stream
+      setCameraActive(true)
+      setTimeout(() => {
+        if (videoRef.current) { videoRef.current.srcObject = stream; videoRef.current.play() }
+      }, 100)
+    } catch (err) { alert('Camera access denied.') }
+  }
+
+  const stopCamera = () => {
+    if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null }
+    setCameraActive(false); setIsRecording(false)
+  }
+
+  const startRecording = () => {
+    let count = 3
+    setCountdown(count)
+    const timer = setInterval(() => {
+      count--
+      if (count === 0) {
+        clearInterval(timer); setCountdown(null); chunksRef.current = []
+        const recorder = new MediaRecorder(streamRef.current)
+        mediaRecorderRef.current = recorder
+        recorder.ondataavailable = e => chunksRef.current.push(e.data)
+        recorder.onstop = () => {
+          const blob = new Blob(chunksRef.current, { type: 'video/webm' })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url; a.download = 'creatorflow-recording.webm'; a.click()
+          URL.revokeObjectURL(url)
+        }
+        recorder.start(); setIsRecording(true); setIsPlaying(true)
+      } else { setCountdown(count) }
+    }, 1000)
+  }
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current) mediaRecorderRef.current.stop()
+    setIsRecording(false); setIsPlaying(false)
   }
 
   return (
     <>
       <Head>
-        <title>Flow Teleprompter™ — CreatorFlow Studio</title>
+        <title>Flow Teleprompter - CreatorFlow Studio</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <style>{`html { scroll-behavior: auto !important; }`}</style>
       </Head>
-
-      <div className="min-h-screen bg-void flex flex-col">
-
-        {/* Header */}
-        {!isFullscreen && (
-          <nav className="sticky top-0 z-40 bg-graphite border-b border-border px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="text-tertiary hover:text-secondary transition-colors text-sm">
-                ← Dashboard
-              </Link>
-              <span className="text-border">|</span>
-              <span className="text-primary text-sm font-medium">Flow Teleprompter™</span>
+      <div style={{ height: '100vh', background: '#050505', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <nav style={{ background: '#111', borderBottom: '1px solid #222', padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Link href="/dashboard" style={{ color: '#666', fontSize: '14px', textDecoration: 'none' }}>Back</Link>
+            <span style={{ color: 'white', fontSize: '14px', fontWeight: '500' }}>Flow Teleprompter</span>
+          </div>
+        </nav>
+        <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+          <div style={{ width: '280px', flexShrink: 0, background: '#111', borderRight: '1px solid #222', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto' }}>
+            <div>
+              <label style={{ color: '#888', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '8px' }}>Script</label>
+              <textarea
+                value={script}
+                onChange={e => setScript(e.target.value)}
+                placeholder="Paste your script here..."
+                rows={8}
+                style={{ width: '100%', background: '#1a1a1a', border: '1px solid #333', borderRadius: '12px', padding: '12px', color: 'white', fontSize: '13px', resize: 'none', boxSizing: 'border-box' }}
+              />
             </div>
-            <button
-              onClick={toggleFullscreen}
-              className="text-tertiary text-xs hover:text-secondary transition-colors"
-            >
-              ⛶ Fullscreen
-            </button>
-          </nav>
-        )}
-
-        <div className="flex-1 flex flex-col md:flex-row">
-
-          {/* ── Controls Panel ── */}
-          {!isFullscreen && (
-            <div className="md:w-72 border-b md:border-b-0 md:border-r border-border bg-graphite p-6 flex flex-col gap-6">
-
-              {/* Script input */}
-              <div>
-                <label className="block text-secondary text-xs uppercase tracking-widest mb-3">
-                  Your Script
-                </label>
-                <textarea
-                  value={script}
-                  onChange={(e) => setScript(e.target.value)}
-                  placeholder="Paste your script here or generate one from the Scripts page..."
-                  rows={8}
-                  className="input-field w-full px-4 py-3 rounded-xl text-sm resize-none"
-                />
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <label style={{ color: '#888', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px' }}>Speed</label>
+                <span style={{ color: '#3b82f6', fontSize: '12px' }}>{speed}</span>
               </div>
-
-              {/* Speed */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-secondary text-xs uppercase tracking-widest">Speed</label>
-                  <span className="text-electric-glow text-xs font-mono">{speed}x</span>
-                </div>
-                <input
-                  type="range"
-                  min="1"
-                  max="8"
-                  value={speed}
-                  onChange={(e) => setSpeed(Number(e.target.value))}
-                  className="w-full accent-electric"
-                />
-                <div className="flex justify-between text-tertiary text-xs mt-1">
-                  <span>Slow</span>
-                  <span>Fast</span>
-                </div>
-              </div>
-
-              {/* Font size */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-secondary text-xs uppercase tracking-widest">Text Size</label>
-                  <span className="text-electric-glow text-xs font-mono">{fontSize}px</span>
-                </div>
-                <input
-                  type="range"
-                  min="20"
-                  max="72"
-                  value={fontSize}
-                  onChange={(e) => setFontSize(Number(e.target.value))}
-                  className="w-full accent-electric"
-                />
-              </div>
-
-              {/* Mirror mode */}
-              <div className="flex items-center justify-between">
-                <label className="text-secondary text-xs uppercase tracking-widest">Mirror Mode</label>
-                <button
-                  onClick={() => setMirror(!mirror)}
-                  className={`w-12 h-6 rounded-full transition-all duration-200 ${mirror ? 'bg-electric' : 'bg-border'}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white mx-0.5 transition-all duration-200 ${mirror ? 'translate-x-6' : 'translate-x-0'}`} />
-                </button>
-              </div>
-
-              {/* Playback controls */}
-              <div className="flex items-center gap-3 mt-auto">
-                <button
-                  onClick={resetScroll}
-                  className="btn-ghost flex-1 py-3 rounded-xl text-sm"
-                >
-                  ↺ Reset
-                </button>
-                <button
-                  onClick={togglePlay}
-                  className="btn-electric flex-1 py-3 rounded-xl text-sm font-medium"
-                >
-                  {isPlaying ? '⏸ Pause' : '▶ Play'}
-                </button>
-              </div>
-
+              <input type="range" min="1" max="10" value={speed} onChange={e => setSpeed(Number(e.target.value))} style={{ width: '100%', accentColor: '#3b82f6' }} />
             </div>
-          )}
-
-          {/* ── Teleprompter Display ── */}
-          <div className="flex-1 relative bg-void overflow-hidden">
-
-            {/* Gradient overlays for focus line effect */}
-            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-void to-transparent z-10 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-void to-transparent z-10 pointer-events-none" />
-
-            {/* Focus line */}
-            <div className="absolute top-1/2 left-0 right-0 h-px bg-electric/20 z-10 pointer-events-none" />
-
-            {/* Script text */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <label style={{ color: '#888', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px' }}>Font Size</label>
+                <span style={{ color: '#3b82f6', fontSize: '12px' }}>{fontSize}px</span>
+              </div>
+              <input type="range" min="20" max="72" value={fontSize} onChange={e => setFontSize(Number(e.target.value))} style={{ width: '100%', accentColor: '#3b82f6' }} />
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <label style={{ color: '#888', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px' }}>Mirror</label>
+              <button onClick={() => setMirror(m => !m)} style={{ width: '48px', height: '24px', borderRadius: '12px', background: mirror ? '#3b82f6' : '#333', border: 'none', cursor: 'pointer', position: 'relative' }}>
+                <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'white', position: 'absolute', top: '2px', left: mirror ? '26px' : '2px', transition: 'left 0.2s' }} />
+              </button>
+            </div>
+            <div style={{ borderTop: '1px solid #222', paddingTop: '16px' }}>
+              <label style={{ color: '#888', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '2px', display: 'block', marginBottom: '10px' }}>Record</label>
+              {cameraActive && (
+                <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', background: 'black', aspectRatio: '16/9', marginBottom: '10px' }}>
+                  <video ref={videoRef} autoPlay muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }} />
+                  {countdown && (
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.6)' }}>
+                      <span style={{ color: 'white', fontSize: '64px', fontWeight: 'bold' }}>{countdown}</span>
+                    </div>
+                  )}
+                  {isRecording && (
+                    <div style={{ position: 'absolute', top: '8px', right: '8px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(0,0,0,0.5)', borderRadius: '20px', padding: '4px 8px' }}>
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#ef4444' }} />
+                      <span style={{ color: 'white', fontSize: '11px' }}>REC</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {!cameraActive ? (
+                  <button onClick={startCamera} style={{ flex: 1, padding: '10px', borderRadius: '12px', background: '#1a1a1a', border: '1px solid #333', color: 'white', fontSize: '12px', cursor: 'pointer' }}>Start Camera</button>
+                ) : !isRecording ? (
+                  <button onClick={startRecording} style={{ flex: 1, padding: '10px', borderRadius: '12px', background: '#ef4444', border: 'none', color: 'white', fontSize: '12px', cursor: 'pointer', fontWeight: '600' }}>Record</button>
+                ) : (
+                  <button onClick={stopRecording} style={{ flex: 1, padding: '10px', borderRadius: '12px', background: '#991b1b', border: 'none', color: 'white', fontSize: '12px', cursor: 'pointer' }}>Stop and Save</button>
+                )}
+                {cameraActive && (
+                  <button onClick={stopCamera} style={{ padding: '10px 14px', borderRadius: '12px', background: '#1a1a1a', border: '1px solid #333', color: 'white', fontSize: '12px', cursor: 'pointer' }}>X</button>
+                )}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', marginTop: 'auto', paddingTop: '16px' }}>
+              <button onClick={resetScroll} style={{ flex: 1, padding: '12px', borderRadius: '12px', background: '#1a1a1a', border: '1px solid #333', color: 'white', fontSize: '14px', cursor: 'pointer' }}>Reset</button>
+              <button onClick={togglePlay} style={{ flex: 1, padding: '12px', borderRadius: '12px', background: isPlaying ? '#1d4ed8' : '#3b82f6', border: 'none', color: 'white', fontSize: '14px', cursor: 'pointer', fontWeight: '600' }}>
+                {isPlaying ? 'Pause' : 'Play'}
+              </button>
+            </div>
+          </div>
+          <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#050505' }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '120px', background: 'linear-gradient(to bottom, #050505, transparent)', zIndex: 10, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '120px', background: 'linear-gradient(to top, #050505, transparent)', zIndex: 10, pointerEvents: 'none' }} />
             <div
               ref={scrollRef}
-              className="h-full overflow-y-scroll teleprompter-scroll px-8 md:px-16 py-32"
-              style={{
-                transform: mirror ? 'scaleX(-1)' : 'none',
-              }}
+              style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflowY: 'scroll', padding: '45vh 64px', boxSizing: 'border-box', transform: mirror ? 'scaleX(-1)' : 'none', scrollBehavior: 'auto' }}
             >
               {script ? (
-                <p
-                  className="teleprompter-text text-primary leading-loose text-center max-w-3xl mx-auto"
-                  style={{ fontSize: `${fontSize}px` }}
-                >
+                <p style={{ fontSize: fontSize + 'px', lineHeight: 2, textAlign: 'center', maxWidth: '800px', margin: '0 auto', color: 'white', fontWeight: '300' }}>
                   {script}
                 </p>
               ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <p className="text-tertiary text-lg mb-4">No script loaded.</p>
-                    <p className="text-tertiary text-sm mb-6">Paste your script in the panel or generate one.</p>
-                    <Link href="/scripts" className="btn-electric px-6 py-3 rounded-xl text-sm font-medium inline-block">
-                      Generate a Script
-                    </Link>
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '20vh', textAlign: 'center' }}>
+                  <p style={{ color: '#444', fontSize: '18px' }}>Paste your script to begin.</p>
                 </div>
               )}
             </div>
-
-            {/* Fullscreen controls */}
-            {isFullscreen && (
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-4">
-                <button onClick={resetScroll} className="btn-ghost px-6 py-3 rounded-xl text-sm">
-                  ↺
-                </button>
-                <button onClick={togglePlay} className="btn-electric px-8 py-3 rounded-xl text-sm font-medium">
-                  {isPlaying ? '⏸' : '▶'}
-                </button>
-                <button onClick={() => setSpeed(s => Math.max(1, s - 1))} className="btn-ghost px-4 py-3 rounded-xl text-sm">
-                  −
-                </button>
-                <span className="text-secondary text-xs">{speed}x</span>
-                <button onClick={() => setSpeed(s => Math.min(8, s + 1))} className="btn-ghost px-4 py-3 rounded-xl text-sm">
-                  +
-                </button>
-                <button onClick={toggleFullscreen} className="btn-ghost px-4 py-3 rounded-xl text-sm">
-                  ✕
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </div>

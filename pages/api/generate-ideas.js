@@ -1,27 +1,38 @@
-import Stripe from 'stripe'
-import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
-
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end()
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
+  }
 
-  const supabase = createServerSupabaseClient({ req, res })
-  const { data: { user } } = await supabase.auth.getUser()
+  const { niche, audience, tone, platform, days } = req.body
 
-  if (!user) return res.status(401).json({ error: 'Unauthorized' })
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-5',
+        max_tokens: 2000,
+        system: `You are a content strategist for ${niche || 'general'} creators. Generate content ideas. Return ONLY a JSON array with no other text. Each item must have: topic, hook, category, type.`,
+        messages: [{
+          role: 'user',
+          content: `Generate ${days || 30} content ideas for a ${niche} creator targeting ${audience} with a ${tone} tone for ${platform}. Return ONLY a JSON array.`
+        }],
+      }),
+    })
 
-  const { priceId } = req.body
+    const data = await response.json()
+    console.log('Anthropic response:', JSON.stringify(data))
+    const content = data.content[0].text
+    const cleaned = content.replace(/```json\n?|\n?```/g, '').trim()
+    const ideas = JSON.parse(cleaned)
+    return res.status(200).json({ ideas })
 
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    mode: 'subscription',
-    customer_email: user.email,
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?cancelled=true`,
-    metadata: { userId: user.id },
-  })
-
-  res.status(200).json({ url: session.url })
+  } catch (error) {
+    console.error('Generate ideas error:', error)
+    return res.status(500).json({ error: 'Failed to generate ideas. Please try again.' })
+  }
 }
