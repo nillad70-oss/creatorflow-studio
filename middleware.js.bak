@@ -5,13 +5,18 @@ const AUTH_ROUTES = ['/login', '/signup']
 
 export async function middleware(request) {
   const path = request.nextUrl.pathname
-  const session = request.cookies.get('sb-ndcwggugyuixpnzeyfmg-auth-token')
 
-  if (!session && PROTECTED.some(p => path.startsWith(p))) {
+  // Check for any Supabase auth cookie
+  const cookies = request.cookies.getAll()
+  const hasSession = cookies.some(cookie => 
+    cookie.name.includes('auth-token') && cookie.value
+  )
+
+  if (!hasSession && PROTECTED.some(p => path.startsWith(p))) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  if (session && AUTH_ROUTES.some(p => path.startsWith(p))) {
+  if (hasSession && AUTH_ROUTES.some(p => path.startsWith(p))) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
