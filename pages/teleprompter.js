@@ -36,7 +36,7 @@ export default function Teleprompter() {
     const step = () => {
       const el = scrollRef.current
       if (!el || !playingRef.current) return
-      el.scrollTop = el.scrollTop + speedRef.current * 0.2
+      el.scrollTop = el.scrollTop + speedRef.current * 0.5
       if (el.scrollTop + el.clientHeight >= el.scrollHeight) {
         setIsPlaying(false)
         return
