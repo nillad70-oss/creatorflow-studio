@@ -134,7 +134,7 @@ export default function Landing() {
                 <span className="text-white text-xs font-bold">CFS</span>
               </div>
               <span style={{fontFamily: 'var(--font-display)'}} className="text-white text-xl font-semibold tracking-wide">
-                CreatorFlow
+                CreatorFlow Studio™
               </span>
             </div>
 
