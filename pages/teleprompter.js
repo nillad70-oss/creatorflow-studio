@@ -60,7 +60,7 @@ export default function Teleprompter() {
     try {
       if (streamRef.current) streamRef.current.getTracks().forEach(t => t.stop())
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+        video: { facingMode: 'user', width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } },
         audio: true
       })
       streamRef.current = stream
