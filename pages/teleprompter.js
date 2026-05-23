@@ -80,21 +80,6 @@ export default function Teleprompter() {
   }
 
   const startRecording = () => {
-    // Use native camera on iOS
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-    if (isIOS) {
-      setIsPlaying(true)
-      setIsRecording(true)
-      // Open native camera
-      const input = document.createElement('input')
-      input.type = 'file'
-      input.accept = 'video/*'
-      input.capture = 'user'
-      input.click()
-      input.onchange = () => { setIsRecording(false) }
-      return
-    }
-    // Desktop recording
     let count = 3
     setCountdown(count)
     const timer = setInterval(() => {
