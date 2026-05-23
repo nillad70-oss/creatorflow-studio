@@ -44,7 +44,7 @@ export default function Teleprompter() {
     let id
     const animate = () => {
       if (scrollRef.current) {
-        scrollRef.current.scrollTop += (speedRef.current * 1.2) + 1
+        scrollRef.current.scrollTop += speedRef.current * 0.15
         if (scrollRef.current.scrollTop + scrollRef.current.clientHeight >= scrollRef.current.scrollHeight) {
           setIsPlaying(false)
           return
