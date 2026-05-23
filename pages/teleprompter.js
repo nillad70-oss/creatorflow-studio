@@ -87,15 +87,17 @@ export default function Teleprompter() {
         clearInterval(timer)
         setCountdown(null)
         chunksRef.current = []
-        const recorder = new MediaRecorder(streamRef.current)
+        const mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 
+                          MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm'
+        const recorder = new MediaRecorder(streamRef.current, { mimeType })
         mediaRecorderRef.current = recorder
         recorder.ondataavailable = e => chunksRef.current.push(e.data)
         recorder.onstop = () => {
-          const blob = new Blob(chunksRef.current, { type: 'video/webm' })
+          const blob = new Blob(chunksRef.current)
           const url = URL.createObjectURL(blob)
           const a = document.createElement('a')
           a.href = url
-          a.download = 'creatorflow-recording.webm'
+          a.download = 'creatorflow-recording.mp4'
           a.click()
           URL.revokeObjectURL(url)
         }
