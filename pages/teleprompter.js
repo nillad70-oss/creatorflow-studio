@@ -79,6 +79,21 @@ export default function Teleprompter() {
   }
 
   const startRecording = () => {
+    // Use native camera on iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    if (isIOS) {
+      setIsPlaying(true)
+      setIsRecording(true)
+      // Open native camera
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = 'video/*'
+      input.capture = 'user'
+      input.click()
+      input.onchange = () => { setIsRecording(false) }
+      return
+    }
+    // Desktop recording
     let count = 3
     setCountdown(count)
     const timer = setInterval(() => {
@@ -87,8 +102,7 @@ export default function Teleprompter() {
         clearInterval(timer)
         setCountdown(null)
         chunksRef.current = []
-        const mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 
-                          MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm'
+        const mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 'video/webm'
         const recorder = new MediaRecorder(streamRef.current, { mimeType })
         mediaRecorderRef.current = recorder
         recorder.ondataavailable = e => chunksRef.current.push(e.data)
