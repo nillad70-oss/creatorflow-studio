@@ -10,7 +10,7 @@ export default function Captions() {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
-  const [script, setScript] = useState('')
+  const [script, setScript] = useState(typeof window !== 'undefined' ? localStorage.getItem('caption_script') || '' : '')
   const [captions, setCaptions] = useState('')
   const [captionStyle, setCaptionStyle] = useState('engaging')
   const [copied, setCopied] = useState(false)
