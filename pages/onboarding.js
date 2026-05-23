@@ -52,7 +52,7 @@ export default function Onboarding() {
     niche: '',
     audience: '',
     content_goals: '',
-    preferred_platform: '',
+    preferred_platform: [],
     tone: '',
     creator_level: '',
   })
@@ -66,7 +66,7 @@ export default function Onboarding() {
     // Validate current step
     if (step === 1 && !profile.niche) { setError('Please select your niche.'); return }
     if (step === 2 && !profile.audience) { setError('Please describe your audience.'); return }
-    if (step === 3 && !profile.preferred_platform) { setError('Please select a platform.'); return }
+    if (step === 3 && (!profile.preferred_platform || profile.preferred_platform.length === 0)) { setError('Please select at least one platform.'); return }
     if (step === 4 && !profile.tone) { setError('Please select your tone.'); return }
     setError('')
     setStep(prev => prev + 1)
@@ -246,16 +246,22 @@ export default function Onboarding() {
                   {PLATFORMS.map((platform) => (
                     <button
                       key={platform.id}
-                      onClick={() => updateProfile('preferred_platform', platform.id)}
+                      onClick={() => {
+        const current = profile.preferred_platform || []
+        const updated = current.includes(platform.id)
+          ? current.filter(p => p !== platform.id)
+          : [...current, platform.id]
+        updateProfile('preferred_platform', updated)
+      }}
                       className={`flex items-center gap-4 px-5 py-4 rounded-xl text-left transition-all duration-200 ${
-                        profile.preferred_platform === platform.id
+                        (profile.preferred_platform || []).includes(platform.id)
                           ? 'bg-electric/20 border border-electric/50'
                           : 'glass hover:border-electric/20'
                       }`}
                     >
                       <span className="text-electric-glow text-xl">{platform.icon}</span>
                       <span className={`text-sm font-medium ${
-                        profile.preferred_platform === platform.id ? 'text-primary' : 'text-secondary'
+                        (profile.preferred_platform || []).includes(platform.id) ? 'text-primary' : 'text-secondary'
                       }`}>
                         {platform.label}
                       </span>
