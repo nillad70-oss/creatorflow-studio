@@ -126,10 +126,10 @@ export default function Teleprompter() {
       </Head>
       <div style={{position:'fixed',inset:0,background:'#000',overflow:'hidden'}}>
         {cameraActive && (
-          <video ref={videoRef} autoPlay muted playsInline style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',transform:'scaleX(-1)',zIndex:1}} />
+          <video ref={videoRef} autoPlay muted playsInline style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',transform:'scaleX(-1)',zIndex:1,pointerEvents:'none'}} />
         )}
         {cameraActive && (
-          <div ref={scrollRef} style={{position:'absolute',inset:0,overflowY:'scroll',zIndex:2,padding:'15vh 24px 40vh',boxSizing:'border-box',scrollbarWidth:'none'}}>
+          <div ref={scrollRef} style={{position:'absolute',inset:0,overflowY:'scroll',zIndex:3,padding:'15vh 24px 40vh',WebkitOverflowScrolling:'touch',boxSizing:'border-box',scrollbarWidth:'none'}}>
             {script ? (
               <p style={{fontSize:fontSize+'px',lineHeight:1.7,textAlign:'center',color:'white',fontWeight:'600',textShadow:'0 2px 8px rgba(0,0,0,0.9)',maxWidth:'600px',margin:'0 auto'}}>
                 {script}
