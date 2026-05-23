@@ -167,7 +167,7 @@ export default function Landing() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-electric/20 bg-electric/5 text-electric-glow text-xs font-medium mb-8">
               <span className="w-1.5 h-1.5 rounded-full bg-electric-glow animate-pulse" />
-              Creator Confidence System
+              AI-Powered Creator Confidence System
             </div>
 
             {/* Headline */}
@@ -179,7 +179,7 @@ export default function Landing() {
 
             {/* Sub */}
             <p className="text-secondary text-lg md:text-xl font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-              CreatorFlow Studio™ moves you from idea to recorded content in one smooth flow — without retakes, without anxiety, without mental exhaustion.
+              The AI creator studio that takes you from blank page to confident recording — scripts, teleprompter, captions. All in one flow.
             </p>
 
             {/* CTAs */}
