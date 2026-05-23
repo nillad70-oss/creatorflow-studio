@@ -128,6 +128,7 @@ export default function Teleprompter() {
     setIsRecording(false)
     setIsPlaying(false)
     setRecordingDone(true)
+    if (script) localStorage.setItem('caption_script', script)
   }
 
   const resetScroll = () => {
