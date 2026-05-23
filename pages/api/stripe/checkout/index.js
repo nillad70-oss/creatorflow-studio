@@ -7,21 +7,10 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
 
   try {
-    // Get auth token from any supabase cookie
-    const cookies = req.cookies
-    const cookieKey = Object.keys(cookies).find(k => k.includes('auth-token'))
+    const authHeader = req.headers.authorization
+    if (!authHeader) return res.status(401).json({ error: 'No auth header' })
     
-    if (!cookieKey) {
-      return res.status(401).json({ error: 'Not logged in' })
-    }
-
-    let accessToken
-    try {
-      const parsed = JSON.parse(cookies[cookieKey])
-      accessToken = Array.isArray(parsed) ? parsed[0] : parsed.access_token
-    } catch {
-      accessToken = cookies[cookieKey]
-    }
+    const accessToken = authHeader.replace('Bearer ', '')
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -29,10 +18,7 @@ export default async function handler(req, res) {
     )
 
     const { data: { user }, error } = await supabase.auth.getUser(accessToken)
-    
-    if (error || !user) {
-      return res.status(401).json({ error: 'Invalid session' })
-    }
+    if (error || !user) return res.status(401).json({ error: 'Invalid session' })
 
     const { priceId } = req.body
     if (!priceId) return res.status(400).json({ error: 'Price ID required' })
