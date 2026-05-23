@@ -185,7 +185,7 @@ export default function Landing() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <Link href="/signup" className="btn-electric w-full sm:w-auto px-8 py-4 rounded-xl text-base font-medium inline-flex items-center justify-center gap-2">
-                Start Free — No card required
+                Start Free — Create. Speak. Record. Flow.
               </Link>
               <a href="#workflow" className="btn-ghost w-full sm:w-auto px-8 py-4 rounded-xl text-base inline-flex items-center justify-center gap-2">
                 <PlayIcon />
@@ -195,7 +195,7 @@ export default function Landing() {
 
             {/* Social proof */}
             <p className="text-tertiary text-sm">
-              Built for creators who know what they want to say — they just need to{" "}
+              Stop overthinking. Start creating.{" "}
               <span className="text-secondary">flow</span>.
             </p>
           </div>
