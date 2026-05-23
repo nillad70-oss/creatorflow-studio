@@ -131,16 +131,6 @@ export default function Scripts() {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = () => {
-    if (!generatedScript) return
-    const fullScript = `${generatedScript.hook}\n\n${generatedScript.body}\n\n${generatedScript.cta}\n\n${generatedScript.hashtags ? (Array.isArray(generatedScript.hashtags) ? generatedScript.hashtags.join(' ') : generatedScript.hashtags) : ''}`
-    navigator.clipboard.writeText(fullScript)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
   const handleOpenInTeleprompter = () => {
     if (!generatedScript) return
     const fullScript = `${generatedScript.hook}\n\n${generatedScript.body}\n\n${generatedScript.cta}`
