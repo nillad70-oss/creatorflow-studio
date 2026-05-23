@@ -9,6 +9,7 @@ export default function Teleprompter() {
   const [speed, setSpeed] = useState(3)
   const [fontSize, setFontSize] = useState(28)
   const [isRecording, setIsRecording] = useState(false)
+  const [recordingDone, setRecordingDone] = useState(false)
   const [countdown, setCountdown] = useState(null)
   const [cameraActive, setCameraActive] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
@@ -126,6 +127,7 @@ export default function Teleprompter() {
     if (mediaRecorderRef.current) mediaRecorderRef.current.stop()
     setIsRecording(false)
     setIsPlaying(false)
+    setRecordingDone(true)
   }
 
   const resetScroll = () => {
@@ -238,6 +240,25 @@ export default function Teleprompter() {
                 Start Camera and Record
               </button>
               <p style={{color:'#555',fontSize:'12px',textAlign:'center'}}>Camera fills your screen. Script overlays on top.</p>
+            </div>
+          </div>
+        )}
+      {/* POST RECORDING SCREEN */}
+        {recordingDone && (
+          <div style={{position:'absolute',inset:0,zIndex:20,background:'rgba(0,0,0,0.92)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'32px'}}>
+            <div style={{fontSize:'48px',marginBottom:'16px'}}>🎬</div>
+            <h2 style={{color:'white',fontSize:'24px',fontWeight:'600',marginBottom:'8px',textAlign:'center'}}>Recording Saved!</h2>
+            <p style={{color:'#888',fontSize:'14px',marginBottom:'32px',textAlign:'center'}}>Your video has been saved to your device</p>
+            <div style={{display:'flex',flexDirection:'column',gap:'12px',width:'100%',maxWidth:'300px'}}>
+              <button onClick={() => { setRecordingDone(false); resetScroll(); }} style={{padding:'14px',borderRadius:'12px',background:'#3b82f6',border:'none',color:'white',fontSize:'14px',fontWeight:'600',cursor:'pointer'}}>
+                🔄 Record Again
+              </button>
+              <a href="/captions" style={{padding:'14px',borderRadius:'12px',background:'#1a1a1a',border:'1px solid #333',color:'white',fontSize:'14px',textAlign:'center',textDecoration:'none',cursor:'pointer'}}>
+                💬 Generate Captions
+              </a>
+              <a href="/dashboard" style={{padding:'14px',borderRadius:'12px',background:'#1a1a1a',border:'1px solid #333',color:'white',fontSize:'14px',textAlign:'center',textDecoration:'none',cursor:'pointer'}}>
+                🏠 Back to Dashboard
+              </a>
             </div>
           </div>
         )}
