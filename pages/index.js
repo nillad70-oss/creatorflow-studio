@@ -346,6 +346,47 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ── Founder Story ── */}
+        <section className="py-20 px-6 border-t border-border">
+          <div className="max-w-4xl mx-auto">
+            <div className="glass rounded-3xl p-8 md:p-12">
+              <div className="flex flex-col md:flex-row gap-8 items-start">
+                <div className="flex-1">
+                  <p className="text-tertiary text-sm uppercase tracking-widest mb-4">Why CreatorFlow exists</p>
+                  <h2 style={{fontFamily: 'var(--font-display)'}} className="text-3xl md:text-4xl text-primary font-light mb-6 leading-tight">
+                    "I've been a creator since 2021.
+                    <br />
+                    <em className="text-electric-glow">For 5 years, I struggled."</em>
+                  </h2>
+                  <div className="space-y-4 text-secondary text-base leading-relaxed">
+                    <p>Memorizing scripts made me rigid. I stuttered. I missed lines. I started over. Days. Hours. Sometimes weeks lost to endless retakes.</p>
+                    <p>When I finally discovered teleprompters, it gave me a new lease of life. But I still had to jump between apps — one for ideas, one for scripts, one for recording, one for captions.</p>
+                    <p>So I built CreatorFlow Studio™ — a complete virtual studio in your pocket. This morning I went from idea to posted in under 10 minutes.</p>
+                    <p className="text-primary font-medium">"I don't recall the last time I moved that fast."</p>
+                  </div>
+                  <div className="mt-8 flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-electric/20 border border-electric/30 flex items-center justify-center">
+                      <span className="text-electric-glow font-bold">L</span>
+                    </div>
+                    <div>
+                      <p className="text-primary text-sm font-medium">Leonilla Addeh</p>
+                      <p className="text-tertiary text-xs">Founder, CreatorFlow Studio™ · Nurse · Creator</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="md:w-64 glass rounded-2xl p-6 border border-electric/20">
+                  <p className="text-electric-glow text-xs uppercase tracking-widest mb-4">The transformation</p>
+                  <div className="space-y-3">
+                    {['❌ Hours lost to retakes', '❌ Rigid from memorizing', '❌ Switching between apps', '❌ Inconsistent posting', '✅ Idea to posted in 10 mins', '✅ Natural confident delivery', '✅ Everything in one flow'].map((item, i) => (
+                      <p key={i} className={`text-sm ${item.startsWith('✅') ? 'text-primary' : 'text-tertiary line-through'}`}>{item}</p>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── Pricing ── */}
         <section id="pricing" className="py-24 px-6">
           <div className="max-w-4xl mx-auto">
