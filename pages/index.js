@@ -346,6 +346,23 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ── Demo Video ── */}
+        <section className="py-20 px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-tertiary text-sm uppercase tracking-widest mb-4">See it in action</p>
+            <h2 style={{fontFamily: 'var(--font-display)'}} className="text-3xl md:text-4xl text-primary font-light mb-8">
+              Watch the flow.
+            </h2>
+            <div className="glass rounded-3xl p-12 border border-electric/20 flex flex-col items-center justify-center" style={{minHeight: '300px'}}>
+              <div className="w-20 h-20 rounded-full bg-electric/20 border border-electric/30 flex items-center justify-center mb-6">
+                <span className="text-electric-glow text-4xl">▶</span>
+              </div>
+              <p className="text-primary text-lg font-medium mb-2">Demo Video Coming Soon</p>
+              <p className="text-secondary text-sm">Watch a creator go from blank page to recorded content in under 10 minutes.</p>
+            </div>
+          </div>
+        </section>
+
         {/* ── Founder Story ── */}
         <section className="py-20 px-6 border-t border-border">
           <div className="max-w-4xl mx-auto">
