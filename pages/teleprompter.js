@@ -92,14 +92,34 @@ export default function Teleprompter() {
         const recorder = new MediaRecorder(streamRef.current, { mimeType })
         mediaRecorderRef.current = recorder
         recorder.ondataavailable = e => chunksRef.current.push(e.data)
-        recorder.onstop = () => {
-          const blob = new Blob(chunksRef.current)
-          const url = URL.createObjectURL(blob)
-          const a = document.createElement('a')
-          a.href = url
-          a.download = 'creatorflow-recording.mp4'
-          a.click()
-          URL.revokeObjectURL(url)
+        recorder.onstop = async () => {
+          const blob = new Blob(chunksRef.current, { type: mimeType })
+          
+          // Try Web Share API first (saves to Photos on iPhone)
+          if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'recording.mp4', { type: 'video/mp4' })] })) {
+            try {
+              await navigator.share({
+                files: [new File([blob], 'creatorflow-recording.mp4', { type: 'video/mp4' })],
+                title: 'CreatorFlow Recording',
+              })
+            } catch (err) {
+              // User cancelled share - fall back to download
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url
+              a.download = 'creatorflow-recording.mp4'
+              a.click()
+              URL.revokeObjectURL(url)
+            }
+          } else {
+            // Desktop - regular download
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = 'creatorflow-recording.mp4'
+            a.click()
+            URL.revokeObjectURL(url)
+          }
         }
         recorder.start()
         setIsRecording(true)
