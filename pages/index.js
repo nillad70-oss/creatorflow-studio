@@ -346,6 +346,33 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ── Social Proof ── */}
+        <section className="py-16 px-6 border-t border-border">
+          <div className="max-w-4xl mx-auto text-center">
+            <p className="text-tertiary text-sm uppercase tracking-widest mb-8">Creators are flowing</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { quote: "I posted 3 videos this week. That never happened before.", name: "Sarah M.", role: "Health Coach" },
+                { quote: "From idea to posted in 8 minutes. CreatorFlow changed everything.", name: "Leonilla A.", role: "Nurse & Creator · Founder" },
+                { quote: "No more endless retakes. I finally sound like myself on camera.", name: "Beta Creator", role: "Faith Creator" }
+              ].map((t, i) => (
+                <div key={i} className="glass rounded-2xl p-6 text-left">
+                  <p className="text-secondary text-sm leading-relaxed mb-4">"{t.quote}"</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-electric/20 flex items-center justify-center">
+                      <span className="text-electric-glow text-xs font-bold">{t.name[0]}</span>
+                    </div>
+                    <div>
+                      <p className="text-primary text-xs font-medium">{t.name}</p>
+                      <p className="text-tertiary text-xs">{t.role}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── Demo Video ── */}
         <section className="py-20 px-6">
           <div className="max-w-4xl mx-auto text-center">
