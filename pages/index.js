@@ -360,6 +360,7 @@ export default function Landing() {
                   </h2>
                   <div className="space-y-4 text-secondary text-base leading-relaxed">
                     <p>Memorizing scripts made me rigid. I stuttered. I missed lines. I started over. Days. Hours. Sometimes weeks lost to endless retakes.</p>
+                    <p>I was using 6 different AI apps — ChatGPT, Claude, Gemini, ElevenLabs, Grok, and more. And I was STILL struggling. Too many tools. Zero flow.</p>
                     <p>When I finally discovered teleprompters, it gave me a new lease of life. But I still had to jump between apps — one for ideas, one for scripts, one for recording, one for captions.</p>
                     <p>So I built CreatorFlow Studio™ — a complete virtual studio in your pocket. This morning I went from idea to posted in under 10 minutes.</p>
                     <p className="text-primary font-medium">"I don't recall the last time I moved that fast."</p>
