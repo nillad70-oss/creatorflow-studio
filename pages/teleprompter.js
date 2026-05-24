@@ -121,7 +121,7 @@ export default function Teleprompter() {
             URL.revokeObjectURL(url)
           }
         }
-        recorder.start()
+        recorder.start(100) // collect data every 100ms for smoother recording
         setIsRecording(true)
         setIsPlaying(true)
       } else { setCountdown(count) }
