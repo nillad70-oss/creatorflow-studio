@@ -256,7 +256,12 @@ export default function Teleprompter() {
             <h2 style={{color:'white',fontSize:'24px',fontWeight:'600',marginBottom:'8px',textAlign:'center'}}>Recording Saved!</h2>
             <p style={{color:'#888',fontSize:'14px',marginBottom:'32px',textAlign:'center'}}>Your video has been saved to your device</p>
             <div style={{display:'flex',flexDirection:'column',gap:'12px',width:'100%',maxWidth:'300px'}}>
-              <button onClick={() => { setRecordingDone(false); resetScroll(); }} style={{padding:'14px',borderRadius:'12px',background:'#3b82f6',border:'none',color:'white',fontSize:'14px',fontWeight:'600',cursor:'pointer'}}>
+              <button onClick={() => { 
+                setRecordingDone(false)
+                resetScroll()
+                stopCamera()
+                setTimeout(() => startCamera(), 500)
+              }} style={{padding:'14px',borderRadius:'12px',background:'#3b82f6',border:'none',color:'white',fontSize:'14px',fontWeight:'600',cursor:'pointer'}}>
                 🔄 Record Again
               </button>
               <a href="/captions" style={{padding:'14px',borderRadius:'12px',background:'#1a1a1a',border:'1px solid #333',color:'white',fontSize:'14px',textAlign:'center',textDecoration:'none',cursor:'pointer'}}>
