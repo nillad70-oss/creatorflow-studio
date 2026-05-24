@@ -43,7 +43,10 @@ if (!data.session) { setError('No session returned. Data: ' + JSON.stringify(dat
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <p className="text-center text-tertiary text-xs mt-6">No account? <Link href="/signup" className="text-electric-glow">Create one free</Link></p>
+        <p className="text-center text-tertiary text-xs mt-4">
+          <Link href="/auth/reset-password" className="text-electric-glow">Forgot password?</Link>
+        </p>
+        <p className="text-center text-tertiary text-xs mt-2">No account? <Link href="/signup" className="text-electric-glow">Create one free</Link></p>
       </div>
     </div>
   )
