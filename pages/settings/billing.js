@@ -6,6 +6,8 @@ import Link from 'next/link'
 export default function Billing() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const isExpired = router.query.expired === 'true'
 
   const handleCheckout = async (priceId) => {
     setLoading(true)
@@ -37,6 +39,11 @@ export default function Billing() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#050505', display: 'flex', flexDirection: 'column' }}>
+      {isExpired && (
+        <div style={{background:'#ef4444',color:'white',padding:'12px 24px',textAlign:'center',fontSize:'14px',fontWeight:'600'}}>
+          ⚠️ Your 3-day trial has ended. Subscribe to continue using CreatorFlow Studio™.
+        </div>
+      )}
       <nav style={{ background: '#111', borderBottom: '1px solid #222', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '16px' }}>
         <Link href="/dashboard" style={{ color: '#666', fontSize: '14px', textDecoration: 'none' }}>← Dashboard</Link>
         <span style={{ color: 'white', fontSize: '14px' }}>Upgrade to Pro</span>
