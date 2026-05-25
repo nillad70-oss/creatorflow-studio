@@ -185,7 +185,7 @@ export default function Landing() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <Link href="/signup" className="btn-electric w-full sm:w-auto px-8 py-4 rounded-xl text-base font-medium inline-flex items-center justify-center gap-2">
-                Start Free — Create. Speak. Record. Flow.
+                Start 3-Day Free Trial — Card Required
               </Link>
               <a href="#workflow" className="btn-ghost w-full sm:w-auto px-8 py-4 rounded-xl text-base inline-flex items-center justify-center gap-2">
                 <PlayIcon />
