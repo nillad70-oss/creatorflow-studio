@@ -71,6 +71,19 @@ export default function Dashboard() {
 
       setProfile(profileData)
 
+      // Subscription gate
+      if (profileData) {
+        const createdAt = new Date(user.created_at)
+        const now = new Date()
+        const daysSinceSignup = (now - createdAt) / (1000 * 60 * 60 * 24)
+        const isTrialExpired = daysSinceSignup > 3
+        const isPro = profileData.subscription_tier === 'pro'
+        if (isTrialExpired && isPro === false) {
+          router.push('/settings/billing?expired=true')
+          return
+        }
+      }
+
       // Load recent scripts
       const { data: scriptsData } = await supabase
         .from('scripts')
