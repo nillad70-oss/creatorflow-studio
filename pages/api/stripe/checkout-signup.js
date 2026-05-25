@@ -9,7 +9,6 @@ export default async function handler(req, res) {
 
     const { userId, email } = req.query
     const priceId = req.query.priceId || 'price_1TZdETLtci79J0RjR1JnKafJ'
-    const priceId = process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID || 'price_1TZdETLtci79J0RjR1JnKafJ'
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

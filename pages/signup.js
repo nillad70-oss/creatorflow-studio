@@ -61,6 +61,7 @@ export default function Signup() {
 
     if (data.session) {
       // Redirect to Stripe checkout to collect card before onboarding
+      console.log('Redirecting to Stripe:', data.user?.id, form.email)
       window.location.href = '/api/stripe/checkout-signup?priceId=price_1TZdETLtci79J0RjR1JnKafJ&userId=' + data.user.id + '&email=' + encodeURIComponent(form.email)
     } else if (data.user) {
       router.push('/login?email=' + encodeURIComponent(form.email))
