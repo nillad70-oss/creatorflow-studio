@@ -61,7 +61,7 @@ export default function Signup() {
 
     if (data.session) {
       // Redirect to Stripe checkout to collect card before onboarding
-      window.location.href = '/api/stripe/checkout-signup?priceId=' + (process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID || '')
+      window.location.href = '/api/stripe/checkout-signup?priceId=' + (process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID || '') + '&userId=' + data.user.id + '&email=' + encodeURIComponent(form.email)
     } else if (data.user) {
       router.push('/login?email=' + encodeURIComponent(form.email))
     } else {

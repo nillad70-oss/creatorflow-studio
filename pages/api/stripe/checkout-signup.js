@@ -7,13 +7,17 @@ export default async function handler(req, res) {
   try {
     const { priceId } = req.query
 
+    const { userId, email } = req.query
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'subscription',
+      customer_email: email || undefined,
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/onboarding`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/signup`,
       subscription_data: { trial_period_days: 3 },
+      metadata: { userId: userId || '' },
     })
 
     res.redirect(303, session.url)
