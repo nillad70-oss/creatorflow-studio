@@ -6,7 +6,6 @@ import Link from 'next/link'
 export default function Billing() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
   const isExpired = router.query.expired === 'true'
 
   const handleCheckout = async (priceId) => {
