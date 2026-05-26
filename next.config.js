@@ -4,6 +4,31 @@ const nextConfig = {
   images: {
     domains: [],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'creatorflowstudio.app',
+          },
+        ],
+        destination: 'https://nillaflowstudio.app/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.creatorflowstudio.app',
+          },
+        ],
+        destination: 'https://nillaflowstudio.app/:path*',
+        permanent: true,
+      },
+    ]
+  },
 }
-
 module.exports = nextConfig
