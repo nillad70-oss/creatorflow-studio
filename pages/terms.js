@@ -33,7 +33,7 @@ export default function Terms() {
             <p>We reserve the right to terminate accounts that violate these terms.</p>
 
             <h2 style={{ color: 'white', fontSize: '20px', marginTop: '32px' }}>7. Contact</h2>
-            <p>For questions about these terms, contact us at support@creatorflowstudio.app</p>
+            <p>For questions about these terms, contact us at support@NillaFlowstudio.app</p>
           </div>
         </div>
       </div>

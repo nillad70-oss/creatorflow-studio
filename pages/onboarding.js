@@ -135,7 +135,7 @@ export default function Onboarding() {
               <span className="text-white text-xs font-bold">CF</span>
             </div>
             <span style={{fontFamily: 'var(--font-display)'}} className="text-primary text-lg font-medium">
-              CreatorFlow
+              NillaFlow
             </span>
           </div>
           <span className="text-tertiary text-xs">

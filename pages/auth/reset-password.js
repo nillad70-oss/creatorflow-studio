@@ -80,7 +80,7 @@ export default function ResetPassword() {
               <span className="text-white text-xs font-bold">CF</span>
             </div>
             <span style={{fontFamily: 'var(--font-display)'}} className="text-primary text-lg font-medium tracking-wide">
-              CreatorFlow
+              NillaFlow
             </span>
           </Link>
         </nav>

@@ -1,6 +1,6 @@
 {
   "name": "NillaFlowStudio",
-  "short_name": "CreatorFlow",
+  "short_name": "NillaFlow",
   "description": "Create. Speak. Record. Flow.",
   "start_url": "/",
   "display": "standalone",

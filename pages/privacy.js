@@ -30,10 +30,10 @@ export default function Privacy() {
             <p>We use cookies for authentication and to improve your experience.</p>
 
             <h2 style={{ color: 'white', fontSize: '20px', marginTop: '32px' }}>6. Your Rights</h2>
-            <p>You may request deletion of your account and data at any time by contacting support@creatorflowstudio.app</p>
+            <p>You may request deletion of your account and data at any time by contacting support@NillaFlowstudio.app</p>
 
             <h2 style={{ color: 'white', fontSize: '20px', marginTop: '32px' }}>7. Contact</h2>
-            <p>For privacy concerns, contact us at support@creatorflowstudio.app</p>
+            <p>For privacy concerns, contact us at support@NillaFlowstudio.app</p>
           </div>
         </div>
       </div>

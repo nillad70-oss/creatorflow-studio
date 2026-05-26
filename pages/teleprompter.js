@@ -99,7 +99,7 @@ export default function Teleprompter() {
           if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'recording.mp4', { type: 'video/mp4' })] })) {
             try {
               await navigator.share({
-                files: [new File([blob], 'creatorflow-recording.mp4', { type: 'video/mp4' })],
+                files: [new File([blob], 'NillaFlow-recording.mp4', { type: 'video/mp4' })],
                 title: 'NillaFlowRecording',
               })
             } catch (err) {
@@ -107,7 +107,7 @@ export default function Teleprompter() {
               const url = URL.createObjectURL(blob)
               const a = document.createElement('a')
               a.href = url
-              a.download = 'creatorflow-recording.mp4'
+              a.download = 'NillaFlow-recording.mp4'
               a.click()
               URL.revokeObjectURL(url)
             }
@@ -116,7 +116,7 @@ export default function Teleprompter() {
             const url = URL.createObjectURL(blob)
             const a = document.createElement('a')
             a.href = url
-            a.download = 'creatorflow-recording.mp4'
+            a.download = 'NillaFlow-recording.mp4'
             a.click()
             URL.revokeObjectURL(url)
           }
