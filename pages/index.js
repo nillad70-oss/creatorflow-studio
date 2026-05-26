@@ -130,7 +130,7 @@ export default function Landing() {
             {/* Logo */}
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-electric flex items-center justify-center">
-                <span className="text-white text-xs font-bold">CFS</span>
+                <span className="text-white text-xs font-bold">NFS</span>
               </div>
               <span style={{fontFamily: 'var(--font-display)'}} className="text-white text-xl font-semibold tracking-wide">
                 NillaFlow Studio™.
@@ -529,7 +529,7 @@ export default function Landing() {
           <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-md bg-electric flex items-center justify-center">
-                <span className="text-white text-xs font-bold">CFS</span>
+                <span className="text-white text-xs font-bold">NFS</span>
               </div>
               <span style={{fontFamily: 'var(--font-display)'}} className="text-secondary text-sm">
                 NillaFlow Studio™.
