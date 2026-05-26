@@ -121,7 +121,7 @@ export default function Dashboard() {
           <div className="px-6 py-5 border-b border-border">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-electric flex items-center justify-center">
-                <span className="text-white text-xs font-bold">NFS</span>
+                <svg width="20" height="20" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="14" y1="14" x2="14" y2="66" stroke="#3B82F6" strokeWidth="10" strokeLinecap="round"/><line x1="14" y1="14" x2="66" y2="66" stroke="#3B82F6" strokeWidth="10" strokeLinecap="round"/><line x1="66" y1="14" x2="66" y2="66" stroke="#3B82F6" strokeWidth="10" strokeLinecap="round"/><path d="M14 40 C24 28 34 52 40 40 C46 28 56 52 66 40" stroke="white" strokeWidth="4" strokeLinecap="round" fill="none"/><path d="M14 52 C24 40 34 64 40 52 C46 40 56 64 66 52" stroke="#C8A96E" strokeWidth="3" strokeLinecap="round" fill="none"/></svg>
               </div>
               <span style={{fontFamily: 'var(--font-display)'}} className="text-primary text-lg font-medium">
                 NillaFlow Studio™
@@ -173,7 +173,7 @@ export default function Dashboard() {
         <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-graphite border-b border-border px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-electric flex items-center justify-center">
-              <span className="text-white text-xs font-bold">NFS</span>
+              <svg width="20" height="20" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><line x1="14" y1="14" x2="14" y2="66" stroke="#3B82F6" strokeWidth="10" strokeLinecap="round"/><line x1="14" y1="14" x2="66" y2="66" stroke="#3B82F6" strokeWidth="10" strokeLinecap="round"/><line x1="66" y1="14" x2="66" y2="66" stroke="#3B82F6" strokeWidth="10" strokeLinecap="round"/><path d="M14 40 C24 28 34 52 40 40 C46 28 56 52 66 40" stroke="white" strokeWidth="4" strokeLinecap="round" fill="none"/><path d="M14 52 C24 40 34 64 40 52 C46 40 56 64 66 52" stroke="#C8A96E" strokeWidth="3" strokeLinecap="round" fill="none"/></svg>
             </div>
             <span style={{fontFamily: 'var(--font-display)'}} className="text-primary text-base font-medium">
               NillaFlow Studio™
