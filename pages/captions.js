@@ -22,6 +22,7 @@ export default function Captions() {
   }, [])
   const [captionStyle, setCaptionStyle] = useState('engaging')
   const [copied, setCopied] = useState(false)
+  const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
 
   const STYLES = [
@@ -71,6 +72,25 @@ export default function Captions() {
     setGenerating(false)
   }
 
+
+  const saveCaption = async () => {
+    if (!captions || !user) return
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.from('captions').insert({
+        user_id: user.id,
+        subtitle_text: captions,
+        export_format: captionStyle,
+        created_at: new Date().toISOString(),
+      })
+      if (!error) {
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2000)
+      }
+    } catch (err) {
+      console.error('Save failed:', err)
+    }
+  }
   const copyCaption = () => {
     navigator.clipboard.writeText(captions)
     setCopied(true)
@@ -125,8 +145,11 @@ export default function Captions() {
                   <div className="flex items-center justify-between mb-4">
                     <h2 style={{fontFamily: 'var(--font-display)'}} className="text-xl text-primary font-light">Your Caption</h2>
                     <button onClick={copyCaption} className={`px-4 py-2 rounded-lg text-xs transition-all ${copied ? 'bg-success/20 text-success' : 'btn-ghost'}`}>
-                      {copied ? '✓ Copied!' : 'Copy'}
-                    </button>
+                        {copied ? '✓ Copied!' : 'Copy'}
+                      </button>
+                      <button onClick={saveCaption} className={`px-4 py-2 rounded-lg text-xs transition-all ${saved ? 'bg-success/20 text-success' : 'btn-ghost'}`}>
+                        {saved ? '✓ Saved!' : '✦ Save'}
+                      </button>
                   </div>
                   <div className="glass rounded-2xl p-6">
                     <p className="text-primary text-sm leading-relaxed whitespace-pre-line">{captions}</p>
