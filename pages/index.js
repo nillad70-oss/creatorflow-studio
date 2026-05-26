@@ -14,7 +14,6 @@ const PlayIcon = () => (
     <path d="M6 4L16 10L6 16V4Z" fill="currentColor"/>
   </svg>
 )
-
 // ── Data ──
 const PAIN_POINTS = [
   "I hate how I sound on camera.",
@@ -116,10 +115,10 @@ export default function Landing() {
   return (
     <>
       <Head>
-        <title>CreatorFlow Studio™ — Create. Speak. Record. Flow.</title>
-        <meta name="description" content="Stop doing endless retakes. CreatorFlow Studio helps you move from idea to recorded content naturally, without memorization or mental exhaustion." />
+        <title>NillaFlow Studio™. — Create. Speak. Record. Flow.</title>
+        <meta name="description" content="Stop doing endless retakes. NillaFlowStudio helps you move from idea to recorded content naturally, without memorization or mental exhaustion." />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-        <meta property="og:title" content="CreatorFlow Studio™" />
+        <meta property="og:title" content="NillaFlow Studio™." />
         <meta property="og:description" content="Create. Speak. Record. Flow." />
       </Head>
 
@@ -134,7 +133,7 @@ export default function Landing() {
                 <span className="text-white text-xs font-bold">CFS</span>
               </div>
               <span style={{fontFamily: 'var(--font-display)'}} className="text-white text-xl font-semibold tracking-wide">
-                CreatorFlow Studio™
+                NillaFlow Studio™.
               </span>
             </div>
 
@@ -223,7 +222,7 @@ export default function Landing() {
             <div className="text-center mt-10">
               <div className="divider-glow mb-8" />
               <p style={{fontFamily: 'var(--font-display)'}} className="text-2xl md:text-3xl text-primary font-light italic">
-                CreatorFlow Studio™ fixes all of this.
+                NillaFlow Studio™. fixes all of this.
               </p>
             </div>
           </div>
@@ -353,7 +352,7 @@ export default function Landing() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 { quote: "I posted 3 videos this week. That never happened before.", name: "Sarah M.", role: "Health Coach" },
-                { quote: "From idea to posted in 8 minutes. CreatorFlow changed everything.", name: "Leonilla A.", role: "Nurse & Creator · Founder" },
+                { quote: "From idea to posted in 8 minutes. NillaFlowchanged everything.", name: "Leonilla A.", role: "Nurse & Creator · Founder" },
                 { quote: "No more endless retakes. I finally sound like myself on camera.", name: "Beta Creator", role: "Faith Creator" }
               ].map((t, i) => (
                 <div key={i} className="glass rounded-2xl p-6 text-left">
@@ -396,7 +395,7 @@ export default function Landing() {
             <div className="glass rounded-3xl p-8 md:p-12">
               <div className="flex flex-col md:flex-row gap-8 items-start">
                 <div className="flex-1">
-                  <p className="text-tertiary text-sm uppercase tracking-widest mb-4">Why CreatorFlow exists</p>
+                  <p className="text-tertiary text-sm uppercase tracking-widest mb-4">Why NillaFlowexists</p>
                   <h2 style={{fontFamily: 'var(--font-display)'}} className="text-3xl md:text-4xl text-primary font-light mb-6 leading-tight">
                     "I've been a creator since 2021.
                     <br />
@@ -406,7 +405,7 @@ export default function Landing() {
                     <p>Memorizing scripts made me rigid. I stuttered. I missed lines. I started over. Days. Hours. Sometimes weeks lost to endless retakes.</p>
                     <p>I was using 6 different AI apps — ChatGPT, Claude, Gemini, ElevenLabs, Grok, and more. And I was STILL struggling. Too many tools. Zero flow.</p>
                     <p>When I finally discovered teleprompters, it gave me a new lease of life. But I still had to jump between apps — one for ideas, one for scripts, one for recording, one for captions.</p>
-                    <p>So I built CreatorFlow Studio™ — a complete virtual studio in your pocket. This morning I went from idea to posted in under 10 minutes.</p>
+                    <p>So I built NillaFlow Studio™. — a complete virtual studio in your pocket. This morning I went from idea to posted in under 10 minutes.</p>
                     <p className="text-primary font-medium">"I don't recall the last time I moved that fast."</p>
                   </div>
                   <div className="mt-8 flex items-center gap-4">
@@ -415,7 +414,7 @@ export default function Landing() {
                     </div>
                     <div>
                       <p className="text-primary text-sm font-medium">Leonilla Addeh</p>
-                      <p className="text-tertiary text-xs">Founder, CreatorFlow Studio™ · Nurse · Creator</p>
+                      <p className="text-tertiary text-xs">Founder, NillaFlow Studio™. · Nurse · Creator</p>
                     </div>
                   </div>
                 </div>
@@ -533,11 +532,11 @@ export default function Landing() {
                 <span className="text-white text-xs font-bold">CFS</span>
               </div>
               <span style={{fontFamily: 'var(--font-display)'}} className="text-secondary text-sm">
-                CreatorFlow Studio™
+                NillaFlow Studio™.
               </span>
             </div>
             <p className="text-tertiary text-xs">
-              © 2026 CreatorFlow Studio™. Built for creators who flow.
+              © 2026 NillaFlow Studio™.. Built for creators who flow.
             </p>
             <div className="flex items-center gap-6">
               <Link href="/privacy" className="text-tertiary text-xs hover:text-secondary transition-colors">Privacy</Link>

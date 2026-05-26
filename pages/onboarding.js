@@ -113,7 +113,7 @@ export default function Onboarding() {
   return (
     <>
       <Head>
-        <title>Setup Your Profile — CreatorFlow Studio™</title>
+        <title>Setup Your Profile — NillaFlow Studio™.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
 

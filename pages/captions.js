@@ -81,7 +81,7 @@ export default function Captions() {
 
   return (
     <>
-      <Head><title>Captions — CreatorFlow Studio™</title></Head>
+      <Head><title>Captions — NillaFlow Studio™.</title></Head>
       <div className="min-h-screen bg-void">
         <nav className="sticky top-0 z-40 bg-graphite border-b border-border px-4 md:px-8 py-4 flex items-center gap-4">
           <Link href="/dashboard" className="text-tertiary hover:text-secondary transition-colors text-sm">← Dashboard</Link>

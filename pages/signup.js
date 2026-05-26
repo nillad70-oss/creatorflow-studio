@@ -75,7 +75,7 @@ export default function Signup() {
   return (
     <>
       <Head>
-        <title>Create Account — CreatorFlow Studio™</title>
+        <title>Create Account — NillaFlow Studio™.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
       <div className="min-h-screen bg-void flex flex-col">
@@ -106,7 +106,7 @@ export default function Signup() {
                     </div>
                   )}
                   <h1 style={{fontFamily: 'var(--font-display)'}} className="text-3xl text-primary font-light mb-2">Start flowing.</h1>
-                  <p className="text-secondary text-sm">Create your CreatorFlow account.</p>
+                  <p className="text-secondary text-sm">Create your NillaFlowaccount.</p>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>

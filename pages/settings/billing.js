@@ -40,7 +40,7 @@ export default function Billing() {
     <div style={{ minHeight: '100vh', background: '#050505', display: 'flex', flexDirection: 'column' }}>
       {isExpired && (
         <div style={{background:'#ef4444',color:'white',padding:'12px 24px',textAlign:'center',fontSize:'14px',fontWeight:'600'}}>
-          ⚠️ Your 3-day trial has ended. Subscribe to continue using CreatorFlow Studio™.
+          ⚠️ Your 3-day trial has ended. Subscribe to continue using NillaFlow Studio™..
         </div>
       )}
       <nav style={{ background: '#111', borderBottom: '1px solid #222', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '16px' }}>

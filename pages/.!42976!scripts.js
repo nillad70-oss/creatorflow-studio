@@ -139,7 +139,7 @@ export default function Scripts() {
   return (
     <>
       <Head>
-        <title>AI Script Generator — CreatorFlow Studio™</title>
+        <title>AI Script Generator — NillaFlow Studio™.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
 

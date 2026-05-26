@@ -5,7 +5,7 @@ export default function Privacy() {
   return (
     <>
       <Head>
-        <title>Privacy Policy — CreatorFlow Studio™</title>
+        <title>Privacy Policy — NillaFlow Studio™.</title>
       </Head>
       <div style={{ minHeight: '100vh', background: '#050505', color: 'white', padding: '40px 24px' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>

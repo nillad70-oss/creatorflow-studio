@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // CreatorFlow Design System
+        // NillaFlowDesign System
         void: '#080A0E',
         graphite: '#111318',
         surface: '#161B24',

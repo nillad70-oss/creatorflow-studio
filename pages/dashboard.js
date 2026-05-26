@@ -109,7 +109,7 @@ export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>Dashboard — CreatorFlow Studio™</title>
+        <title>Dashboard — NillaFlow Studio™.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
 

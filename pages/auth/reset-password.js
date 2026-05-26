@@ -66,7 +66,7 @@ export default function ResetPassword() {
   return (
     <>
       <Head>
-        <title>Reset Password — CreatorFlow Studio™</title>
+        <title>Reset Password — NillaFlow Studio™.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
 

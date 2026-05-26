@@ -1,5 +1,5 @@
 -- ============================================================
--- CREATORFLOW STUDIO™ — Supabase Database Setup
+-- NillaFlow Studio™. — Supabase Database Setup
 -- Run this entire file in Supabase SQL Editor
 -- ============================================================
 

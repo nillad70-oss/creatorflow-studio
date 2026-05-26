@@ -100,7 +100,7 @@ export default function Teleprompter() {
             try {
               await navigator.share({
                 files: [new File([blob], 'creatorflow-recording.mp4', { type: 'video/mp4' })],
-                title: 'CreatorFlow Recording',
+                title: 'NillaFlowRecording',
               })
             } catch (err) {
               // User cancelled share - fall back to download
@@ -144,7 +144,7 @@ export default function Teleprompter() {
   return (
     <>
       <Head>
-        <title>Flow Teleprompter - CreatorFlow Studio</title>
+        <title>Flow Teleprompter - NillaFlowStudio</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <style>{`body{margin:0;padding:0;background:#000;overflow:hidden}html{scroll-behavior:auto!important}::-webkit-scrollbar{display:none}`}</style>
       </Head>
