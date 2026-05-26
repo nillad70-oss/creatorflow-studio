@@ -106,7 +106,7 @@ export default function Signup() {
                     </div>
                   )}
                   <h1 style={{fontFamily: 'var(--font-display)'}} className="text-3xl text-primary font-light mb-2">Start flowing.</h1>
-                  <p className="text-secondary text-sm">Create your NillaFlowaccount.</p>
+                  <p className="text-secondary text-sm">Create your NillaFlow Studio™ account.</p>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
