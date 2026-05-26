@@ -23,7 +23,7 @@ export default async function handler(req, res) {
         system: `You are an expert social media caption writer for ${niche || 'general'} creators on ${platform || 'instagram'}. Write captions that drive engagement. Return ONLY the caption text, no explanation.`,
         messages: [{
           role: 'user',
-          content: `Write a ${style} caption for this script. Include relevant hashtags at the end.\n\nScript:\n${script}`
+          content: `Write a ${style} caption for this script. Include no more than 5 relevant hashtags at the end.\n\nScript:\n${script}`
         }],
       }),
     })
