@@ -121,7 +121,7 @@ export default function Dashboard() {
           <div className="px-6 py-5 border-b border-border">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg bg-electric flex items-center justify-center">
-                <span className="text-white text-xs font-bold">CF</span>
+                <span className="text-white text-xs font-bold">NFS</span>
               </div>
               <span style={{fontFamily: 'var(--font-display)'}} className="text-primary text-lg font-medium">
                 NillaFlow
@@ -173,7 +173,7 @@ export default function Dashboard() {
         <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-graphite border-b border-border px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-electric flex items-center justify-center">
-              <span className="text-white text-xs font-bold">CF</span>
+              <span className="text-white text-xs font-bold">NFS</span>
             </div>
             <span style={{fontFamily: 'var(--font-display)'}} className="text-primary text-base font-medium">
               NillaFlow

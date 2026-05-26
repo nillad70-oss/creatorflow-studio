@@ -77,7 +77,7 @@ export default function ResetPassword() {
         <nav className="relative z-10 px-6 py-5">
           <Link href="/" className="flex items-center gap-2 w-fit">
             <div className="w-7 h-7 rounded-lg bg-electric flex items-center justify-center">
-              <span className="text-white text-xs font-bold">CF</span>
+              <span className="text-white text-xs font-bold">NFS</span>
             </div>
             <span style={{fontFamily: 'var(--font-display)'}} className="text-primary text-lg font-medium tracking-wide">
               NillaFlow
