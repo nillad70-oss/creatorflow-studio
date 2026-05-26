@@ -86,7 +86,7 @@ export default function Signup() {
               <span className="text-white text-xs font-bold">NFS</span>
             </div>
             <span style={{fontFamily: 'var(--font-display)'}} className="text-primary text-lg font-medium tracking-wide">
-              NillaFlow
+              NillaFlow Studio™
             </span>
           </Link>
         </nav>

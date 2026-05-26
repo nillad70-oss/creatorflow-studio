@@ -135,7 +135,7 @@ export default function Onboarding() {
               <span className="text-white text-xs font-bold">NFS</span>
             </div>
             <span style={{fontFamily: 'var(--font-display)'}} className="text-primary text-lg font-medium">
-              NillaFlow
+              NillaFlow Studio™
             </span>
           </div>
           <span className="text-tertiary text-xs">
