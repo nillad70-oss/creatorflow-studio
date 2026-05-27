@@ -218,7 +218,7 @@ export default function Dashboard() {
 
             {/* Welcome */}
             <div className="mb-10">
-              <p className="text-tertiary text-sm mb-1">Good morning,</p>
+              <p className="text-tertiary text-sm mb-1">Hi,</p>
               <h1 style={{fontFamily: 'var(--font-display)'}} className="text-3xl md:text-4xl text-primary font-light">
                 {displayName}. Ready to flow?
               </h1>
