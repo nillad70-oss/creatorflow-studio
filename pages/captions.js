@@ -12,6 +12,8 @@ export default function Captions() {
   const [generating, setGenerating] = useState(false)
   const [script, setScript] = useState('')
   const [captions, setCaptions] = useState('')
+  const [solutionStack, setSolutionStack] = useState([])
+  const [creatorResponse, setCreatorResponse] = useState('')
 
   useEffect(() => {
     const saved = localStorage.getItem('caption_script')
@@ -66,6 +68,8 @@ export default function Captions() {
       const data = await response.json()
       if (!response.ok) { setError(data.error || 'Failed.'); setGenerating(false); return }
       setCaptions(data.caption)
+      setSolutionStack(data.solution_stack || [])
+      setCreatorResponse(data.creator_response || '')
     } catch (err) {
       setError('Something went wrong.')
     }
@@ -159,6 +163,27 @@ export default function Captions() {
                   <div className="glass rounded-2xl p-6">
                     <p className="text-primary text-sm leading-relaxed whitespace-pre-line">{captions}</p>
                   </div>
+                  {solutionStack && solutionStack.length > 0 && (
+                    <div className="glass rounded-2xl p-5 mt-4 border border-electric/20">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Solution Stack</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {solutionStack.map((tool, i) => (
+                          <span key={i} className="px-3 py-1 rounded-full bg-electric/10 text-electric-glow text-xs border border-electric/20">{tool}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {creatorResponse && (
+                    <div className="glass rounded-2xl p-5 mt-4 border border-gold/20 bg-gold/5">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-xs font-mono uppercase tracking-widest" style={{color: "#C8A96E"}}>Creator Response</span>
+                        <span className="text-tertiary text-xs">— send this when someone engages</span>
+                      </div>
+                      <p className="text-primary text-sm leading-relaxed">{creatorResponse}</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-full">
