@@ -149,7 +149,7 @@ export default function Scripts() {
         <nav className="sticky top-0 z-40 bg-graphite border-b border-border px-4 md:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-tertiary hover:text-secondary transition-colors text-sm">
-              <- Dashboard
+              &larr; Dashboard
             </Link>
             <span className="text-border">|</span>
             <h1 className="text-primary text-sm font-medium">AI Script Generator</h1>
