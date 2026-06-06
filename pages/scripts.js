@@ -121,16 +121,6 @@ export default function Scripts() {
     setSaving(false)
   }
 
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = () => {
-    if (!generatedScript) return
-    const fullScript = `${generatedScript.hook}\n\n${generatedScript.body}\n\n${generatedScript.cta}\n\n${generatedScript.hashtags ? (Array.isArray(generatedScript.hashtags) ? generatedScript.hashtags.join(' ') : generatedScript.hashtags) : ''}`
-    navigator.clipboard.writeText(fullScript)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
   const handleOpenInTeleprompter = () => {
     if (!generatedScript) return
     const fullScript = `${generatedScript.hook}\n\n${generatedScript.body}\n\n${generatedScript.cta}`
@@ -149,7 +139,7 @@ export default function Scripts() {
   return (
     <>
       <Head>
-        <title>AI Script Generator — NillaFlow Studio™.</title>
+        <title>AI Script Generator — CreatorFlow Studio™</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
 
@@ -303,12 +293,6 @@ export default function Scripts() {
                       >
                         ▶ Teleprompter
                       </button>
-                      <button
-                        onClick={handleCopy}
-                        className="btn-ghost flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm"
-                      >
-                        {copied ? '✓ Copied!' : '⎘ Copy'}
-                      </button>
                     </div>
                   </div>
 
@@ -327,9 +311,11 @@ export default function Scripts() {
                       <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Body</span>
                       <span className="text-tertiary text-xs">— core value</span>
                     </div>
-                    <div className="text-primary text-sm leading-relaxed space-y-2">{generatedScript.body.split("\n").map((line, i) => line.trim() ? <p key={i}>{line}</p> : null)}</div>
-                  </div>
-
+                    <div className="text-primary text-sm leading-relaxed space-y-2">
+  {generatedScript.body.split('\n').map((line, i) => (
+    <p key={i}>{line}</p>
+  ))}
+</div>
                   {/* CTA */}
                   <div className="glass rounded-2xl p-5 mb-3 border-gold/20">
                     <div className="flex items-center gap-2 mb-3">

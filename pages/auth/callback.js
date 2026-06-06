@@ -8,15 +8,12 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleCallback = async () => {
       const supabase = createClient()
-
-      // Handle both code and token hash flows
+      
+      // Give Supabase time to process the token from URL
       const { data: { session }, error } = await supabase.auth.getSession()
-
-      if (error) {
-        console.error('Auth callback error:', error)
-        router.push('/login?error=auth_callback_failed')
-        return
-      }
+      
+      console.log('CALLBACK SESSION:', session)
+      console.log('CALLBACK ERROR:', error)
 
       if (session) {
         const { data: profile } = await supabase
@@ -31,41 +28,36 @@ export default function AuthCallback() {
           router.push('/dashboard')
         }
       } else {
-        // Try exchanging code if no session yet
-        const code = new URLSearchParams(window.location.search).get('code')
-        if (code) {
-          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
-          if (exchangeError) {
-            router.push('/login?error=auth_callback_failed')
-            return
-          }
-          if (data.session) {
-            const { data: profile } = await supabase
-              .from('users')
-              .select('onboarding_complete')
-              .eq('id', data.session.user.id)
-              .single()
-
-            if (!profile?.onboarding_complete) {
-              router.push('/onboarding')
-            } else {
-              router.push('/dashboard')
-            }
-          }
-        } else {
-          router.push('/login')
-        }
+        // No session found - redirect to login
+        router.push('/login')
       }
     }
 
-    handleCallback()
-  }, [router])
+    // Small delay to let Supabase process the URL hash
+    setTimeout(handleCallback, 500)
+  }, [])
 
   return (
-    <div className="min-h-screen bg-void flex items-center justify-center">
-      <div className="text-center">
-        <div className="w-8 h-8 border-2 border-electric border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-secondary text-sm">Confirming your account...</p>
+    <div style={{
+      minHeight: '100vh',
+      background: '#0a0a0a',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: 'white',
+      fontFamily: 'sans-serif'
+    }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{
+          width: '40px',
+          height: '40px',
+          border: '2px solid #3b82f6',
+          borderTopColor: 'transparent',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+          margin: '0 auto 16px'
+        }} />
+        <p>Signing you in...</p>
       </div>
     </div>
   )
