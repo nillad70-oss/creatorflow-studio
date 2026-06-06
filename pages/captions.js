@@ -144,18 +144,17 @@ export default function Captions() {
                 <div className="page-enter">
                   <div className="flex items-center justify-between mb-4">
                     <h2 style={{fontFamily: 'var(--font-display)'}} className="text-xl text-primary font-light">Your Caption</h2>
-                    <button onClick={copyCaption} className={`px-4 py-2 rounded-lg text-xs transition-all ${copied ? 'bg-success/20 text-success' : 'btn-ghost'}`}>
+                    <div className="flex items-center gap-2">
+                      <button onClick={copyCaption} className={`px-3 py-1.5 rounded-lg text-xs transition-all ${copied ? 'bg-success/20 text-success' : 'btn-ghost'}`}>
                         {copied ? '✓ Copied!' : 'Copy'}
                       </button>
-                      <button onClick={saveCaption} className={`px-4 py-2 rounded-lg text-xs transition-all ${saved ? 'bg-success/20 text-success' : 'btn-ghost'}`}>
+                      <button onClick={saveCaption} className={`px-3 py-1.5 rounded-lg text-xs transition-all ${saved ? 'bg-success/20 text-success' : 'btn-ghost'}`}>
                         {saved ? '✓ Saved!' : '✦ Save'}
                       </button>
-                      <a href="/teleprompter" className="px-4 py-2 rounded-lg text-xs btn-electric whitespace-nowrap">
+                      <a href="/teleprompter" className="px-3 py-1.5 rounded-lg text-xs btn-electric whitespace-nowrap">
                         ▶ Teleprompter
                       </a>
-                      <a href="/teleprompter" className="px-4 py-2 rounded-lg text-xs btn-electric whitespace-nowrap">
-                        ▶ Teleprompter
-                      </a>
+                    </div>
                   </div>
                   <div className="glass rounded-2xl p-6">
                     <p className="text-primary text-sm leading-relaxed whitespace-pre-line">{captions}</p>
