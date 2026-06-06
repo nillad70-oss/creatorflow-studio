@@ -352,7 +352,7 @@ export default function Landing() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 { quote: "I posted 3 videos this week. That never happened before.", name: "Sarah M.", role: "Health Coach" },
-                { quote: "From idea to posted in 8 minutes. NillaFlowchanged everything.", name: "Leonilla A.", role: "Nurse & Creator · Founder" },
+                { quote: "From idea to posted in 8 minutes. NillaFlow Studio™ changed everything.", name: "Leonilla A.", role: "Nurse & Creator · Founder" },
                 { quote: "No more endless retakes. I finally sound like myself on camera.", name: "Beta Creator", role: "Faith Creator" }
               ].map((t, i) => (
                 <div key={i} className="glass rounded-2xl p-6 text-left">
@@ -395,7 +395,7 @@ export default function Landing() {
             <div className="glass rounded-3xl p-8 md:p-12">
               <div className="flex flex-col md:flex-row gap-8 items-start">
                 <div className="flex-1">
-                  <p className="text-tertiary text-sm uppercase tracking-widest mb-4">Why NillaFlowexists</p>
+                  <p className="text-tertiary text-sm uppercase tracking-widest mb-4">Why NillaFlow Studio™ exists</p>
                   <h2 style={{fontFamily: 'var(--font-display)'}} className="text-3xl md:text-4xl text-primary font-light mb-6 leading-tight">
                     "I've been a creator since 2021.
                     <br />
@@ -405,7 +405,7 @@ export default function Landing() {
                     <p>Memorizing scripts made me rigid. I stuttered. I missed lines. I started over. Days. Hours. Sometimes weeks lost to endless retakes.</p>
                     <p>I was using 6 different AI apps — ChatGPT, Claude, Gemini, ElevenLabs, Grok, and more. And I was STILL struggling. Too many tools. Zero flow.</p>
                     <p>When I finally discovered teleprompters, it gave me a new lease of life. But I still had to jump between apps — one for ideas, one for scripts, one for recording, one for captions.</p>
-                    <p>So I built NillaFlow Studio™. — a complete virtual studio in your pocket. This morning I went from idea to posted in under 10 minutes.</p>
+                    <p>So I built NillaFlow Studio™ — the AI Creator Confidence Studio. Scripts. Captions. Teleprompter. Creator Responses. Everything in one flow. This morning I went from idea to ready-to-post content in under 10 minutes.</p>
                     <p className="text-primary font-medium">"I don't recall the last time I moved that fast."</p>
                   </div>
                   <div className="mt-8 flex items-center gap-4">
