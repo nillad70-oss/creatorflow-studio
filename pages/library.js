@@ -36,6 +36,19 @@ export default function Library() {
     load()
   }, [router])
 
+
+  const deleteScript = async (id) => {
+    const supabase = createClient()
+    await supabase.from('scripts').delete().eq('id', id)
+    setScripts(scripts.filter(s => s.id !== id))
+  }
+
+  const deleteIdea = async (id) => {
+    const supabase = createClient()
+    await supabase.from('content_calendar').delete().eq('id', id)
+    setIdeas(ideas.filter(i => i.id !== id))
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-void flex items-center justify-center">
@@ -74,9 +87,14 @@ export default function Library() {
                       <p className="text-secondary text-xs leading-relaxed line-clamp-2">{script.hook}</p>
                       <p className="text-tertiary text-xs mt-2">{new Date(script.created_at).toLocaleDateString()}</p>
                     </div>
-                    <Link href={`/teleprompter`} onClick={() => localStorage.setItem('teleprompter_script', `${script.hook}\n\n${script.body}\n\n${script.cta}`)} className="btn-electric px-3 py-1.5 rounded-lg text-xs whitespace-nowrap">
-                      ▶ Use
-                    </Link>
+<div className="flex items-center gap-2">
+                      <Link href={`/teleprompter`} onClick={() => localStorage.setItem('teleprompter_script', `${script.hook}\n\n${script.body}\n\n${script.cta}`)} className="btn-electric px-3 py-1.5 rounded-lg text-xs whitespace-nowrap">
+                        ▶ Use
+                      </Link>
+                      <button onClick={() => deleteScript(script.id)} className="px-3 py-1.5 rounded-lg text-xs text-error hover:bg-error/10 transition-all border border-error/20">
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 </div>
               )) : (
@@ -96,9 +114,14 @@ export default function Library() {
                     <p className="text-primary text-sm font-medium">{idea.topic}</p>
                     <p className="text-tertiary text-xs mt-0.5">{idea.category} · {new Date(idea.created_at).toLocaleDateString()}</p>
                   </div>
-                  <Link href="/scripts" onClick={() => localStorage.setItem('script_topic', idea.topic)} className="text-electric-glow text-xs hover:underline">
-                    Write Script →
-                  </Link>
+<div className="flex items-center gap-3">
+                    <Link href="/scripts" onClick={() => localStorage.setItem('script_topic', idea.topic)} className="text-electric-glow text-xs hover:underline">
+                      Write Script →
+                    </Link>
+                    <button onClick={() => deleteIdea(idea.id)} className="text-error text-xs hover:underline">
+                      Delete
+                    </button>
+                  </div>
                 </div>
               )) : (
                 <div className="text-center py-20">
