@@ -347,7 +347,7 @@ export default function Scripts() {
               ) : (
                 <div className="h-full flex items-center justify-center">
                   <div className="text-center py-20">
-                    <div className="text-4xl mb-4 text-border">❋</div>
+                    <div className="text-4xl mb-4 text-border">*</div>
                     <p className="text-tertiary text-sm">Your script will appear here.</p>
                     <p className="text-tertiary text-xs mt-1">Enter a topic and click Generate.</p>
                   </div>
