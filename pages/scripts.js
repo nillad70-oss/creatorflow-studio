@@ -357,6 +357,27 @@ export default function Scripts() {
                       <p className="text-secondary text-xs leading-relaxed">{generatedScript.pacing}</p>
                     </div>
                   )}
+                  {generatedScript.solution_stack && generatedScript.solution_stack.length > 0 && (
+                    <div className="glass rounded-2xl p-5 border border-electric/20">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Solution Stack</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {generatedScript.solution_stack.map((tool, i) => (
+                          <span key={i} className="px-3 py-1 rounded-full bg-electric/10 text-electric-glow text-xs border border-electric/20">{tool}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {generatedScript.creator_response && (
+                    <div className="glass rounded-2xl p-5 border border-gold/20 bg-gold/5">
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-xs font-mono uppercase tracking-widest" style={{color: "#C8A96E"}}>Creator Response</span>
+                        <span className="text-tertiary text-xs">— send this when someone engages</span>
+                      </div>
+                      <p className="text-primary text-sm leading-relaxed">{generatedScript.creator_response}</p>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="h-full flex items-center justify-center">
