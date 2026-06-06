@@ -171,20 +171,20 @@ export default function Landing() {
 
             {/* Headline */}
             <h1 style={{fontFamily: 'var(--font-display)'}} className="text-5xl md:text-7xl lg:text-8xl font-light text-primary leading-[1.05] tracking-tight mb-6">
-              Record Naturally.
+              Stop overthinking. Start creating.
               <br />
-              <em className="text-electric-glow italic">Without Memorizing.</em>
+              <em className="text-electric-glow italic">Create naturally and confidently.</em>
             </h1>
 
             {/* Sub */}
             <p className="text-secondary text-lg md:text-xl font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-              The AI creator studio that takes you from blank page to confident recording — scripts, teleprompter, captions. All in one flow.
+              NillaFlow Studio™ is the AI Creator Confidence Studio that takes you from blank page to ready-to-post content. Scripts. Captions. Teleprompter-ready content. Creator Responses. Content Workflows. Everything you need to create with confidence — all in one flow.
             </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <Link href="/signup" className="btn-electric w-full sm:w-auto px-8 py-4 rounded-xl text-base font-medium inline-flex items-center justify-center gap-2">
-                Start 3-Day Free Trial — Card Required
+                Start Flowing with NillaFlow Studio™
               </Link>
               <a href="#workflow" className="btn-ghost w-full sm:w-auto px-8 py-4 rounded-xl text-base inline-flex items-center justify-center gap-2">
                 <PlayIcon />
@@ -194,8 +194,8 @@ export default function Landing() {
 
             {/* Social proof */}
             <p className="text-tertiary text-sm">
-              Stop overthinking. Start creating.{" "}
-              <span className="text-secondary">flow</span>.
+              From idea to ready-to-post content.{" "}
+              <span className="text-secondary">one flow.</span>
             </p>
           </div>
         </section>
@@ -222,7 +222,7 @@ export default function Landing() {
             <div className="text-center mt-10">
               <div className="divider-glow mb-8" />
               <p style={{fontFamily: 'var(--font-display)'}} className="text-2xl md:text-3xl text-primary font-light italic">
-                NillaFlow Studio™. fixes all of this.
+                NillaFlow Studio™ fixes all of this.
               </p>
             </div>
           </div>
