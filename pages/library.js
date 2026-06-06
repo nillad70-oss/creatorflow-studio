@@ -10,6 +10,7 @@ export default function Library() {
   const [ideas, setIdeas] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('scripts')
+  const [captions, setCaptions] = useState([])
 
   useEffect(() => {
     const load = async () => {
@@ -31,6 +32,13 @@ export default function Library() {
 
       setScripts(scriptsData || [])
       setIdeas(ideasData || [])
+
+      const { data: captionsData } = await supabase
+        .from('captions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+      setCaptions(captionsData || [])
       setLoading(false)
     }
     load()
@@ -41,6 +49,12 @@ export default function Library() {
     const supabase = createClient()
     await supabase.from('scripts').delete().eq('id', id)
     setScripts(scripts.filter(s => s.id !== id))
+  }
+
+  const deleteCaption = async (id) => {
+    const supabase = createClient()
+    await supabase.from('captions').delete().eq('id', id)
+    setCaptions(captions.filter(c => c.id !== id))
   }
 
   const deleteIdea = async (id) => {
@@ -75,6 +89,9 @@ export default function Library() {
             <button onClick={() => setActiveTab('ideas')} className={`px-4 py-2 rounded-xl text-sm transition-all ${activeTab === 'ideas' ? 'bg-electric/20 text-electric-glow border border-electric/30' : 'text-secondary hover:text-primary'}`}>
               Ideas ({ideas.length})
             </button>
+            <button onClick={() => setActiveTab('captions')} className={`px-4 py-2 rounded-xl text-sm transition-all ${activeTab === 'captions' ? 'bg-electric/20 text-electric-glow border border-electric/30' : 'text-secondary hover:text-primary'}`}>
+              Captions ({captions.length})
+            </button>
           </div>
 
           {activeTab === 'scripts' && (
@@ -101,6 +118,34 @@ export default function Library() {
                 <div className="text-center py-20">
                   <p className="text-tertiary text-sm mb-4">No scripts yet.</p>
                   <Link href="/scripts" className="btn-electric px-6 py-2.5 rounded-xl text-sm inline-block">Generate First Script</Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'captions' && (
+            <div className="space-y-3">
+              {captions.length > 0 ? captions.map((caption) => (
+                <div key={caption.id} className="glass rounded-xl px-5 py-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <p className="text-secondary text-xs leading-relaxed line-clamp-3">{caption.subtitle_text}</p>
+                      <p className="text-tertiary text-xs mt-2">{caption.export_format} · {new Date(caption.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => { navigator.clipboard.writeText(caption.subtitle_text) }} className="btn-ghost px-3 py-1.5 rounded-lg text-xs whitespace-nowrap">
+                        Copy
+                      </button>
+                      <button onClick={() => deleteCaption(caption.id)} className="px-3 py-1.5 rounded-lg text-xs text-error hover:bg-error/10 transition-all border border-error/20">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )) : (
+                <div className="text-center py-20">
+                  <p className="text-tertiary text-sm mb-4">No captions saved yet.</p>
+                  <Link href="/captions" className="btn-electric px-6 py-2.5 rounded-xl text-sm inline-block">Generate Captions</Link>
                 </div>
               )}
             </div>
