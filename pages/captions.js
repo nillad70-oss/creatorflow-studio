@@ -150,6 +150,12 @@ export default function Captions() {
                       <button onClick={saveCaption} className={`px-4 py-2 rounded-lg text-xs transition-all ${saved ? 'bg-success/20 text-success' : 'btn-ghost'}`}>
                         {saved ? '✓ Saved!' : '✦ Save'}
                       </button>
+                      <a href="/teleprompter" className="px-4 py-2 rounded-lg text-xs btn-electric whitespace-nowrap">
+                        ▶ Teleprompter
+                      </a>
+                      <a href="/teleprompter" className="px-4 py-2 rounded-lg text-xs btn-electric whitespace-nowrap">
+                        ▶ Teleprompter
+                      </a>
                   </div>
                   <div className="glass rounded-2xl p-6">
                     <p className="text-primary text-sm leading-relaxed whitespace-pre-line">{captions}</p>

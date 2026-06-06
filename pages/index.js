@@ -146,7 +146,7 @@ export default function Landing() {
 
             {/* CTA */}
             <div className="flex items-center gap-3">
-              <Link href="/login" className="text-secondary text-sm hover:text-primary transition-colors hidden md:block">
+              <Link href="/login" className="text-secondary text-sm hover:text-primary transition-colors">
                 Sign in
               </Link>
               <Link href="/signup" className="btn-electric px-4 py-2 rounded-lg text-sm font-medium">
