@@ -121,6 +121,16 @@ export default function Scripts() {
     setSaving(false)
   }
 
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = () => {
+    if (!generatedScript) return
+    const fullScript = `${generatedScript.hook}\n\n${generatedScript.body}\n\n${generatedScript.cta}\n\n${generatedScript.hashtags ? (Array.isArray(generatedScript.hashtags) ? generatedScript.hashtags.join(' ') : generatedScript.hashtags) : ''}`
+    navigator.clipboard.writeText(fullScript)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   const handleOpenInTeleprompter = () => {
     if (!generatedScript) return
     const fullScript = `${generatedScript.hook}\n\n${generatedScript.body}\n\n${generatedScript.cta}`
@@ -139,7 +149,7 @@ export default function Scripts() {
   return (
     <>
       <Head>
-        <title>AI Script Generator -- CreatorFlow StudioTM</title>
+        <title>AI Script Generator — NillaFlow Studio™.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
 
@@ -149,14 +159,14 @@ export default function Scripts() {
         <nav className="sticky top-0 z-40 bg-graphite border-b border-border px-4 md:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-tertiary hover:text-secondary transition-colors text-sm">
-              &larr; Dashboard
+              ← Dashboard
             </Link>
             <span className="text-border">|</span>
             <h1 className="text-primary text-sm font-medium">AI Script Generator</h1>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-tertiary text-xs hidden md:block">
-              {profile?.niche} . {profile?.tone}
+              {profile?.niche} · {profile?.tone}
             </span>
           </div>
         </nav>
@@ -164,7 +174,7 @@ export default function Scripts() {
         <div className="max-w-4xl mx-auto px-4 md:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-            {/* -- Left -- Generator -- */}
+            {/* ── Left — Generator ── */}
             <div>
               <div className="mb-6">
                 <h2 style={{fontFamily: 'var(--font-display)'}} className="text-2xl text-primary font-light mb-1">
@@ -238,7 +248,7 @@ export default function Scripts() {
               {/* Creator profile note */}
               {profile?.niche && (
                 <p className="text-tertiary text-xs text-center mt-3">
-                  Generating for {profile.niche} . {profile.audience}
+                  Generating for {profile.niche} · {profile.audience}
                 </p>
               )}
 
@@ -263,7 +273,7 @@ export default function Scripts() {
                           <p className="text-primary text-xs font-medium">{script.title}</p>
                           <p className="text-tertiary text-xs">{new Date(script.created_at).toLocaleDateString()}</p>
                         </div>
-                        <span className="text-tertiary text-xs group-hover:text-electric-glow transition-colors">Load -></span>
+                        <span className="text-tertiary text-xs group-hover:text-electric-glow transition-colors">Load →</span>
                       </div>
                     ))}
                   </div>
@@ -271,7 +281,7 @@ export default function Scripts() {
               )}
             </div>
 
-            {/* -- Right -- Generated Script -- */}
+            {/* ── Right — Generated Script ── */}
             <div>
               {generatedScript ? (
                 <div className="page-enter">
@@ -285,13 +295,19 @@ export default function Scripts() {
                         disabled={saving}
                         className="btn-ghost px-4 py-2 rounded-lg text-xs disabled:opacity-50"
                       >
-                        {saving ? 'Saving...' : 'v Save'}
+                        {saving ? 'Saving...' : '↓ Save'}
                       </button>
                       <button
                         onClick={handleOpenInTeleprompter}
                         className="btn-electric px-4 py-2 rounded-lg text-xs"
                       >
-                        > Teleprompter
+                        ▶ Teleprompter
+                      </button>
+                      <button
+                        onClick={handleCopy}
+                        className="btn-ghost flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm"
+                      >
+                        {copied ? '✓ Copied!' : '⎘ Copy'}
                       </button>
                     </div>
                   </div>
@@ -300,7 +316,7 @@ export default function Scripts() {
                   <div className="glass rounded-2xl p-5 mb-3 border-electric/20">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Hook</span>
-                      <span className="text-tertiary text-xs">-- stops the scroll</span>
+                      <span className="text-tertiary text-xs">— stops the scroll</span>
                     </div>
                     <p className="text-primary text-sm leading-relaxed">{generatedScript.hook}</p>
                   </div>
@@ -309,18 +325,16 @@ export default function Scripts() {
                   <div className="glass rounded-2xl p-5 mb-3">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Body</span>
-                      <span className="text-tertiary text-xs">-- core value</span>
+                      <span className="text-tertiary text-xs">— core value</span>
                     </div>
-                    <div className="text-primary text-sm leading-relaxed space-y-2">
-  {generatedScript.body.split('\n').map((line, i) => (
-    <p key={i}>{line}</p>
-  ))}
-</div>
+                    <div className="text-primary text-sm leading-relaxed space-y-2">{generatedScript.body.split("\n").map((line, i) => line.trim() ? <p key={i}>{line}</p> : null)}</div>
+                  </div>
+
                   {/* CTA */}
                   <div className="glass rounded-2xl p-5 mb-3 border-gold/20">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-gold text-xs font-mono uppercase tracking-widest">CTA</span>
-                      <span className="text-tertiary text-xs">-- call to action</span>
+                      <span className="text-tertiary text-xs">— call to action</span>
                     </div>
                     <p className="text-primary text-sm leading-relaxed">{generatedScript.cta}</p>
                   </div>
@@ -330,7 +344,7 @@ export default function Scripts() {
                     <div className="glass rounded-2xl p-5 mb-3">
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Hashtags</span>
-                        <span className="text-tertiary text-xs">-- SEO tags</span>
+                        <span className="text-tertiary text-xs">— SEO tags</span>
                       </div>
                       <p className="text-primary text-sm leading-relaxed">{Array.isArray(generatedScript.hashtags) ? generatedScript.hashtags.join(" ") : generatedScript.hashtags}</p>
                     </div>
@@ -347,7 +361,7 @@ export default function Scripts() {
               ) : (
                 <div className="h-full flex items-center justify-center">
                   <div className="text-center py-20">
-                    <div className="text-4xl mb-4 text-border">*</div>
+                    <div className="text-4xl mb-4 text-border">❋</div>
                     <p className="text-tertiary text-sm">Your script will appear here.</p>
                     <p className="text-tertiary text-xs mt-1">Enter a topic and click Generate.</p>
                   </div>
