@@ -58,7 +58,7 @@ Return ONLY a JSON object with: title, hook, body, cta, hashtags, solution_stack
       },
       body: JSON.stringify({
         model: 'claude-opus-4-5',
-        max_tokens: 1000,
+        max_tokens: 2000,
         system: systemPrompt,
         messages: [{
           role: 'user',
