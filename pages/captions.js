@@ -151,7 +151,7 @@ export default function Captions() {
                       <button onClick={saveCaption} className={`px-3 py-1.5 rounded-lg text-xs transition-all ${saved ? 'bg-success/20 text-success' : 'btn-ghost'}`}>
                         {saved ? '✓ Saved!' : '✦ Save'}
                       </button>
-                      <a href="/teleprompter" className="px-3 py-1.5 rounded-lg text-xs btn-electric whitespace-nowrap">
+                      <a href="/teleprompter" onClick={() => localStorage.setItem('teleprompter_script', captions)} className="px-3 py-1.5 rounded-lg text-xs btn-electric whitespace-nowrap">
                         ▶ Teleprompter
                       </a>
                     </div>
