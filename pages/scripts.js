@@ -13,6 +13,60 @@ const SCRIPT_MODES = [
   { id: 'listicle', label: 'List', desc: 'Top tips or steps' },
 ]
 
+const CONTENT_OBJECTIVES = [
+  'Awareness', 'Authority', 'Engagement', 'Lead Generation',
+  'Conversion', 'Recruitment', 'Community Growth', 'Product Education',
+  'Event Promotion', 'Consultation Booking', 'Brand Building',
+]
+
+const OFFER_TYPES = [
+  'Product', 'Service', 'Consultation', 'Community', 'Membership',
+  'Course', 'Event', 'Newsletter', 'Affiliate Opportunity', 'Business Opportunity', 'Other',
+]
+
+const AUDIENCE_PROBLEMS = [
+  'Burnout', 'Time Constraints', 'Income Constraints', 'Career Growth',
+  'Leadership Challenges', 'Business Growth', 'AI Confusion', 'Productivity',
+  'Compliance', 'Stress', 'Visibility', 'Client Acquisition', 'Other',
+]
+
+const CTA_OBJECTIVES = [
+  'Comment', 'DM', 'Follow', 'Book Call', 'Apply',
+  'Join Community', 'Download Resource', 'Register', 'Subscribe', 'Visit Website',
+]
+
+const COMPLIANCE_TRIGGERS = ['Affiliate Opportunity', 'Business Opportunity']
+
+function MultiSelect({ options, selected, onChange, label }) {
+  const toggle = (val) => {
+    if (selected.includes(val)) {
+      onChange(selected.filter(v => v !== val))
+    } else {
+      onChange([...selected, val])
+    }
+  }
+  return (
+    <div className="mb-5">
+      <label className="block text-secondary text-xs mb-2 tracking-wide uppercase">{label}</label>
+      <div className="flex flex-wrap gap-2">
+        {options.map((opt) => (
+          <button
+            key={opt}
+            onClick={() => toggle(opt)}
+            className={`px-3 py-1.5 rounded-full text-xs transition-all duration-200 ${
+              selected.includes(opt)
+                ? 'bg-electric/20 border border-electric/50 text-primary'
+                : 'glass text-secondary hover:border-electric/20'
+            }`}
+          >
+            {opt}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function Scripts() {
   const router = useRouter()
   const [user, setUser] = useState(null)
@@ -22,13 +76,17 @@ export default function Scripts() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [savedScripts, setSavedScripts] = useState([])
+  const [copied, setCopied] = useState(false)
 
-  // Form state
-  const [topic, setTopic] = useState(typeof window !== 'undefined' ? localStorage.getItem('script_topic') || '' : '')
+  const [topic, setTopic] = useState('')
   const [scriptMode, setScriptMode] = useState('educational')
-
-  // Generated script
+  const [contentObjectives, setContentObjectives] = useState([])
+  const [offerTypes, setOfferTypes] = useState([])
+  const [audienceProblems, setAudienceProblems] = useState([])
+  const [ctaObjectives, setCtaObjectives] = useState([])
   const [generatedScript, setGeneratedScript] = useState(null)
+
+  const complianceMode = offerTypes.some(o => COMPLIANCE_TRIGGERS.includes(o))
 
   useEffect(() => {
     const load = async () => {
@@ -36,20 +94,12 @@ export default function Scripts() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
       setUser(user)
-
       const { data: profileData } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .single()
+        .from('users').select('*').eq('id', user.id).single()
       setProfile(profileData)
-
       const { data: scripts } = await supabase
-        .from('scripts')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10)
+        .from('scripts').select('*').eq('user_id', user.id)
+        .order('created_at', { ascending: false }).limit(10)
       setSavedScripts(scripts || [])
       setLoading(false)
     }
@@ -61,7 +111,6 @@ export default function Scripts() {
     setError('')
     setGenerating(true)
     setGeneratedScript(null)
-
     try {
       const response = await fetch('/api/generate-script', {
         method: 'POST',
@@ -73,29 +122,25 @@ export default function Scripts() {
           tone: profile?.tone,
           platform: profile?.preferred_platform,
           script_mode: scriptMode,
+          content_objectives: contentObjectives,
+          offer_types: offerTypes,
+          audience_problems: audienceProblems,
+          cta_objectives: ctaObjectives,
+          compliance_mode: complianceMode,
         }),
       })
-
       const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.error || 'Failed to generate script.')
-        setGenerating(false)
-        return
-      }
-
+      if (!response.ok) { setError(data.error || 'Failed to generate script.'); setGenerating(false); return }
       setGeneratedScript(data.script)
     } catch (err) {
       setError('Something went wrong. Please try again.')
     }
-
     setGenerating(false)
   }
 
   const handleSave = async () => {
     if (!generatedScript) return
     setSaving(true)
-
     const supabase = createClient()
     const { data, error: saveError } = await supabase
       .from('scripts')
@@ -110,18 +155,10 @@ export default function Scripts() {
         script_mode: scriptMode,
         platform: profile?.preferred_platform,
       })
-      .select()
-      .single()
-
-    if (!saveError && data) {
-      setSavedScripts(prev => [data, ...prev])
-      setError('')
-    }
-
+      .select().single()
+    if (!saveError && data) { setSavedScripts(prev => [data, ...prev]) }
     setSaving(false)
   }
-
-  const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {
     if (!generatedScript) return
@@ -152,42 +189,28 @@ export default function Scripts() {
         <title>AI Script Generator — NillaFlow Studio™.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
-
       <div className="min-h-screen bg-void">
-
-        {/* Header */}
         <nav className="sticky top-0 z-40 bg-graphite border-b border-border px-4 md:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-tertiary hover:text-secondary transition-colors text-sm">
-              ← Dashboard
-            </Link>
+            <Link href="/dashboard" className="text-tertiary hover:text-secondary transition-colors text-sm">← Dashboard</Link>
             <span className="text-border">|</span>
             <h1 className="text-primary text-sm font-medium">AI Script Generator</h1>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-tertiary text-xs hidden md:block">
-              {profile?.niche} · {profile?.tone}
-            </span>
-          </div>
+          <span className="text-tertiary text-xs hidden md:block">{profile?.niche} · {profile?.tone}</span>
         </nav>
 
-        <div className="max-w-4xl mx-auto px-4 md:px-8 py-8">
+        <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-            {/* ── Left — Generator ── */}
+            {/* LEFT — Configuration */}
             <div>
               <div className="mb-6">
-                <h2 style={{fontFamily: 'var(--font-display)'}} className="text-2xl text-primary font-light mb-1">
-                  What's your topic?
-                </h2>
-                <p className="text-secondary text-sm">AI will write a natural script tailored to your voice.</p>
+                <h2 style={{fontFamily: 'var(--font-display)'}} className="text-2xl text-primary font-light mb-1">What's your topic?</h2>
+                <p className="text-secondary text-sm">Configure your content intelligence before generating.</p>
               </div>
 
-              {/* Topic input */}
               <div className="mb-5">
-                <label className="block text-secondary text-xs mb-2 tracking-wide uppercase">
-                  Your topic or idea
-                </label>
+                <label className="block text-secondary text-xs mb-2 tracking-wide uppercase">Your topic or idea</label>
                 <textarea
                   value={topic}
                   onChange={(e) => { setTopic(e.target.value); setError('') }}
@@ -197,39 +220,41 @@ export default function Scripts() {
                 />
               </div>
 
-              {/* Script mode */}
-              <div className="mb-6">
-                <label className="block text-secondary text-xs mb-3 tracking-wide uppercase">
-                  Script style
-                </label>
+              <div className="mb-5">
+                <label className="block text-secondary text-xs mb-3 tracking-wide uppercase">Script style</label>
                 <div className="grid grid-cols-2 gap-2">
                   {SCRIPT_MODES.map((mode) => (
                     <button
                       key={mode.id}
                       onClick={() => setScriptMode(mode.id)}
                       className={`px-4 py-3 rounded-xl text-left transition-all duration-200 ${
-                        scriptMode === mode.id
-                          ? 'bg-electric/20 border border-electric/50'
-                          : 'glass hover:border-electric/20'
+                        scriptMode === mode.id ? 'bg-electric/20 border border-electric/50' : 'glass hover:border-electric/20'
                       }`}
                     >
-                      <p className={`text-xs font-medium ${scriptMode === mode.id ? 'text-primary' : 'text-secondary'}`}>
-                        {mode.label}
-                      </p>
+                      <p className={`text-xs font-medium ${scriptMode === mode.id ? 'text-primary' : 'text-secondary'}`}>{mode.label}</p>
                       <p className="text-tertiary text-xs mt-0.5">{mode.desc}</p>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Error */}
+              <MultiSelect label="Content Objective" options={CONTENT_OBJECTIVES} selected={contentObjectives} onChange={setContentObjectives} />
+              <MultiSelect label="What are you promoting?" options={OFFER_TYPES} selected={offerTypes} onChange={setOfferTypes} />
+              <MultiSelect label="Audience Pain Points" options={AUDIENCE_PROBLEMS} selected={audienceProblems} onChange={setAudienceProblems} />
+              <MultiSelect label="Desired Audience Action" options={CTA_OBJECTIVES} selected={ctaObjectives} onChange={setCtaObjectives} />
+
+              {complianceMode && (
+                <div className="mb-4 px-4 py-3 rounded-xl bg-gold/10 border border-gold/30">
+                  <p className="text-xs" style={{color: '#C8A96E'}}>⚠ Compliance mode active — income claims and earnings language will be automatically blocked.</p>
+                </div>
+              )}
+
               {error && (
                 <div className="bg-error/10 border border-error/20 rounded-xl px-4 py-3 mb-4">
                   <p className="text-error text-sm">{error}</p>
                 </div>
               )}
 
-              {/* Generate button */}
               <button
                 onClick={handleGenerate}
                 disabled={generating}
@@ -240,19 +265,13 @@ export default function Scripts() {
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     Writing your script...
                   </span>
-                ) : (
-                  '✦ Generate Script'
-                )}
+                ) : '✦ Generate Script'}
               </button>
 
-              {/* Creator profile note */}
               {profile?.niche && (
-                <p className="text-tertiary text-xs text-center mt-3">
-                  Generating for {profile.niche} · {profile.audience}
-                </p>
+                <p className="text-tertiary text-xs text-center mt-3">Generating for {profile.niche} · {profile.audience}</p>
               )}
 
-              {/* Saved scripts */}
               {savedScripts.length > 0 && (
                 <div className="mt-8">
                   <h3 className="text-secondary text-xs uppercase tracking-widest mb-3">Saved Scripts</h3>
@@ -261,13 +280,7 @@ export default function Scripts() {
                       <div
                         key={script.id}
                         className="glass rounded-xl px-4 py-3 flex items-center justify-between group cursor-pointer hover:border-electric/20 transition-all"
-                        onClick={() => setGeneratedScript({
-                          title: script.title,
-                          hook: script.hook,
-                          body: script.body,
-                          cta: script.cta,
-                          pacing: script.pacing,
-                        })}
+                        onClick={() => setGeneratedScript({ title: script.title, hook: script.hook, body: script.body, cta: script.cta, pacing: script.pacing })}
                       >
                         <div>
                           <p className="text-primary text-xs font-medium">{script.title}</p>
@@ -281,38 +294,23 @@ export default function Scripts() {
               )}
             </div>
 
-            {/* ── Right — Generated Script ── */}
+            {/* RIGHT — Generated Script */}
             <div>
               {generatedScript ? (
                 <div className="page-enter">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 style={{fontFamily: 'var(--font-display)'}} className="text-xl text-primary font-light">
-                      Your Script
-                    </h2>
+                    <h2 style={{fontFamily: 'var(--font-display)'}} className="text-xl text-primary font-light">Your Script</h2>
                     <div className="flex items-center gap-2">
-                      <button
-                        onClick={handleSave}
-                        disabled={saving}
-                        className="btn-ghost px-4 py-2 rounded-lg text-xs disabled:opacity-50"
-                      >
+                      <button onClick={handleSave} disabled={saving} className="btn-ghost px-4 py-2 rounded-lg text-xs disabled:opacity-50">
                         {saving ? 'Saving...' : '↓ Save'}
                       </button>
-                      <button
-                        onClick={handleOpenInTeleprompter}
-                        className="btn-electric px-4 py-2 rounded-lg text-xs"
-                      >
-                        ▶ Teleprompter
-                      </button>
-                      <button
-                        onClick={handleCopy}
-                        className="btn-ghost flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm"
-                      >
+                      <button onClick={handleOpenInTeleprompter} className="btn-electric px-4 py-2 rounded-lg text-xs">▶ Teleprompter</button>
+                      <button onClick={handleCopy} className="btn-ghost flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm">
                         {copied ? '✓ Copied!' : '⎘ Copy'}
                       </button>
                     </div>
                   </div>
 
-                  {/* Hook */}
                   <div className="glass rounded-2xl p-5 mb-3 border-electric/20">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Hook</span>
@@ -321,16 +319,16 @@ export default function Scripts() {
                     <p className="text-primary text-sm leading-relaxed">{generatedScript.hook}</p>
                   </div>
 
-                  {/* Body */}
                   <div className="glass rounded-2xl p-5 mb-3">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Body</span>
                       <span className="text-tertiary text-xs">— core value</span>
                     </div>
-                    <div className="text-primary text-sm leading-relaxed space-y-2">{generatedScript.body.split("\n").map((line, i) => line.trim() ? <p key={i}>{line}</p> : null)}</div>
+                    <div className="text-primary text-sm leading-relaxed space-y-2">
+                      {generatedScript.body.split("\n").map((line, i) => line.trim() ? <p key={i}>{line}</p> : null)}
+                    </div>
                   </div>
 
-                  {/* CTA */}
                   <div className="glass rounded-2xl p-5 mb-3 border-gold/20">
                     <div className="flex items-center gap-2 mb-3">
                       <span className="text-gold text-xs font-mono uppercase tracking-widest">CTA</span>
@@ -339,26 +337,19 @@ export default function Scripts() {
                     <p className="text-primary text-sm leading-relaxed">{generatedScript.cta}</p>
                   </div>
 
-                  {/* Pacing tips */}
                   {generatedScript.hashtags && (
                     <div className="glass rounded-2xl p-5 mb-3">
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Hashtags</span>
-                        <span className="text-tertiary text-xs">— SEO tags</span>
                       </div>
-                      <p className="text-primary text-sm leading-relaxed">{Array.isArray(generatedScript.hashtags) ? generatedScript.hashtags.join(" ") : generatedScript.hashtags}</p>
+                      <p className="text-primary text-sm leading-relaxed">
+                        {Array.isArray(generatedScript.hashtags) ? generatedScript.hashtags.join(" ") : generatedScript.hashtags}
+                      </p>
                     </div>
                   )}
-                  {generatedScript.pacing && (
-                    <div className="glass rounded-2xl p-5 bg-white/2">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="text-secondary text-xs font-mono uppercase tracking-widest">Delivery Tips</span>
-                      </div>
-                      <p className="text-secondary text-xs leading-relaxed">{generatedScript.pacing}</p>
-                    </div>
-                  )}
+
                   {generatedScript.solution_stack && generatedScript.solution_stack.length > 0 && (
-                    <div className="glass rounded-2xl p-5 border border-electric/20">
+                    <div className="glass rounded-2xl p-5 mb-3 border border-electric/20">
                       <div className="flex items-center gap-2 mb-3">
                         <span className="text-electric-glow text-xs font-mono uppercase tracking-widest">Solution Stack</span>
                       </div>
@@ -369,6 +360,7 @@ export default function Scripts() {
                       </div>
                     </div>
                   )}
+
                   {generatedScript.creator_response && (
                     <div className="glass rounded-2xl p-5 border border-gold/20 bg-gold/5">
                       <div className="flex items-center gap-2 mb-3">
@@ -384,7 +376,7 @@ export default function Scripts() {
                   <div className="text-center py-20">
                     <div className="text-4xl mb-4 text-border">❋</div>
                     <p className="text-tertiary text-sm">Your script will appear here.</p>
-                    <p className="text-tertiary text-xs mt-1">Enter a topic and click Generate.</p>
+                    <p className="text-tertiary text-xs mt-1">Configure your intent and click Generate.</p>
                   </div>
                 </div>
               )}
