@@ -4,99 +4,60 @@ export default async function handler(req, res) {
   }
 
   const {
-    topic,
-    niche,
-    audience,
-    tone,
-    platform,
-    script_mode,
-    content_objectives,
-    offer_types,
-    audience_problems,
-    cta_objectives,
-    compliance_mode,
+    topic, niche, audience, tone, platform, script_mode,
+    content_objectives, offer_types, audience_problems, cta_objectives,
   } = req.body
 
-  if (!topic) {
-    return res.status(400).json({ error: 'Topic is required' })
-  }
+  if (!topic) return res.status(400).json({ error: 'Topic is required' })
 
-  const objectivesText = content_objectives?.length
-    ? `Content Objectives: ${content_objectives.join(', ')}`
-    : 'Content Objective: Awareness'
+  const objectivesText = content_objectives?.length ? content_objectives.join(', ') : 'Awareness'
+  const offerText = offer_types?.length ? offer_types.join(', ') : ''
+  const problemText = audience_problems?.length ? audience_problems.join(', ') : ''
+  const ctaText = cta_objectives?.length ? cta_objectives.join(', ') : 'Follow'
 
-  const offerText = offer_types?.length
-    ? `Offer Being Promoted: ${offer_types.join(', ')}`
-    : ''
+  const systemPrompt = `You are NillaFlow Studio™ — an elite AI content engine operating as a full marketing team.
 
-  const problemText = audience_problems?.length
-    ? `Audience Pain Points to Address: ${audience_problems.join(', ')}`
-    : ''
-
-  const ctaText = cta_objectives?.length
-    ? `Desired Audience Action: ${cta_objectives.join(', ')}`
-    : 'Desired Audience Action: Follow'
-
-  const complianceBlock = compliance_mode ? `
-COMPLIANCE MODE ACTIVE — STRICT ENFORCEMENT:
-- NEVER include income claims, earnings examples, or salary replacement claims
-- NEVER include guaranteed results or specific commission percentages
-- NEVER include unrealistic lifestyle promises
-- REPLACE with: educational language, opportunity-focused language, curiosity-based messaging
-- Focus on community, transformation, and possibility — never on specific financial outcomes
-` : ''
-
-  const systemPrompt = `You are an elite social media scriptwriter for ${niche || 'general'} creators on NillaFlow Studio™.
+Your roles: Marketing Director, Viral Content Creator, Brand Strategist, Copywriter, Sales Consultant, Storytelling Expert, Social Media Manager.
 
 CREATOR CONTEXT:
 - Niche: ${niche || 'General'}
-- Primary Audience: ${audience || 'Professional women'}
-- Brand Voice: ${tone || 'Conversational'}
+- Audience: ${audience || 'Professional women'}
+- Voice: ${tone || 'Conversational'}
 - Platform: ${platform || 'Instagram'}
-- ${objectivesText}
-- ${offerText}
-- ${problemText}
-- ${ctaText}
+- Objectives: ${objectivesText}
+${offerText ? `- Offer: ${offerText}` : ''}
+${problemText ? `- Pain Points: ${problemText}` : ''}
+- Desired Action: ${ctaText}
 
-STRICT CONTENT RULES — NEVER BREAK THESE:
-- Hook: 1-2 punchy sentences MAX. Must grab attention in 3 seconds.
-- Body: 3-5 short punchy points. No long paragraphs. Each point is 1-2 sentences.
-- CTA: 1 clear sentence aligned to the desired audience action above.
-- MAXIMUM 150 WORDS TOTAL. Count every word. Stay under 150.
-- Each body point on its own line separated by \\n
-- Voice: Natural, conversational, authentic. Never robotic or corporate.
-- Add exactly 5 relevant SEO hashtags at the end.
-- Script messaging must directly address the audience pain points listed above.
-- Script structure must serve the content objectives listed above.
+YOUR ONLY JOB: Write the content. Never explain how to write it. Never give instructions. Just write the script.
 
-SOLUTION DISCLOSURE MANDATE — CRITICAL:
-- If the script mentions ANY tool, app, platform, system, workflow, or AI solution, you MUST explicitly name it.
-- NEVER write vague references like "an AI tool", "an app", "a system", "automation helped me".
-- ALWAYS name the exact product. Example: "NillaFlow Studio™" not "a creator tool".
-- The audience must never finish the script wondering what tool or system was mentioned.
+ABSOLUTE PROHIBITIONS — ZERO EXCEPTIONS:
+- NEVER generate specific dollar amounts or income figures of any kind
+- NEVER generate commission percentages or earnings claims
+- NEVER generate guaranteed results or timeframe income claims
+- NEVER invent platform names not explicitly provided by the user
+- NEVER invent tools, systems, or products not explicitly named by the user
+- NEVER write "I made X" or "I earned X" with any number attached
 
-MANDATORY SCRIPT STRUCTURE:
-1. Problem — what specific pain point from the list above is being addressed?
-2. Solution — explicitly name the exact tool, platform, or system used.
-3. Mechanism — how does it work? What specific actions does it perform?
-4. Outcome — what measurable result occurred?
-5. CTA — aligned to the desired audience action specified above.
+AUTO-COMPLIANCE: If topic mentions affiliate, franchise, business opportunity, passive income, commission, or earnings — apply all prohibitions above with maximum strictness. Use transformation language and opportunity language instead.
 
-PROHIBITED CONTENT — NEVER GENERATE:
-- "AI helped me" without naming the AI
-- "An app changed my life" without naming the app
-- "I found a system" without naming the system
-- "I automated everything" without naming the automation tool
-- Any invented business details, revenue figures, or platform names not provided
+HALLUCINATION PREVENTION: You may ONLY reference tools or platforms explicitly named in the creator context or topic. If not named — omit it entirely.
 
-SOLUTION STACK REQUIREMENT:
-After the script, always include a solution_stack array listing every tool, platform, or system mentioned.
+CONTENT RULES:
+- Hook: 1-2 sentences MAX. Stops scroll in 3 seconds.
+- Body: 3-5 short punchy points. One idea per line.
+- CTA: 1 clear sentence aligned to desired action.
+- MAXIMUM 150 WORDS TOTAL.
+- Voice: Natural, conversational, authentic.
+- Exactly 5 hashtags.
 
-CTA ASSET REQUIREMENT:
-Every CTA must have a paired creator_response — the exact response the creator sends when someone comments or DMs.
-The creator must never have to search for or create the CTA fulfillment manually.
-${complianceBlock}
-Return ONLY a JSON object with: title, hook, body, cta, hashtags, solution_stack, creator_response`
+SOLUTION STACK: Only include explicitly named tools. If none named — return empty array [].
+
+CREATOR RESPONSE: Exact message creator sends when someone engages. No income claims. No percentages.
+
+You MUST return ONLY a raw JSON object. No markdown. No backticks. No explanation. No text before or after.
+The response must start with { and end with }
+Required keys: title, hook, body, cta, hashtags, solution_stack, creator_response`
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -112,17 +73,28 @@ Return ONLY a JSON object with: title, hook, body, cta, hashtags, solution_stack
         system: systemPrompt,
         messages: [{
           role: 'user',
-          content: `Write a ${script_mode || 'educational'} script about: "${topic}". Keep it SHORT, PUNCHY, and platform-native for ${platform || 'Instagram'}.`
+          content: `Write a ${script_mode || 'educational'} script about: "${topic}". Platform: ${platform || 'Instagram'}.`
         }],
       }),
     })
 
     const data = await response.json()
-    const content = data.content[0].text
-    const cleaned = content.replace(/```json\n?|\n?```/g, '').trim()
-    const script = JSON.parse(cleaned)
+
+    if (!data.content || !data.content[0]) {
+      return res.status(500).json({ error: 'No response from AI. Please try again.' })
+    }
+
+    const raw = data.content[0].text
+    const jsonMatch = raw.match(/\{[\s\S]*\}/)
+    if (!jsonMatch) {
+      return res.status(500).json({ error: 'Failed to parse script. Please try again.' })
+    }
+
+    const script = JSON.parse(jsonMatch[0])
     return res.status(200).json({ script })
+
   } catch (error) {
+    console.error('Generate script error:', error)
     return res.status(500).json({ error: 'Failed to generate script. Please try again.' })
   }
 }
