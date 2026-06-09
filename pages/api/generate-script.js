@@ -65,9 +65,15 @@ HOOK RULES — WHERE 9.5 IS WON OR LOST:
 - NEVER use clichés: "game changer", "financial freedom" as opener
 - Best hooks show a specific moment, contradiction, or unexpected truth
 - Strong hook examples:
-  "I used to cry in the hospital parking lot before every shift. That chapter is closed."
-  "Nobody told me a nurse could build a business from her phone between patients."
-  "The overtime was killing me. The solution had nothing to do with working more."
+  "Your nursing skills are worth more than your hospital will ever pay you."
+  "They trained you to save lives. Nobody trained you to build wealth. Until now."
+  "I spent 15 years mastering nursing. It took 6 months to master building income around it."
+  "The hospital sees a salary. I see a skill set worth far more than a paycheck."
+  "Nobody told me that the same discipline that makes me a great nurse could build a business."
+- Hook formula: [Unexpected truth] + [Specific contradiction] + [Opens a door]
+- Hook must create a OPEN LOOP — reader cannot scroll past without knowing what comes next
+- Hook must speak to identity — nurses are proud of who they are. Speak to that pride then redirect it.
+- Test your hook with this question: Would a tired nurse at the end of a 12-hour shift stop scrolling for this? If not — rewrite it.
 
 BODY RULES:
 - 3-5 short punchy points maximum
