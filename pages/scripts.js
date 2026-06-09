@@ -169,7 +169,7 @@ export default function Scripts() {
   return (
     <>
       <Head>
-        <title>AI Script Generator — NillaFlow Studio.</title>
+        <title>Creator Intelligence Studio™ — NillaFlow Studio.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
       <div className="min-h-screen bg-void">
@@ -177,7 +177,7 @@ export default function Scripts() {
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-tertiary hover:text-secondary transition-colors text-sm">← Dashboard</Link>
             <span className="text-border">|</span>
-            <h1 className="text-primary text-sm font-medium">AI Script Generator</h1>
+            <h1 className="text-primary text-sm font-medium">Creator Intelligence Studio™</h1>
           </div>
           <span className="text-tertiary text-xs hidden md:block">{profile?.niche} · {profile?.tone}</span>
         </nav>
@@ -185,8 +185,8 @@ export default function Scripts() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div>
               <div className="mb-6">
-                <h2 style={{fontFamily: "var(--font-display)"}} className="text-2xl text-primary font-light mb-1">What are we creating today?</h2>
-                <p className="text-secondary text-sm">Select your agent, enter your topic, and generate.</p>
+                <h2 style={{fontFamily: "var(--font-display)"}} className="text-2xl text-primary font-light mb-1">Creator Intelligence Studio™</h2>
+                <p className="text-secondary text-sm">Select your agent. Enter your topic. Generate elite content.</p>
               </div>
               <div className="mb-5">
                 <label className="block text-secondary text-xs mb-2 tracking-wide uppercase">Creator Agent</label>
