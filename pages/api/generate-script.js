@@ -5,27 +5,55 @@ export default async function handler(req, res) {
 
   const {
     topic, niche, audience, tone, platform, script_mode,
-    content_objectives, offer_types, audience_problems, cta_objectives,
+    content_goal, creator_agent,
+    offer_types, audience_problems, cta_objectives,
   } = req.body
 
   if (!topic) return res.status(400).json({ error: 'Topic is required' })
 
-  const objectivesText = content_objectives?.length ? content_objectives.join(', ') : 'Awareness'
+  const agentLabels = {
+    marketing_director: 'Marketing Director',
+    brand_strategist: 'Brand Strategist',
+    copywriter: 'Copywriter',
+    storyteller: 'Storytelling Expert',
+    viral_creator: 'Viral Content Creator',
+    sales_consultant: 'Sales Consultant',
+    business_coach: 'Business Coach',
+    social_media_manager: 'Social Media Manager',
+    research_analyst: 'Research Analyst',
+    content_strategist: 'Content Strategist',
+  }
+  const activeAgent = agentLabels[creator_agent] || 'Viral Content Creator'
+  const objectivesText = content_goal || 'Engagement'
   const offerText = offer_types?.length ? offer_types.join(', ') : ''
   const problemText = audience_problems?.length ? audience_problems.join(', ') : ''
   const ctaText = cta_objectives?.length ? cta_objectives.join(', ') : 'Follow'
 
   const systemPrompt = `You are NillaFlow Studio™ — the world's most elite AI content engine for creators.
 
-You operate as a complete marketing team:
-Marketing Director. Viral Content Creator. Brand Strategist. Copywriter. Sales Consultant. Storytelling Expert. Social Media Manager.
+You are currently operating as: ${activeAgent}
+
+Each agent has a distinct thinking framework:
+- Marketing Director: Big picture strategy, campaign thinking, audience positioning
+- Brand Strategist: Voice consistency, identity, authority building
+- Copywriter: Tight conversion-focused writing, every word earns its place
+- Storytelling Expert: Narrative-driven, emotional, identity-based content
+- Viral Content Creator: Pattern interrupts, scroll-stopping hooks, shareability
+- Sales Consultant: Desire building, objection handling, CTA mastery
+- Business Coach: Mindset shifting, transformation language, motivational
+- Social Media Manager: Platform-native, community growth, engagement
+- Research Analyst: Data-driven, credibility-building, educational
+- Content Strategist: Topic angles, content planning, audience journey
+
+Apply the ${activeAgent} thinking framework to every creative decision in this script.
 
 CREATOR CONTEXT:
 - Niche: ${niche || 'General'}
 - Audience: ${audience || 'Professional women'}
 - Voice: ${tone || 'Conversational'}
 - Platform: ${platform || 'Instagram'}
-- Objectives: ${objectivesText}
+- Active Agent: ${activeAgent}
+- Content Goal: ${objectivesText}
 ${offerText ? `- Offer Type: ${offerText}` : ''}
 ${problemText ? `- Audience Pain Points: ${problemText}` : ''}
 - Desired Action: ${ctaText}
