@@ -230,14 +230,17 @@ export default function Scripts() {
                 </div>
               </div>
               <button onClick={() => setShowAdvanced(!showAdvanced)}
-                className="flex items-center gap-2 text-secondary text-xs mb-4 hover:text-primary transition-colors">
-                <span>{showAdvanced ? "▾" : "▸"}</span>
-                <span>⚙ Advanced Settings</span>
-                {(offerTypes.length + audienceProblems.length + ctaObjectives.length) > 0 && (
-                  <span className="px-2 py-0.5 rounded-full bg-electric/20 text-electric-glow text-xs">
-                    {offerTypes.length + audienceProblems.length + ctaObjectives.length} selected
-                  </span>
-                )}
+                className="w-full flex items-center justify-between px-4 py-3 rounded-xl glass border border-electric/20 hover:border-electric/50 transition-all duration-200 mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-electric-glow text-sm">⚙</span>
+                  <span className="text-primary text-xs font-medium tracking-wide">Advanced Settings</span>
+                  {(offerTypes.length + audienceProblems.length + ctaObjectives.length) > 0 && (
+                    <span className="px-2 py-0.5 rounded-full bg-electric/20 text-electric-glow text-xs">
+                      {offerTypes.length + audienceProblems.length + ctaObjectives.length} selected
+                    </span>
+                  )}
+                </div>
+                <span className="text-electric-glow text-xs">{showAdvanced ? "▾ Hide" : "▸ Show"}</span>
               </button>
               {showAdvanced && (
                 <div className="glass rounded-2xl p-4 mb-5">
