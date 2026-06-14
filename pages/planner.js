@@ -76,7 +76,11 @@ export default function Planner() {
         return
       }
 
-      setIdeas(data.ideas || [])
+      if (data.calendar) {
+        setIdeas(data.calendar.days || [])
+      } else {
+        setIdeas(data.ideas || [])
+      }
     } catch (err) {
       setError('Something went wrong. Please try again.')
     }
