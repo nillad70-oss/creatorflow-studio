@@ -8,50 +8,6 @@ export default async function handler(req, res) {
   const platformList = Array.isArray(platform) ? platform.join(', ') : platform || 'Instagram, TikTok'
   const dayCount = days || 30
 
-  const prompt = `You are a world-class content strategist.
-
-A creator has provided this information:
-- Brand: ${brandContext}
-- Niche: ${niche || 'general'}
-- Target Audience: ${audience || 'general audience'}
-- Tone: ${tone || 'conversational'}
-- Platforms: ${platformList}
-
-Create a ${dayCount}-day content calendar with this weekly strategy:
-- Week 1: Establish authority and personal story
-- Week 2: Education and value delivery
-- Week 3: Social proof and offers
-- Week 4: Community and legacy
-
-Return ONLY a valid JSON object — no text before or after:
-{
-  "competitors": [
-    {
-      "name": "competitor name",
-      "type": "direct or adjacent",
-      "description": "what they do",
-      "gap": "opportunity for this creator"
-    }
-  ],
-  "days": [
-    {
-      "day": 1,
-      "week": 1,
-      "title": "video title",
-      "hook": "opening 2 seconds",
-      "cta": "call to action",
-      "format": "how to create",
-      "platforms": ["ig"],
-      "hashtags": "#tag1 #tag2 #tag3 #tag4 #tag5"
-    }
-  ],
-  "strategy": {
-    "platformPriority": "which platform first and why",
-    "contentRhythm": "how to structure each week",
-    "hashtagStack": "master hashtag list"
-  }
-}`
-
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -63,15 +19,36 @@ Return ONLY a valid JSON object — no text before or after:
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
         max_tokens: 8000,
+        system: `You are a world-class content strategist. Return ONLY valid JSON. No text before or after. No markdown fences.`,
         messages: [{
           role: 'user',
-          content: prompt
+          content: `Create a ${dayCount}-day content calendar for a ${niche} creator targeting ${audience} with a ${tone} tone for ${platformList}.
+
+Weekly strategy:
+- Week 1: Authority and personal story
+- Week 2: Education and value
+- Week 3: Social proof and offers
+- Week 4: Community and legacy
+
+Return this exact JSON structure:
+{
+  "competitors": [
+    {"name": "name", "type": "direct", "description": "what they do", "gap": "your opportunity"}
+  ],
+  "days": [
+    {"day": 1, "week": 1, "title": "title", "hook": "opening line", "cta": "action", "format": "how to film", "platforms": ["ig"], "hashtags": "#tag1 #tag2 #tag3 #tag4 #tag5"}
+  ],
+  "strategy": {
+    "platformPriority": "which platform first",
+    "contentRhythm": "weekly structure",
+    "hashtagStack": "master hashtags"
+  }
+}`
         }],
       }),
     })
 
     const data = await response.json()
-    console.log('Anthropic status:', response.status)
 
     if (!response.ok) {
       console.error('Anthropic error:', JSON.stringify(data))
@@ -83,22 +60,14 @@ Return ONLY a valid JSON object — no text before or after:
       return res.status(500).json({ error: 'No content returned.' })
     }
 
-    const cleaned = textBlock.text.replace(/\`\`\`json\n?|\n?\`\`\`/g, '').trim()
+    const cleaned = textBlock.text.replace(/```json\n?|\n?```/g, '').trim()
+    const calendar = JSON.parse(cleaned)
 
-    try {
-      const calendar = JSON.parse(cleaned)
-      if (calendar.days && calendar.competitors) {
-        return res.status(200).json({ calendar, mode: 'calendar' })
-      }
-      return res.status(200).json({ ideas: Array.isArray(calendar) ? calendar : [], mode: 'ideas' })
-    } catch (parseError) {
-      const arrayMatch = cleaned.match(/\[[\s\S]*\]/)
-      if (arrayMatch) {
-        const ideas = JSON.parse(arrayMatch[0])
-        return res.status(200).json({ ideas, mode: 'ideas' })
-      }
-      throw new Error('Could not parse response')
+    if (calendar.days && calendar.competitors) {
+      return res.status(200).json({ calendar, mode: 'calendar' })
     }
+
+    return res.status(200).json({ ideas: Array.isArray(calendar) ? calendar : [], mode: 'ideas' })
 
   } catch (error) {
     console.error('Generate ideas error:', error)
