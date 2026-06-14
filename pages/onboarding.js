@@ -52,7 +52,7 @@ export default function Onboarding() {
     niche: '',
     audience: '',
     content_goals: '',
-    preferred_platform: [],
+    preferred_platform: '',
     tone: '',
     creator_level: '',
   })
@@ -66,7 +66,7 @@ export default function Onboarding() {
     // Validate current step
     if (step === 1 && !profile.niche) { setError('Please select your niche.'); return }
     if (step === 2 && !profile.audience) { setError('Please describe your audience.'); return }
-    if (step === 3 && (!profile.preferred_platform || profile.preferred_platform.length === 0)) { setError('Please select at least one platform.'); return }
+    if (step === 3 && !profile.preferred_platform) { setError('Please select a platform.'); return }
     if (step === 4 && !profile.tone) { setError('Please select your tone.'); return }
     setError('')
     setStep(prev => prev + 1)
@@ -113,12 +113,12 @@ export default function Onboarding() {
   return (
     <>
       <Head>
-        <title>Setup Your Profile — NillaFlow Studio™.</title>
+        <title>Setup Your Profile — CreatorFlow Studio™</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
 
       <div className="min-h-screen bg-void flex flex-col">
-        <div className="fixed inset-0 pointer-events-none" />
+        <div className="fixed inset-0 bg-electric-glow pointer-events-none" />
 
         {/* Progress bar */}
         <div className="fixed top-0 left-0 right-0 z-50 h-0.5 bg-border">
@@ -132,10 +132,10 @@ export default function Onboarding() {
         <nav className="relative z-10 px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-electric flex items-center justify-center">
-              <svg width="20" height="20" viewBox="0 0 80 80" fill="none"><line x1="14" y1="14" x2="14" y2="66" stroke="white" strokeWidth="10" strokeLinecap="round"/><line x1="14" y1="14" x2="66" y2="66" stroke="white" strokeWidth="10" strokeLinecap="round"/><line x1="66" y1="14" x2="66" y2="66" stroke="white" strokeWidth="10" strokeLinecap="round"/><path d="M14 40 C24 28 34 52 40 40 C46 28 56 52 66 40" stroke="white" strokeWidth="4" strokeLinecap="round" fill="none"/><path d="M14 52 C24 40 34 64 40 52 C46 40 56 64 66 52" stroke="#C8A96E" strokeWidth="3" strokeLinecap="round" fill="none"/></svg>
+              <span className="text-white text-xs font-bold">CF</span>
             </div>
             <span style={{fontFamily: 'var(--font-display)'}} className="text-primary text-lg font-medium">
-              NillaFlow Studio™
+              CreatorFlow
             </span>
           </div>
           <span className="text-tertiary text-xs">
@@ -246,22 +246,16 @@ export default function Onboarding() {
                   {PLATFORMS.map((platform) => (
                     <button
                       key={platform.id}
-                      onClick={() => {
-        const current = profile.preferred_platform || []
-        const updated = current.includes(platform.id)
-          ? current.filter(p => p !== platform.id)
-          : [...current, platform.id]
-        updateProfile('preferred_platform', updated)
-      }}
+                      onClick={() => updateProfile('preferred_platform', platform.id)}
                       className={`flex items-center gap-4 px-5 py-4 rounded-xl text-left transition-all duration-200 ${
-                        (profile.preferred_platform || []).includes(platform.id)
+                        profile.preferred_platform === platform.id
                           ? 'bg-electric/20 border border-electric/50'
                           : 'glass hover:border-electric/20'
                       }`}
                     >
                       <span className="text-electric-glow text-xl">{platform.icon}</span>
                       <span className={`text-sm font-medium ${
-                        (profile.preferred_platform || []).includes(platform.id) ? 'text-primary' : 'text-secondary'
+                        profile.preferred_platform === platform.id ? 'text-primary' : 'text-secondary'
                       }`}>
                         {platform.label}
                       </span>
