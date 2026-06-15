@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 8000,
+        max_tokens: 4000,
         system: `You are a world-class content strategist. Return ONLY valid JSON. No text before or after. No markdown fences.`,
         messages: [{
           role: 'user',
