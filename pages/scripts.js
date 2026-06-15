@@ -108,7 +108,39 @@ export default function Scripts() {
       setSavedScripts(scripts || [])
       setLoading(false)
       const savedTopic = localStorage.getItem('script_topic')
-      if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
+      const savedFormat = localStorage.getItem('script_format')
+      const savedHook = localStorage.getItem('script_hook')
+      const savedCta = localStorage.getItem('script_cta')
+      if (savedTopic) {
+        setTopic(savedTopic)
+        localStorage.removeItem('script_topic')
+      }
+      if (savedFormat) {
+        const fmt = savedFormat.toLowerCase()
+        if (fmt.includes('carousel')) {
+          setScriptMode('educational')
+          setContentGoal('engagement')
+          setSelectedAgent('content_strategist')
+        } else if (fmt.includes('talking head') || fmt.includes('reel')) {
+          setScriptMode('storytelling')
+          setContentGoal('authority')
+          setSelectedAgent('viral_creator')
+        } else if (fmt.includes('static') || fmt.includes('caption')) {
+          setScriptMode('motivational')
+          setContentGoal('engagement')
+          setSelectedAgent('copywriter')
+        }
+        localStorage.setItem('script_format_context', savedFormat)
+        localStorage.removeItem('script_format')
+      }
+      if (savedHook) {
+        localStorage.setItem('script_hook_context', savedHook)
+        localStorage.removeItem('script_hook')
+      }
+      if (savedCta) {
+        localStorage.setItem('script_cta_context', savedCta)
+        localStorage.removeItem('script_cta')
+      }
     }
     load()
   }, [router])
@@ -126,6 +158,9 @@ export default function Scripts() {
           script_mode: scriptMode, content_goal: contentGoal,
           creator_agent: selectedAgent, offer_types: offerTypes,
           audience_problems: audienceProblems, cta_objectives: ctaObjectives,
+          format_context: localStorage.getItem('script_format_context') || '',
+          hook_context: localStorage.getItem('script_hook_context') || '',
+          cta_context: localStorage.getItem('script_cta_context') || '',
         }),
       })
       const data = await response.json()

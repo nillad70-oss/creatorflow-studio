@@ -7,6 +7,7 @@ export default async function handler(req, res) {
     topic, niche, audience, tone, platform, script_mode,
     content_goal, creator_agent,
     offer_types, audience_problems, cta_objectives,
+    format_context, hook_context, cta_context,
   } = req.body
 
   if (!topic) return res.status(400).json({ error: 'Topic is required' })
@@ -152,7 +153,30 @@ Required keys: title, hook, body, cta, hashtags, solution_stack, creator_respons
         system: systemPrompt,
         messages: [{
           role: 'user',
-          content: `Write a ${script_mode || 'educational'} script about: "${topic}". Platform: ${platform || 'Instagram'}. Keep total body under 600 characters.`
+          content: (() => {
+            const fmt = (format_context || '').toLowerCase()
+            if (fmt.includes('carousel')) {
+              const slideCount = (fmt.match(/\d+\s*slides?/) || ['7 slides'])[0]
+              return `Write a CAROUSEL POST with ${slideCount} for the topic: "${topic}".
+${hook_context ? `The hook/opening is already set: "${hook_context}"` : ''}
+${cta_context ? `The CTA is already set: "${cta_context}"` : ''}
+Format the BODY as numbered slides:
+Slide 1: Bold hook statement
+Slides 2-${slideCount.match(/\d+/)[0]-1}: One punchy sentence per slide telling the story
+Final slide: Call to action
+Keep each slide to 1-2 sentences maximum. Platform: ${platform || 'Instagram'}.`
+            } else if (fmt.includes('static') || fmt.includes('caption')) {
+              return `Write a STATIC POST CAPTION for the topic: "${topic}".
+${hook_context ? `Opening hook: "${hook_context}"` : ''}
+${cta_context ? `CTA: "${cta_context}"` : ''}
+Format as a compelling Instagram caption. Keep total body under 600 characters. Platform: ${platform || 'Instagram'}.`
+            } else {
+              return `Write a ${script_mode || 'educational'} TALKING HEAD REEL SCRIPT about: "${topic}".
+${hook_context ? `Opening hook to use or improve: "${hook_context}"` : ''}
+${cta_context ? `CTA direction: "${cta_context}"` : ''}
+Platform: ${platform || 'Instagram'}. Keep total body under 600 characters.`
+            }
+          })()
         }],
       }),
     })
