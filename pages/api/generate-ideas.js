@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   const { niche, audience, tone, platform, days } = req.body
   const platformList = Array.isArray(platform) ? platform.join(', ') : platform || 'Instagram'
-  const dayCount = days || 7
+  const dayCount = Math.min(days || 7, 30)
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -17,14 +17,16 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 4000,
-        system: `You are a content strategist. Return ONLY a raw JSON object. No markdown. No backticks. No explanation. Start with { and end with }`,
+        max_tokens: 6000,
+        system: `You are a content strategist. Return ONLY a raw JSON object. No markdown. No backticks. No explanation. Start with { and end with }. Be concise — keep each field short.`,
         messages: [{
           role: 'user',
           content: `Create a ${dayCount}-day content calendar for a ${niche || 'general'} creator targeting ${audience || 'professional women'} with a ${tone || 'conversational'} tone for ${platformList}.
 
-Return this JSON structure exactly:
-{"competitors":[{"name":"name","type":"direct","description":"what they do","gap":"opportunity"}],"days":[{"day":1,"week":1,"title":"title","hook":"opening line","cta":"call to action","format":"how to create","platforms":["ig"],"hashtags":"#tag1 #tag2 #tag3 #tag4 #tag5"}],"strategy":{"platformPriority":"platform focus","contentRhythm":"weekly structure","hashtagStack":"master hashtags"}}`
+IMPORTANT: Keep each field SHORT. Max 15 words per field. This must fit in one response.
+
+Return this exact JSON — no extra text:
+{"competitors":[{"name":"name","type":"direct","description":"brief description","gap":"brief opportunity"}],"days":[{"day":1,"week":1,"title":"short title","hook":"hook line","cta":"cta text","format":"format type","platforms":["ig"],"hashtags":"#tag1 #tag2 #tag3 #tag4 #tag5"}],"strategy":{"platformPriority":"brief","contentRhythm":"brief","hashtagStack":"#master #tags"}}`
         }],
       }),
     })
@@ -33,19 +35,18 @@ Return this JSON structure exactly:
 
     if (!response.ok) {
       console.error('Anthropic error:', JSON.stringify(data))
-      return res.status(500).json({ error: data.error?.message || 'Anthropic API error' })
+      return res.status(500).json({ error: data.error?.message || 'API error' })
     }
 
     const textBlock = data.content.find(block => block.type === 'text')
     if (!textBlock) {
-      return res.status(500).json({ error: 'No text content returned from AI.' })
+      return res.status(500).json({ error: 'No content returned.' })
     }
 
     const raw = textBlock.text
     const jsonMatch = raw.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
-      console.error('No JSON in response. Raw:', raw.substring(0, 300))
-      return res.status(500).json({ error: 'Could not parse AI response. Raw: ' + raw.substring(0, 100) })
+      return res.status(500).json({ error: 'Could not parse response: ' + raw.substring(0, 100) })
     }
 
     const calendar = JSON.parse(jsonMatch[0])
