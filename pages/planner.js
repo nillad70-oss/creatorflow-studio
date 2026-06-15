@@ -94,11 +94,11 @@ export default function Planner() {
       .from('content_calendar')
       .insert({
         user_id: user.id,
-        topic: idea.topic,
-        hook: idea.hook,
-        category: idea.category,
+        topic: idea.title || idea.topic || '',
+        hook: idea.hook || '',
+        category: idea.category || idea.format || 'Content',
         platform: profile?.preferred_platform,
-        content_type: idea.type,
+        content_type: idea.type || idea.format || 'video',
       })
       .select()
       .single()
@@ -109,7 +109,7 @@ export default function Planner() {
   }
 
   const generateScript = (idea) => {
-    localStorage.setItem('script_topic', idea.topic)
+    localStorage.setItem('script_topic', idea.title || idea.topic || '')
     router.push('/scripts')
   }
 
@@ -224,19 +224,40 @@ export default function Planner() {
                   <div key={i} className="glass rounded-2xl p-5 hover:border-electric/20 transition-all group">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <span className="text-xs bg-electric/10 text-electric-glow px-2 py-1 rounded-full">
-                        {idea.category}
+                        {idea.category || idea.format || 'Content'}
                       </span>
-                      <span className="text-tertiary text-xs">Day {i + 1}</span>
+                      <span className="text-tertiary text-xs">Day {idea.day || i + 1}</span>
                     </div>
 
                     <h3 className="text-primary text-sm font-medium mb-2 leading-relaxed">
-                      {idea.topic}
+                      {idea.title || idea.topic}
                     </h3>
 
                     {idea.hook && (
-                      <p className="text-secondary text-xs leading-relaxed mb-4 italic">
-                        "{idea.hook}"
-                      </p>
+                      <div className="mb-3">
+                        <p className="text-tertiary text-xs uppercase tracking-wide mb-1">Hook</p>
+                        <p className="text-secondary text-xs leading-relaxed italic">"{idea.hook}"</p>
+                      </div>
+                    )}
+
+                    {idea.cta && (
+                      <div className="mb-3">
+                        <p className="text-tertiary text-xs uppercase tracking-wide mb-1">CTA</p>
+                        <p className="text-secondary text-xs leading-relaxed">{idea.cta}</p>
+                      </div>
+                    )}
+
+                    {idea.format && (
+                      <div className="mb-3">
+                        <p className="text-tertiary text-xs uppercase tracking-wide mb-1">Format</p>
+                        <p className="text-secondary text-xs leading-relaxed">{idea.format}</p>
+                      </div>
+                    )}
+
+                    {idea.hashtags && (
+                      <div className="mb-3">
+                        <p className="text-electric-glow text-xs leading-relaxed">{idea.hashtags}</p>
+                      </div>
                     )}
 
                     <div className="flex items-center gap-2">
