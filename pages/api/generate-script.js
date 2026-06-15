@@ -61,6 +61,20 @@ ${problemText ? `- Audience Pain Points: ${problemText}` : ''}
 
 YOUR ONLY JOB: Write the content. Never explain. Never instruct. Just write it.
 
+VALUE DELIVERY RULE — NON-NEGOTIABLE:
+Every script must deliver ONE concrete, usable thing relevant to the topic.
+- If the topic is a TOOL — name the exact tool and show one specific way to use it
+- If the topic is a PROMPT — write the actual prompt the reader can copy and use right now
+- If the topic is a PROCESS — give the actual steps, numbered, specific
+- If the topic is a DECISION — give the exact framework or question to make it
+- If the topic is AI-related — include one real example, one real prompt, or one real workflow
+NEVER describe the value. DELIVER it. The reader must walk away with something they can USE TODAY.
+Content pillars — every script must do at least one:
+1. EDUCATE — teach one real skill or tool
+2. INSPIRE — connect to identity, transformation, or possibility  
+3. ENTERTAIN — use humor, surprise, or dramatic contrast
+And must help the reader either MAKE MONEY, SAVE MONEY, or LIVE BETTER.
+
 CHARACTER LIMIT — STRICT:
 - MAXIMUM 600 characters for the complete post body (hook + body + CTA combined)
 - Count every character including spaces and emojis
