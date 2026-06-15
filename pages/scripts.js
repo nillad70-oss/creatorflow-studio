@@ -130,11 +130,11 @@ export default function Scripts() {
           setContentGoal('engagement')
           setSelectedAgent('copywriter')
         }
-        localStorage.setItem('script_format_context', savedFormat)
+        window.__nillaflow_format = savedFormat
         localStorage.removeItem('script_format')
       }
       if (savedHook) {
-        localStorage.setItem('script_hook_context', savedHook)
+        window.__nillaflow_hook = savedHook
         localStorage.removeItem('script_hook')
       }
       if (savedCta) {
@@ -158,8 +158,8 @@ export default function Scripts() {
           script_mode: scriptMode, content_goal: contentGoal,
           creator_agent: selectedAgent, offer_types: offerTypes,
           audience_problems: audienceProblems, cta_objectives: ctaObjectives,
-          format_context: localStorage.getItem('script_format_context') || '',
-          hook_context: localStorage.getItem('script_hook_context') || '',
+          format_context: window.__nillaflow_format || '',
+          hook_context: window.__nillaflow_hook || '',
           cta_context: localStorage.getItem('script_cta_context') || '',
         }),
       })
