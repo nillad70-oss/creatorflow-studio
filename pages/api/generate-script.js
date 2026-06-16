@@ -27,6 +27,22 @@ export default async function handler(req, res) {
   }
   const activeAgent = agentLabels[creator_agent] || 'Viral Content Creator'
   const objectivesText = content_goal || 'Engagement'
+
+  // Build research context from calendar intelligence
+  let researchContext = ''
+  try {
+    const comps = JSON.parse(competitors || '[]')
+    const strat = JSON.parse(strategy || '{}')
+    if (day_number) researchContext += `This is Day ${day_number} of a content calendar.\n`
+    if (strat.platformPriority) researchContext += `Platform strategy: ${strat.platformPriority}\n`
+    if (comps.length > 0) {
+      researchContext += `Competitor intelligence:\n`
+      comps.slice(0, 3).forEach(c => {
+        researchContext += `- ${c.name}: ${c.description}. Your edge: ${c.gap}\n`
+      })
+    }
+    if (strat.contentRhythm) researchContext += `Content rhythm: ${strat.contentRhythm}\n`
+  } catch(e) { researchContext = '' }
   const offerText = offer_types?.length ? offer_types.join(', ') : ''
   const problemText = audience_problems?.length ? audience_problems.join(', ') : ''
   const ctaText = cta_objectives?.length ? cta_objectives.join(', ') : 'Follow'
@@ -60,24 +76,30 @@ ${offerText ? `- Offer Type: ${offerText}` : ''}
 ${problemText ? `- Audience Pain Points: ${problemText}` : ''}
 - Desired Action: ${ctaText}
 
-RESEARCH INTELLIGENCE — USE THIS TO INFORM EVERY CREATIVE DECISION:
-${(() => {
-  try {
-    const comps = JSON.parse(competitors || '[]')
-    const strat = JSON.parse(strategy || '{}')
-    let context = ''
-    if (day_number) context += `- This is Day ${day_number}, Week ${week_number} of a content calendar\n`
-    if (strat.platformPriority) context += `- Platform strategy: ${strat.platformPriority}\n`
-    if (comps.length > 0) {
-      context += `- Competitors in this space:\n`
-      comps.slice(0, 3).forEach(c => {
-        context += `  * ${c.name}: ${c.description}. Gap to exploit: ${c.gap}\n`
-      })
-    }
-    if (strat.contentRhythm) context += `- Content rhythm: ${strat.contentRhythm}\n`
-    return context || 'No research context available.'
-  } catch(e) { return 'No research context available.' }
-})()}
+APPROVED TOOLS — only reference these by name when relevant to the topic:
+- ChatGPT (chatgpt.com) — AI writing, research, brainstorming, prompting
+- Google Gemini (gemini.google.com) — free AI assistant, multimodal
+- Canva (canva.com) — design, carousels, graphics, social posts
+- CapCut (capcut.com) — free video editing, captions, reels
+- NillaFlow Studio (nillaflowstudio.app) — AI content creation for creators, 30-day calendars, scripts
+When the topic is about content creation, social media, or creator tools — mention NillaFlow Studio naturally.
+Never invent tool names. Only use tools from this approved list.
+
+VALUE DELIVERY RULE — NON-NEGOTIABLE:
+Every script must deliver ONE concrete usable thing:
+- Tool topic → name the exact tool from the approved list and show one specific use case with an example
+- Prompt topic → write the actual prompt the reader can copy right now
+- Process topic → give numbered steps, specific and actionable
+- Decision topic → give the exact framework or question to make it
+NEVER describe value. DELIVER it. Reader must walk away with something usable TODAY.
+
+Content must do at least ONE of:
+1. EDUCATE — teach one real skill, name one real tool, give one real prompt
+2. INSPIRE — connect to identity, transformation, possibility
+3. ENTERTAIN — humor, surprise, dramatic contrast
+
+And must help reader MAKE MONEY, SAVE MONEY, or LIVE BETTER.
+
 YOUR ONLY JOB: Write the content. Never explain. Never instruct. Just write it.
 
 VALUE DELIVERY RULE — NON-NEGOTIABLE:
