@@ -8,6 +8,7 @@ export default async function handler(req, res) {
     content_goal, creator_agent,
     offer_types, audience_problems, cta_objectives,
     format_context, hook_context, cta_context,
+    competitors, strategy, day_number, week_number,
   } = req.body
 
   if (!topic) return res.status(400).json({ error: 'Topic is required' })
@@ -59,6 +60,24 @@ ${offerText ? `- Offer Type: ${offerText}` : ''}
 ${problemText ? `- Audience Pain Points: ${problemText}` : ''}
 - Desired Action: ${ctaText}
 
+RESEARCH INTELLIGENCE — USE THIS TO INFORM EVERY CREATIVE DECISION:
+${(() => {
+  try {
+    const comps = JSON.parse(competitors || '[]')
+    const strat = JSON.parse(strategy || '{}')
+    let context = ''
+    if (day_number) context += `- This is Day ${day_number}, Week ${week_number} of a content calendar\n`
+    if (strat.platformPriority) context += `- Platform strategy: ${strat.platformPriority}\n`
+    if (comps.length > 0) {
+      context += `- Competitors in this space:\n`
+      comps.slice(0, 3).forEach(c => {
+        context += `  * ${c.name}: ${c.description}. Gap to exploit: ${c.gap}\n`
+      })
+    }
+    if (strat.contentRhythm) context += `- Content rhythm: ${strat.contentRhythm}\n`
+    return context || 'No research context available.'
+  } catch(e) { return 'No research context available.' }
+})()}
 YOUR ONLY JOB: Write the content. Never explain. Never instruct. Just write it.
 
 VALUE DELIVERY RULE — NON-NEGOTIABLE:

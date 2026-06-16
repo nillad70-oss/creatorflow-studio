@@ -19,6 +19,7 @@ export default function Planner() {
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
   const [ideas, setIdeas] = useState([])
+  const [calendarMeta, setCalendarMeta] = useState(null)
   const [savedIdeas, setSavedIdeas] = useState([])
   const [error, setError] = useState('')
   const [daysCount, setDaysCount] = useState(30)
@@ -78,8 +79,13 @@ export default function Planner() {
 
       if (data.calendar) {
         setIdeas(data.calendar.days || [])
+        setCalendarMeta({
+          competitors: data.calendar.competitors || [],
+          strategy: data.calendar.strategy || {}
+        })
       } else {
         setIdeas(data.ideas || [])
+        setCalendarMeta(null)
       }
     } catch (err) {
       setError('Something went wrong. Please try again.')
@@ -110,6 +116,16 @@ export default function Planner() {
 
   const generateScript = (idea) => {
     localStorage.setItem('script_topic', idea.title || idea.topic || '')
+    localStorage.setItem('script_format', idea.format || '')
+    localStorage.setItem('script_hook', idea.hook || '')
+    localStorage.setItem('script_cta', idea.cta || '')
+    localStorage.setItem('script_hashtags', idea.hashtags || '')
+    localStorage.setItem('script_day', idea.day || '')
+    localStorage.setItem('script_week', idea.week || '')
+    if (calendarMeta) {
+      localStorage.setItem('script_competitors', JSON.stringify(calendarMeta.competitors || []))
+      localStorage.setItem('script_strategy', JSON.stringify(calendarMeta.strategy || {}))
+    }
     router.push('/scripts')
   }
 

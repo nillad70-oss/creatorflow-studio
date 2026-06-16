@@ -141,6 +141,20 @@ export default function Scripts() {
         localStorage.setItem('script_cta_context', savedCta)
         localStorage.removeItem('script_cta')
       }
+      const savedCompetitors = localStorage.getItem('script_competitors')
+      const savedStrategy = localStorage.getItem('script_strategy')
+      const savedDay = localStorage.getItem('script_day')
+      const savedWeek = localStorage.getItem('script_week')
+      if (savedCompetitors) {
+        window.__nillaflow_competitors = savedCompetitors
+        localStorage.removeItem('script_competitors')
+      }
+      if (savedStrategy) {
+        window.__nillaflow_strategy = savedStrategy
+        localStorage.removeItem('script_strategy')
+      }
+      if (savedDay) { window.__nillaflow_day = savedDay; localStorage.removeItem('script_day') }
+      if (savedWeek) { window.__nillaflow_week = savedWeek; localStorage.removeItem('script_week') }
     }
     load()
   }, [router])
@@ -161,6 +175,10 @@ export default function Scripts() {
           format_context: window.__nillaflow_format || '',
           hook_context: window.__nillaflow_hook || '',
           cta_context: localStorage.getItem('script_cta_context') || '',
+          competitors: window.__nillaflow_competitors || '[]',
+          strategy: window.__nillaflow_strategy || '{}',
+          day_number: window.__nillaflow_day || '',
+          week_number: window.__nillaflow_week || '',
         }),
       })
       const data = await response.json()
