@@ -110,51 +110,21 @@ export default function Scripts() {
       const savedTopic = localStorage.getItem('script_topic')
       const savedFormat = localStorage.getItem('script_format')
       const savedHook = localStorage.getItem('script_hook')
-      const savedCta = localStorage.getItem('script_cta')
-      if (savedTopic) {
-        setTopic(savedTopic)
-        localStorage.removeItem('script_topic')
-      }
+      if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
       if (savedFormat) {
         const fmt = savedFormat.toLowerCase()
-        if (fmt.includes('carousel')) {
-          setScriptMode('educational')
-          setContentGoal('engagement')
-          setSelectedAgent('content_strategist')
-        } else if (fmt.includes('talking head') || fmt.includes('reel')) {
-          setScriptMode('storytelling')
-          setContentGoal('authority')
-          setSelectedAgent('viral_creator')
-        } else if (fmt.includes('static') || fmt.includes('caption')) {
-          setScriptMode('motivational')
-          setContentGoal('engagement')
-          setSelectedAgent('copywriter')
-        }
+        if (fmt.includes('carousel')) { setScriptMode('educational'); setSelectedAgent('content_strategist') }
+        else if (fmt.includes('reel') || fmt.includes('talking head')) { setScriptMode('storytelling'); setSelectedAgent('viral_creator') }
         localStorage.setItem('nf_format', savedFormat)
         localStorage.removeItem('script_format')
       }
-      if (savedHook) {
-        localStorage.setItem('nf_hook', savedHook)
-        localStorage.removeItem('script_hook')
-      }
-      if (savedCta) {
-        localStorage.setItem('script_cta_context', savedCta)
-        localStorage.removeItem('script_cta')
-      }
+      if (savedHook) { localStorage.setItem('nf_hook', savedHook); localStorage.removeItem('script_hook') }
       const savedCompetitors = localStorage.getItem('script_competitors')
       const savedStrategy = localStorage.getItem('script_strategy')
-      const savedDay = localStorage.getItem('script_day')
-      const savedWeek = localStorage.getItem('script_week')
-      if (savedCompetitors) {
-          localStorage.setItem('nf_competitors', savedCompetitors)
-        localStorage.removeItem('script_competitors')
-      }
-      if (savedStrategy) {
-          localStorage.setItem('nf_strategy', savedStrategy)
-        localStorage.removeItem('script_strategy')
-      }
-      if (savedDay) { localStorage.setItem('nf_day', savedDay); localStorage.removeItem('script_day') }
-      if (savedWeek) { localStorage.setItem('nf_week', savedWeek); localStorage.removeItem('script_week') }
+      if (savedCompetitors) { localStorage.setItem('nf_competitors', savedCompetitors); localStorage.removeItem('script_competitors') }
+      if (savedStrategy) { localStorage.setItem('nf_strategy', savedStrategy); localStorage.removeItem('script_strategy') }
+      const savedTopic = localStorage.getItem('script_topic')
+      if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
     }
     load()
   }, [router])
@@ -174,11 +144,8 @@ export default function Scripts() {
           audience_problems: audienceProblems, cta_objectives: ctaObjectives,
           format_context: localStorage.getItem('nf_format') || '',
           hook_context: localStorage.getItem('nf_hook') || '',
-          cta_context: localStorage.getItem('script_cta_context') || '',
           competitors: localStorage.getItem('nf_competitors') || '[]',
           strategy: localStorage.getItem('nf_strategy') || '{}',
-          day_number: localStorage.getItem('nf_day') || '',
-          week_number: localStorage.getItem('nf_week') || '',
         }),
       })
       const data = await response.json()
