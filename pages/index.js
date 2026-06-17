@@ -573,7 +573,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ── Final CTA ── */>/
+        {/* ── Final CTA ── */}
         <section className="py-24 px-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-electric-glow pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
