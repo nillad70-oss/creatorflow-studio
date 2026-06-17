@@ -219,7 +219,7 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ── Value Pillars ── */
+        {/* ── Value Pillars ── */}
         <section className="py-12 px-6">
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
