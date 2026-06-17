@@ -176,7 +176,7 @@ export default function Landing() {
               <br />
               <em className="text-electric-glow italic">Build your brand with your own team of AI.</em>
             </h1>
-            <p style={{fontFamily: 'var(--font-display)'}} className="text-2xl md:text-3xl text-secondary font-light mb-8 italic">
+            <p style={{fontFamily: 'var(--font-display)'}} className="text-3xl md:text-4xl text-primary font-light mb-8">
               Create naturally. Show up confidently. Grow consistently.
             </p>
 
