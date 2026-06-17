@@ -111,9 +111,13 @@ export default function Scripts() {
         const t = localStorage.getItem('script_topic')
         const a = localStorage.getItem('script_agent')
         const m = localStorage.getItem('script_mode')
+        const f = localStorage.getItem('script_format')
+        const h = localStorage.getItem('script_hook')
         if (t) { setTopic(t); localStorage.removeItem('script_topic') }
         if (a) { setSelectedAgent(a); localStorage.removeItem('script_agent') }
         if (m) { setScriptMode(m); localStorage.removeItem('script_mode') }
+        if (f) { localStorage.setItem('nf_format', f); localStorage.removeItem('script_format') }
+        if (h) { localStorage.setItem('nf_hook', h); localStorage.removeItem('script_hook') }
       } catch(e) {}
       const savedTopic = localStorage.getItem('script_topic')
       if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
@@ -134,6 +138,8 @@ export default function Scripts() {
           script_mode: scriptMode, content_goal: contentGoal,
           creator_agent: selectedAgent, offer_types: offerTypes,
           audience_problems: audienceProblems, cta_objectives: ctaObjectives,
+          format_context: localStorage.getItem('nf_format') || '',
+          hook_context: localStorage.getItem('nf_hook') || '',
         }),
       })
       const data = await response.json()
