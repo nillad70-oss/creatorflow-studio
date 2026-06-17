@@ -167,7 +167,7 @@ export default function Landing() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-electric/20 bg-electric/5 text-electric-glow text-xs font-medium mb-8">
               <span className="w-1.5 h-1.5 rounded-full bg-electric-glow animate-pulse" />
-              AI-Powered Creator Confidence System
+              You used to have one AI. Now you have a team of ten.
             </div>
 
             {/* Headline */}
@@ -179,7 +179,7 @@ export default function Landing() {
 
             {/* Sub */}
             <p className="text-secondary text-lg md:text-xl font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-              NillaFlow Studio™ is the AI Creator Confidence Studio that takes you from blank page to ready-to-post content. Scripts. Captions. Teleprompter-ready content. Creator Responses. Content Workflows. Everything you need to create with confidence — all in one flow.
+              10 specialized AI agents — each one designed to know your audience, grow your brand, and scale your monetization. Tell us your niche. Your complete content calendar, scripts, and strategy are ready in 2 minutes.
             </p>
 
             {/* CTAs */}
