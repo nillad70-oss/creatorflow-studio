@@ -138,8 +138,8 @@ export default function Scripts() {
           script_mode: scriptMode, content_goal: contentGoal,
           creator_agent: selectedAgent, offer_types: offerTypes,
           audience_problems: audienceProblems, cta_objectives: ctaObjectives,
-          format_context: localStorage.getItem('nf_format') || '',
-          hook_context: localStorage.getItem('nf_hook') || '',
+          format_context: (typeof localStorage !== 'undefined' ? localStorage.getItem('nf_format') : '') || '',
+          hook_context: (typeof localStorage !== 'undefined' ? localStorage.getItem('nf_hook') : '') || '',
         }),
       })
       const data = await response.json()
