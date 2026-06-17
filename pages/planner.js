@@ -122,6 +122,24 @@ export default function Planner() {
     localStorage.setItem('script_hashtags', idea.hashtags || '')
     localStorage.setItem('script_day', idea.day || '')
     localStorage.setItem('script_week', idea.week || '')
+
+    // Auto-select agent based on format and week
+    const fmt = (idea.format || '').toLowerCase()
+    const week = idea.week || 1
+    let agent = 'viral_creator'
+    let mode = 'educational'
+    if (fmt.includes('carousel')) { agent = 'content_strategist'; mode = 'educational' }
+    else if (fmt.includes('video tutorial')) { agent = 'research_analyst'; mode = 'educational' }
+    else if (fmt.includes('infographic')) { agent = 'research_analyst'; mode = 'educational' }
+    else if (fmt.includes('motivational')) { agent = 'business_coach'; mode = 'motivational' }
+    else if (fmt.includes('talking head') && week === 1) { agent = 'storyteller'; mode = 'storytelling' }
+    else if (fmt.includes('talking head') && week === 2) { agent = 'research_analyst'; mode = 'educational' }
+    else if (fmt.includes('talking head') && week === 3) { agent = 'sales_consultant'; mode = 'promotional' }
+    else if (fmt.includes('talking head') && week === 4) { agent = 'social_media_manager'; mode = 'motivational' }
+    else if (fmt.includes('reel') && week === 1) { agent = 'viral_creator'; mode = 'storytelling' }
+    else if (fmt.includes('reel') && week >= 2) { agent = 'viral_creator'; mode = 'educational' }
+    localStorage.setItem('script_agent', agent)
+    localStorage.setItem('script_mode', mode)
     if (calendarMeta) {
       localStorage.setItem('script_competitors', JSON.stringify(calendarMeta.competitors || []))
       localStorage.setItem('script_strategy', JSON.stringify(calendarMeta.strategy || {}))

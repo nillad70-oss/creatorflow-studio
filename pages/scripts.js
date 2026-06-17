@@ -107,7 +107,14 @@ export default function Scripts() {
       const { data: scripts } = await supabase.from("scripts").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10)
       setSavedScripts(scripts || [])
       setLoading(false)
-      try { const t = localStorage.getItem('script_topic'); if (t) { setTopic(t); localStorage.removeItem('script_topic') } } catch(e) {}
+      try {
+        const t = localStorage.getItem('script_topic')
+        const a = localStorage.getItem('script_agent')
+        const m = localStorage.getItem('script_mode')
+        if (t) { setTopic(t); localStorage.removeItem('script_topic') }
+        if (a) { setSelectedAgent(a); localStorage.removeItem('script_agent') }
+        if (m) { setScriptMode(m); localStorage.removeItem('script_mode') }
+      } catch(e) {}
       const savedTopic = localStorage.getItem('script_topic')
       if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
     }
