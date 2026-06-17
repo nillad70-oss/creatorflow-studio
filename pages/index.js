@@ -204,6 +204,33 @@ export default function Landing() {
           </div>
         </section>
 
+
+        {/* ── Value Pillars ── */}
+        <section className="py-12 px-6">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="glass rounded-2xl p-6">
+                <p className="text-electric-glow text-2xl mb-3">✦</p>
+                <p className="text-primary text-base font-medium mb-2">30 days of content in 2 minutes</p>
+                <p className="text-tertiary text-sm leading-relaxed">Pain-aware, written in your voice, and ready to publish. NillaFlow knows your audience before you type a word.</p>
+              </div>
+              <div className="glass rounded-2xl p-6">
+                <p className="text-electric-glow text-2xl mb-3">✦</p>
+                <p className="text-primary text-base font-medium mb-2">10 AI agents working for your brand</p>
+                <p className="text-tertiary text-sm leading-relaxed">Your AI content strategist, copywriter, researcher, storyteller, and growth team — all in one place. No hiring. No briefing.</p>
+              </div>
+              <div className="glass rounded-2xl p-6">
+                <p className="text-electric-glow text-2xl mb-3">✦</p>
+                <p className="text-primary text-base font-medium mb-2">Publish everywhere with one click</p>
+                <p className="text-tertiary text-sm leading-relaxed">Schedule to Instagram, TikTok, Facebook, YouTube, and LinkedIn simultaneously — powered by <a href="https://blotato.com/?ref=leonilla" target="_blank" rel="noopener noreferrer" className="text-electric-glow hover:underline">Blotato</a>.</p>
+              </div>
+            </div>
+            <p className="text-tertiary text-sm text-center mt-8">
+              No prompts. No overwhelm. No content burnout. Just your ideas, transformed into a month of strategic content in minutes.
+            </p>
+          </div>
+        </section>
+
         {/* ── Pain Points ── */}
         <section className="py-20 px-6">
           <div className="max-w-4xl mx-auto">
