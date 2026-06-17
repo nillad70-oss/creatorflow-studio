@@ -125,8 +125,7 @@ export default function Scripts() {
         if (savedCompetitors) { localStorage.setItem('nf_competitors', savedCompetitors); localStorage.removeItem('script_competitors') }
         if (savedStrategy) { localStorage.setItem('nf_strategy', savedStrategy); localStorage.removeItem('script_strategy') }
       } catch(e) { console.log('Context restore error:', e.message) }
-      const savedTopic = localStorage.getItem('script_topic')
-      if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
+
     }
     load()
   }, [router])
