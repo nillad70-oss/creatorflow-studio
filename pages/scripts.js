@@ -346,6 +346,36 @@ export default function Scripts() {
                       <p className="text-primary text-sm leading-relaxed">{generatedScript.creator_response}</p>
                     </div>
                   )}
+
+                  <div className="glass rounded-2xl p-5 mt-3 border border-electric/20">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-xs font-mono uppercase tracking-widest text-electric-glow">Post Preview</span>
+                    </div>
+                    <div className="flex gap-2 mb-4">
+                      {['Instagram', 'TikTok', 'Facebook'].map((p) => (
+                        <span key={p} className="px-3 py-1 rounded-full text-xs border border-electric/30 text-electric-glow bg-electric/10">{p}</span>
+                      ))}
+                    </div>
+                    <div className="rounded-xl p-4 mb-3" style={{background: 'linear-gradient(135deg, #1a1200 0%, #2a1f08 100%)'}}>
+                      <p className="text-xs uppercase tracking-widest mb-2" style={{color: '#C8A96E'}}>Hook</p>
+                      <p className="text-white text-sm font-medium leading-relaxed">{generatedScript.hook}</p>
+                    </div>
+                    <div className="rounded-xl p-4" style={{background: '#111'}}>
+                      <p className="text-xs uppercase tracking-widest mb-2 text-tertiary">Caption preview</p>
+                      <p className="text-secondary text-xs leading-relaxed">{generatedScript.body ? generatedScript.body.substring(0, 150) + '...' : ''}</p>
+                      <p className="text-xs mt-2" style={{color: '#3b82f6'}}>{Array.isArray(generatedScript.hashtags) ? generatedScript.hashtags.join(' ') : generatedScript.hashtags}</p>
+                    </div>
+                  </div>
+
+                  <div className="glass rounded-2xl p-5 mt-3 border border-electric/20">
+                    <p className="text-xs font-mono uppercase tracking-widest text-electric-glow mb-1">Publish</p>
+                    <p className="text-tertiary text-xs mb-4">Schedule this post to all your platforms instantly</p>
+                    <a href="https://blotato.com/?ref=leonilla" target="_blank" rel="noopener noreferrer" className="btn-electric w-full py-3 rounded-xl text-sm font-medium text-center block">
+                      Schedule with Blotato
+                    </a>
+                    <p className="text-tertiary text-xs text-center mt-2">Publish to Instagram, TikTok, Facebook and more</p>
+                  </div>
+
                 </div>
               ) : (
                 <div className="h-full flex items-center justify-center">
