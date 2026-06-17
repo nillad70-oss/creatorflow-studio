@@ -142,6 +142,7 @@ export default function Landing() {
               <a href="#workflow" className="text-secondary text-sm hover:text-primary transition-colors">How it works</a>
               <a href="#features" className="text-secondary text-sm hover:text-primary transition-colors">Features</a>
               <a href="#pricing" className="text-secondary text-sm hover:text-primary transition-colors">Pricing</a>
+              <a href="#faq" className="text-secondary text-sm hover:text-primary transition-colors">FAQ</a>
             </div>
 
             {/* CTA */}
@@ -506,7 +507,73 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ── Final CTA ── */}
+
+        {/* ── FAQ ── */}
+        <section id="faq" className="py-24 px-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-16">
+              <p className="text-tertiary text-sm uppercase tracking-widest mb-3">FAQ</p>
+              <h2 style={{fontFamily: "var(--font-display)"}} className="text-4xl md:text-5xl text-primary font-light mb-4">
+                Everything you need to know.
+              </h2>
+              <p className="text-secondary text-base">Before you create. Before you post. Before you grow.</p>
+            </div>
+            <div className="space-y-4">
+              {[
+                {
+                  q: "How does NillaFlow actually help me grow my brand?",
+                  a: "NillaFlow follows a proven content-to-monetization pathway: pain-aware content reaches your audience, consistent value builds trust, saves and shares expand your reach, followers become leads, leads become buyers, buyers become community. Every piece of content NillaFlow generates moves your audience one step further along that journey."
+                },
+                {
+                  q: "What makes NillaFlow different from just using ChatGPT?",
+                  a: "ChatGPT is a blank page. It waits for you to know what to ask. NillaFlow already knows your audience pain points, what keeps them awake at night, and what content converts before you type a single word. You tell NillaFlow your audience, your niche, and your offer. NillaFlow does the strategic thinking."
+                },
+                {
+                  q: "How does NillaFlow know what my audience actually wants?",
+                  a: "NillaFlow has a built-in audience intelligence layer for each niche. It knows the real fears, the unspoken desires, the conversations happening in comments and DMs. When your audience reads your post and thinks how did they know exactly what I was feeling — that is NillaFlow intelligence at work."
+                },
+                {
+                  q: "What does the content actually do for my audience?",
+                  a: "Every output is built around three pillars: Educate by teaching one real skill or naming one real tool. Inspire by connecting to identity and transformation. Entertain through surprise or dramatic contrast. And every post helps your audience make money, save money, or live better. Curiosity alone is never enough — NillaFlow delivers one actionable nugget every time."
+                },
+                {
+                  q: "How long does it take to generate 30 days of content?",
+                  a: "Under 2 minutes. NillaFlow researches your market, identifies competitor gaps, and builds a complete 30-day calendar with pain-aware titles, scroll-stopping hooks, CTAs, filming formats, and hashtags for every day. Week 1 builds awareness. Week 2 delivers value. Week 3 introduces your offer. Week 4 builds community."
+                },
+                {
+                  q: "Will the content sound like me or like a robot?",
+                  a: "NillaFlow learns your tone during onboarding — conversational, motivational, educational, faith-based, or luxury. Every script is written in your voice for your audience. Not generic AI text. Content your audience will recognize as yours."
+                },
+                {
+                  q: "Is NillaFlow only for nurses or healthcare creators?",
+                  a: "No. NillaFlow serves any creator in any niche — business, wellness, technology, faith, parenting, finance, immigration, and career development. The intelligence layer adapts to your specific audience automatically."
+                },
+                {
+                  q: "Do I need a tech background or a website to get started?",
+                  a: "No. You need three things: your audience, your niche, and what you offer. NillaFlow builds your entire content strategy from that. No website required. No prompting knowledge needed. If you can describe who you serve and what you do, NillaFlow handles the rest."
+                },
+                {
+                  q: "What does it cost?",
+                  a: "$17 per month or $144 per year — less than $12 a month annually. Every plan includes unlimited scripts, the 30-day content calendar, the Flow Teleprompter, captions export, and priority support. 3-day free trial included. Cancel anytime."
+                },
+                {
+                  q: "Is my information safe?",
+                  a: "Yes. NillaFlow does not sell your data. Your content, your profile, and your scripts belong to you. We use industry-standard encryption and secure authentication."
+                },
+              ].map((item, i) => (
+                <details key={i} className="glass rounded-xl px-6 py-5 cursor-pointer">
+                  <summary className="flex items-center justify-between text-primary text-sm font-medium list-none">
+                    {item.q}
+                    <span className="text-electric-glow ml-4 flex-shrink-0">+</span>
+                  </summary>
+                  <p className="text-secondary text-sm leading-relaxed mt-4">{item.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Final CTA ── */>/
         <section className="py-24 px-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-electric-glow pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
