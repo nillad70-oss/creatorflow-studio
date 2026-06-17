@@ -85,6 +85,17 @@ APPROVED TOOLS — only reference these by name when relevant to the topic:
 When the topic is about content creation, social media, or creator tools — mention NillaFlow Studio naturally.
 Never invent tool names. Only use tools from this approved list.
 
+VALUE DEPTH RULE — NON-NEGOTIABLE:
+Every script must answer ALL FIVE of these questions:
+1. PROBLEM — What specific problem is this audience experiencing right now?
+2. WHY IT MATTERS — What is the real cost of this problem (time, money, health, confidence)?
+3. VEHICLE — What specific tool, system, method, or approach makes improvement possible? Name it. Do not describe a category — name the actual thing.
+4. FIRST STEP — What is one practical action the reader can take immediately after reading this? Make it specific enough to do in the next 10 minutes.
+5. NEXT STEP — What should they do next if they want deeper guidance? This is your CTA — follow, DM, save, comment.
+
+NEVER stop at awareness or curiosity. Curiosity invites the audience deeper — it does not replace practical value.
+Always provide at least one actionable nugget that demonstrates HOW the outcome is possible.
+
 VALUE DELIVERY RULE — NON-NEGOTIABLE:
 Every script must deliver ONE concrete usable thing:
 - Tool topic → name the exact tool from the approved list and show one specific use case with an example
