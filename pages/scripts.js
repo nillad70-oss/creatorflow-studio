@@ -107,22 +107,24 @@ export default function Scripts() {
       const { data: scripts } = await supabase.from("scripts").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10)
       setSavedScripts(scripts || [])
       setLoading(false)
-      const savedTopic = localStorage.getItem('script_topic')
-      const savedFormat = localStorage.getItem('script_format')
-      const savedHook = localStorage.getItem('script_hook')
-      if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
-      if (savedFormat) {
-        const fmt = savedFormat.toLowerCase()
-        if (fmt.includes('carousel')) { setScriptMode('educational'); setSelectedAgent('content_strategist') }
-        else if (fmt.includes('reel') || fmt.includes('talking head')) { setScriptMode('storytelling'); setSelectedAgent('viral_creator') }
-        localStorage.setItem('nf_format', savedFormat)
-        localStorage.removeItem('script_format')
-      }
-      if (savedHook) { localStorage.setItem('nf_hook', savedHook); localStorage.removeItem('script_hook') }
-      const savedCompetitors = localStorage.getItem('script_competitors')
-      const savedStrategy = localStorage.getItem('script_strategy')
-      if (savedCompetitors) { localStorage.setItem('nf_competitors', savedCompetitors); localStorage.removeItem('script_competitors') }
-      if (savedStrategy) { localStorage.setItem('nf_strategy', savedStrategy); localStorage.removeItem('script_strategy') }
+      try {
+        const savedTopic = localStorage.getItem('script_topic')
+        const savedFormat = localStorage.getItem('script_format')
+        const savedHook = localStorage.getItem('script_hook')
+        if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
+        if (savedFormat) {
+          const fmt = savedFormat.toLowerCase()
+          if (fmt.includes('carousel')) { setScriptMode('educational'); setSelectedAgent('content_strategist') }
+          else if (fmt.includes('reel') || fmt.includes('talking head')) { setScriptMode('storytelling'); setSelectedAgent('viral_creator') }
+          localStorage.setItem('nf_format', savedFormat)
+          localStorage.removeItem('script_format')
+        }
+        if (savedHook) { localStorage.setItem('nf_hook', savedHook); localStorage.removeItem('script_hook') }
+        const savedCompetitors = localStorage.getItem('script_competitors')
+        const savedStrategy = localStorage.getItem('script_strategy')
+        if (savedCompetitors) { localStorage.setItem('nf_competitors', savedCompetitors); localStorage.removeItem('script_competitors') }
+        if (savedStrategy) { localStorage.setItem('nf_strategy', savedStrategy); localStorage.removeItem('script_strategy') }
+      } catch(e) { console.log('Context restore error:', e.message) }
       const savedTopic = localStorage.getItem('script_topic')
       if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
     }
