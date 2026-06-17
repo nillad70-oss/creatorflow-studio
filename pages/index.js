@@ -167,25 +167,28 @@ export default function Landing() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-electric/20 bg-electric/5 text-electric-glow text-xs font-medium mb-8">
               <span className="w-1.5 h-1.5 rounded-full bg-electric-glow animate-pulse" />
-              You used to have one AI. Now you have a team of ten.
+              AI-Powered Content Operating System
             </div>
 
             {/* Headline */}
             <h1 style={{fontFamily: 'var(--font-display)'}} className="text-5xl md:text-7xl lg:text-8xl font-light text-primary leading-[1.05] tracking-tight mb-6">
-              Stop overthinking. Start creating.
+              Stop creating alone.
               <br />
-              <em className="text-electric-glow italic">Create naturally and confidently.</em>
+              <em className="text-electric-glow italic">Build your brand with your own team of AI.</em>
             </h1>
+            <p style={{fontFamily: 'var(--font-display)'}} className="text-2xl md:text-3xl text-secondary font-light mb-8 italic">
+              Create naturally. Show up confidently. Grow consistently.
+            </p>
 
             {/* Sub */}
             <p className="text-secondary text-lg md:text-xl font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-              10 specialized AI agents — each one designed to know your audience, grow your brand, and scale your monetization. Tell us your niche. Your complete content calendar, scripts, and strategy are ready in 2 minutes.
+              NillaFlow Studio™ is your AI-powered content operating system — designed to help creators, coaches, founders, and businesses create, publish, and grow without hiring a full content team.
             </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <Link href="/signup" className="btn-electric w-full sm:w-auto px-8 py-4 rounded-xl text-base font-medium inline-flex items-center justify-center gap-2">
-                Start Flowing with NillaFlow Studio™
+                Generate My First 30 Days of Content →
               </Link>
               <a href="#workflow" className="btn-ghost w-full sm:w-auto px-8 py-4 rounded-xl text-base inline-flex items-center justify-center gap-2">
                 <PlayIcon />
