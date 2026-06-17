@@ -196,6 +196,8 @@ export default function Landing() {
               </a>
             </div>
 
+            {/* Publish everywhere line */}
+            <p className="text-electric-glow text-sm mt-4 mb-2">✦ Publish everywhere — instantly.</p>
             {/* Social proof */}
             <p className="text-tertiary text-sm">
               From idea to ready-to-post content.{" "}
@@ -229,6 +231,32 @@ export default function Landing() {
               No prompts. No overwhelm. No content burnout. Just your ideas, transformed into a month of strategic content in minutes.
             </p>
           </div>
+        </section>
+
+
+        {/* ── Teleprompter Callout ── */}
+        <section className="py-12 px-6">
+          <div className="max-w-3xl mx-auto glass rounded-2xl p-8 text-center border border-electric/20">
+            <p className="text-electric-glow text-xs uppercase tracking-widest mb-3">Exclusive Feature</p>
+            <h3 style={{fontFamily: "var(--font-display)"}} className="text-3xl md:text-4xl text-primary font-light mb-4">
+              Flow Teleprompter™
+            </h3>
+            <p className="text-secondary text-base leading-relaxed mb-6">
+              The only teleprompter built for creators. Smooth scroll. Fullscreen. Mirror mode. Record naturally without memorizing a single word — your script scrolls while you speak.
+            </p>
+            <Link href="/signup" className="btn-electric px-8 py-3 rounded-xl text-sm font-medium inline-block">
+              Try the Teleprompter Free →
+            </Link>
+          </div>
+        </section>
+
+
+        {/* ── Mid Page CTA ── */}
+        <section className="py-12 px-6 text-center">
+          <Link href="/signup" className="btn-electric px-10 py-4 rounded-xl text-base font-medium inline-block">
+            Start Creating With Your AI Team →
+          </Link>
+          <p className="text-tertiary text-xs mt-4">3-day free trial. No credit card required. Cancel anytime.</p>
         </section>
 
         {/* ── Pain Points ── */}
