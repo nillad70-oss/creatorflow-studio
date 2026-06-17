@@ -196,8 +196,6 @@ export default function Landing() {
               </a>
             </div>
 
-            {/* Publish everywhere line */}
-            <p className="text-electric-glow text-sm mt-4 mb-2">✦ Publish everywhere — instantly.</p>
             {/* Social proof */}
             <p className="text-tertiary text-sm">
               From idea to ready-to-post content.{" "}
@@ -207,7 +205,21 @@ export default function Landing() {
         </section>
 
 
-        {/* ── Value Pillars ── */}
+
+        {/* ── Publish Everywhere Banner ── */}
+        <section className="px-6 pb-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="glass rounded-2xl px-8 py-6 text-center border border-electric/30">
+              <p style={{fontFamily: "var(--font-display)"}} className="text-2xl md:text-3xl text-primary font-light">
+                ✦ Create. Script. Record.
+                <span className="text-electric-glow"> Publish everywhere.</span>
+              </p>
+              <p className="text-tertiary text-sm mt-2">All in one flow. No switching apps. No copy-paste. No wasted time.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Value Pillars ── */
         <section className="py-12 px-6">
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
