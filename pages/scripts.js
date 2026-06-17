@@ -108,8 +108,6 @@ export default function Scripts() {
       setSavedScripts(scripts || [])
       setLoading(false)
       try { const t = localStorage.getItem('script_topic'); if (t) { setTopic(t); localStorage.removeItem('script_topic') } } catch(e) {}
-      const savedTopic = localStorage.getItem('script_topic')
-      if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
     }
     load()
   }, [router])
