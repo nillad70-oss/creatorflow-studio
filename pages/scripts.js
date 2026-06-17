@@ -130,11 +130,11 @@ export default function Scripts() {
           setContentGoal('engagement')
           setSelectedAgent('copywriter')
         }
-        window.__nillaflow_format = savedFormat
+        localStorage.setItem('nf_format', savedFormat)
         localStorage.removeItem('script_format')
       }
       if (savedHook) {
-        window.__nillaflow_hook = savedHook
+        localStorage.setItem('nf_hook', savedHook)
         localStorage.removeItem('script_hook')
       }
       if (savedCta) {
@@ -146,15 +146,15 @@ export default function Scripts() {
       const savedDay = localStorage.getItem('script_day')
       const savedWeek = localStorage.getItem('script_week')
       if (savedCompetitors) {
-        window.__nillaflow_competitors = savedCompetitors
+          localStorage.setItem('nf_competitors', savedCompetitors)
         localStorage.removeItem('script_competitors')
       }
       if (savedStrategy) {
-        window.__nillaflow_strategy = savedStrategy
+          localStorage.setItem('nf_strategy', savedStrategy)
         localStorage.removeItem('script_strategy')
       }
-      if (savedDay) { window.__nillaflow_day = savedDay; localStorage.removeItem('script_day') }
-      if (savedWeek) { window.__nillaflow_week = savedWeek; localStorage.removeItem('script_week') }
+      if (savedDay) { localStorage.setItem('nf_day', savedDay); localStorage.removeItem('script_day') }
+      if (savedWeek) { localStorage.setItem('nf_week', savedWeek); localStorage.removeItem('script_week') }
     }
     load()
   }, [router])
@@ -172,13 +172,13 @@ export default function Scripts() {
           script_mode: scriptMode, content_goal: contentGoal,
           creator_agent: selectedAgent, offer_types: offerTypes,
           audience_problems: audienceProblems, cta_objectives: ctaObjectives,
-          format_context: (typeof window !== 'undefined' ? window.__nillaflow_format : '') || '',
-          hook_context: (typeof window !== 'undefined' ? window.__nillaflow_hook : '') || '',
-          cta_context: (typeof window !== 'undefined' ? localStorage.getItem('script_cta_context') : '') || '',
-          competitors: (typeof window !== 'undefined' ? window.__nillaflow_competitors : '') || '[]',
-          strategy: (typeof window !== 'undefined' ? window.__nillaflow_strategy : '') || '{}',
-          day_number: (typeof window !== 'undefined' ? window.__nillaflow_day : '') || '',
-          week_number: (typeof window !== 'undefined' ? window.__nillaflow_week : '') || '',
+          format_context: localStorage.getItem('nf_format') || '',
+          hook_context: localStorage.getItem('nf_hook') || '',
+          cta_context: localStorage.getItem('script_cta_context') || '',
+          competitors: localStorage.getItem('nf_competitors') || '[]',
+          strategy: localStorage.getItem('nf_strategy') || '{}',
+          day_number: localStorage.getItem('nf_day') || '',
+          week_number: localStorage.getItem('nf_week') || '',
         }),
       })
       const data = await response.json()
