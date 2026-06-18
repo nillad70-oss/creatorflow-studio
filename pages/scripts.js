@@ -93,9 +93,9 @@ export default function Scripts() {
   const [generatedScript, setGeneratedScript] = useState(null)
 
   // Safe null-guarded charCount — never crashes
-  const hook = generatedScript?.hook || ""
-  const body = generatedScript?.body || ""
-  const cta = generatedScript?.cta || ""
+  const hook = (generatedScript && generatedScript.hook) ? generatedScript.hook : ""
+  const body = (generatedScript && generatedScript.body) ? generatedScript.body : ""
+  const cta = (generatedScript && generatedScript.cta) ? generatedScript.cta : ""
   const charCount = generatedScript ? (hook + " " + body + " " + cta).length : 0
 
   useEffect(() => {
