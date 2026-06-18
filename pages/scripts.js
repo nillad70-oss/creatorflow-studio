@@ -373,7 +373,7 @@ export default function Scripts() {
             {/* ── Right Column — Output ── */}
             <div>
               {generatedScript ? (
-                <div className="page-enter">
+                <div>
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h2 style={{fontFamily: "var(--font-display)"}} className="text-xl text-primary font-light">Your Script</h2>
