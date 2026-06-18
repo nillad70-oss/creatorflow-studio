@@ -107,6 +107,12 @@ export default function Scripts() {
       const { data: scripts } = await supabase.from("scripts").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(10)
       setSavedScripts(scripts || [])
       setLoading(false)
+      try {
+        const t = localStorage.getItem('script_topic')
+        if (t) { setTopic(t); localStorage.removeItem('script_topic') }
+        const last = localStorage.getItem('last_script')
+        if (last) { setGeneratedScript(JSON.parse(last)) }
+      } catch(e) {}
       const savedTopic = localStorage.getItem('script_topic')
       if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
     }
@@ -131,6 +137,7 @@ export default function Scripts() {
       const data = await response.json()
       if (!response.ok) { setError(data.error || "Failed to generate script."); setGenerating(false); return }
       setGeneratedScript(data.script)
+      try { localStorage.setItem('last_script', JSON.stringify(data.script)) } catch(e) {}
     } catch (err) { setError("Something went wrong. Please try again.") }
     setGenerating(false)
   }
