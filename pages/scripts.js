@@ -93,7 +93,7 @@ export default function Scripts() {
   const [generatedScript, setGeneratedScript] = useState(null)
 
   const charCount = generatedScript
-    ? (generatedScript.hook + " " + generatedScript.body + " " + generatedScript.cta).length
+    ? ((generatedScript.hook || "") + " " + (generatedScript.body || "") + " " + (generatedScript.cta || "")).length
     : 0
 
   useEffect(() => {
@@ -111,7 +111,7 @@ export default function Scripts() {
         const t = localStorage.getItem('script_topic')
         if (t) { setTopic(t); localStorage.removeItem('script_topic') }
         const last = localStorage.getItem('last_script')
-        if (last) { setGeneratedScript(JSON.parse(last)) }
+        if (last) { try { setGeneratedScript(JSON.parse(last)) } catch(e) {} }
       } catch(e) {}
 
     }
@@ -320,7 +320,7 @@ export default function Scripts() {
                       <span className="text-tertiary text-xs">— core value</span>
                     </div>
                     <div className="text-primary text-sm leading-relaxed space-y-2">
-                      {generatedScript.body.split("\n").map((line, i) => line.trim() ? <p key={i}>{line}</p> : null)}
+                      {(generatedScript.body || "").split("\n").map((line, i) => line.trim() ? <p key={i}>{line}</p> : null)}
                     </div>
                   </div>
                   <div className="glass rounded-2xl p-5 mb-3 border-gold/20">
