@@ -113,8 +113,7 @@ export default function Scripts() {
         const last = localStorage.getItem('last_script')
         if (last) { setGeneratedScript(JSON.parse(last)) }
       } catch(e) {}
-      const savedTopic = localStorage.getItem('script_topic')
-      if (savedTopic) { setTopic(savedTopic); localStorage.removeItem('script_topic') }
+
     }
     load()
   }, [router])
@@ -140,6 +139,12 @@ export default function Scripts() {
       try { localStorage.setItem('last_script', JSON.stringify(data.script)) } catch(e) {}
     } catch (err) { setError("Something went wrong. Please try again.") }
     setGenerating(false)
+  }
+
+  const handleClear = () => {
+    setGeneratedScript(null)
+    setTopic("")
+    try { localStorage.removeItem('last_script') } catch(e) {}
   }
 
   const handleSave = async () => {
@@ -296,6 +301,7 @@ export default function Scripts() {
                       <p className={`text-xs mt-0.5 ${charCount > 600 ? "text-error" : "text-secondary"}`}>{charCount} / 600 characters</p>
                     </div>
                     <div className="flex items-center gap-2">
+                      <button onClick={handleClear} className="px-4 py-2 rounded-lg text-xs btn-ghost">✕ Clear</button>
                       <button onClick={handleSave} disabled={saving} className="btn-ghost px-4 py-2 rounded-lg text-xs disabled:opacity-50">{saving ? "Saving..." : "↓ Save"}</button>
                       <button onClick={handleOpenInTeleprompter} className="btn-electric px-4 py-2 rounded-lg text-xs">▶ Teleprompter</button>
                       <button onClick={handleCopy} className="btn-ghost flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm">{copied ? "✓ Copied!" : "⎘ Copy"}</button>
