@@ -461,7 +461,8 @@ export default function Scripts() {
                       href="https://blotato.com/?ref=leonilla"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-electric w-full py-3 rounded-xl text-sm font-medium text-center block">
+                      className="btn-electric w-full py-3 rounded-xl text-sm font-medium text-center block"
+                    >
                       ✦ Schedule with Blotato
                     </a>
                   </div>
