@@ -383,7 +383,7 @@ export default function Scripts() {
                       <button onClick={handleClear} className="btn-ghost px-3 py-2 rounded-lg text-xs">✕ Clear</button>
                       <button onClick={handleSave} disabled={saving} className="btn-ghost px-4 py-2 rounded-lg text-xs disabled:opacity-50">{saving ? "Saving..." : "↓ Save"}</button>
                       <button onClick={handleOpenInTeleprompter} className="btn-electric px-4 py-2 rounded-lg text-xs">▶ Teleprompter</button>
-                      <button onClick={handleCopy} className="btn-ghost px-3 py-2 rounded-lg text-xs">{copied ? "✓" : "⎘"}</button>
+                      <button onClick={handleCopy} className="btn-ghost px-3 py-2 rounded-lg text-xs">{copied ? "Copied!" : "Copy"}</button>
                     </div>
                   </div>
 
@@ -454,7 +454,24 @@ export default function Scripts() {
                     </div>
                   )}
 
+                  <div className="glass rounded-2xl p-5 mt-3 border border-electric/20">
+                    <p className="text-xs font-mono uppercase tracking-widest text-electric-glow mb-1">Post Preview</p>
+                    <p className="text-tertiary text-xs mb-3">How your hook looks as a post</p>
+                    <div className="rounded-xl p-4 mb-3" style={{background: "linear-gradient(135deg, #1a1200 0%, #2a1f08 100%)"}}>
+                      <p className="text-xs uppercase tracking-widest mb-2" style={{color: "#C8A96E"}}>Hook</p>
+                      <p className="text-white text-sm font-medium leading-relaxed">{hook}</p>
+                    </div>
+                    <div className="rounded-xl p-4" style={{background: "#111"}}>
+                      <p className="text-xs uppercase tracking-widest mb-2 text-tertiary">Caption</p>
+                      <p className="text-secondary text-xs leading-relaxed">{body ? body.substring(0, 120) + "..." : ""}</p>
+                    </div>
+                  </div>
 
+                  <div className="glass rounded-2xl p-5 mt-3 border border-electric/20">
+                    <p className="text-xs font-mono uppercase tracking-widest text-electric-glow mb-1">Publish</p>
+                    <p className="text-tertiary text-xs mb-3">Schedule this post to all your platforms instantly</p>
+                    <Link href="https://blotato.com/?ref=leonilla" className="btn-electric w-full py-3 rounded-xl text-sm font-medium text-center block">Schedule with Blotato</Link>
+                  </div>
 
                 </div>
               ) : (
