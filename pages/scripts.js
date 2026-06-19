@@ -470,7 +470,7 @@ export default function Scripts() {
                   <div className="glass rounded-2xl p-5 mt-3 border border-electric/20">
                     <p className="text-xs font-mono uppercase tracking-widest text-electric-glow mb-1">Publish</p>
                     <p className="text-tertiary text-xs mb-3">Schedule this post to all your platforms instantly</p>
-                    <Link href="https://blotato.com/?ref=leonilla" className="btn-electric w-full py-3 rounded-xl text-sm font-medium text-center block">Schedule with Blotato</Link>
+                    <a href="https://blotato.com/?ref=leonilla" target="_blank" rel="noopener noreferrer" className="btn-electric w-full py-3 rounded-xl text-sm font-medium text-center block">Schedule with Blotato</a>
                   </div>
 
                 </div>
