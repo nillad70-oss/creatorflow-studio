@@ -18,7 +18,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5',
+        model: 'claude-sonnet-4-6',
         max_tokens: 2000,
         system: `You are an expert social media caption writer for ${niche || 'general'} creators on ${platform || 'instagram'} for NillaFlow Studio™.
 
@@ -51,6 +51,10 @@ Return ONLY a JSON object with: caption, solution_stack, creator_response, hasht
     })
 
     const data = await response.json()
+    if (!response.ok || !data.content) {
+      console.error('Anthropic API error:', JSON.stringify(data))
+      return res.status(500).json({ error: data.error?.message || 'AI API request failed' })
+    }
     const text = data.content[0].text
     const cleaned = text.replace(/```json\n?|\n?```/g, '').trim()
     const result = JSON.parse(cleaned)
