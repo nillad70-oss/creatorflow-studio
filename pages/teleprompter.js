@@ -107,10 +107,15 @@ export default function Teleprompter() {
             const filename = 'NillaFlow-recording.' + ext
             const file = new File([blob], filename, { type: mimeType })
 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            const canShareFiles = !!(navigator.canShare && navigator.canShare({ files: [file] }))
+            alert('DEBUG: blob size=' + blob.size + ' bytes, canShare=' + canShareFiles)
+
+            if (canShareFiles) {
               try {
                 await navigator.share({ files: [file], title: 'NillaFlowRecording' })
+                alert('DEBUG: share() completed without error')
               } catch (shareErr) {
+                alert('DEBUG: share() threw: ' + shareErr.name + ' - ' + shareErr.message)
                 if (shareErr.name !== 'AbortError') {
                   const url = URL.createObjectURL(blob)
                   const a = document.createElement('a')
@@ -123,6 +128,7 @@ export default function Teleprompter() {
                 }
               }
             } else {
+              alert('DEBUG: taking download fallback path (this is the path that fails silently on iPhone)')
               const url = URL.createObjectURL(blob)
               const a = document.createElement('a')
               a.href = url
