@@ -10,6 +10,7 @@ export default function Teleprompter() {
   const [fontSize, setFontSize] = useState(28)
   const [isRecording, setIsRecording] = useState(false)
   const [recordingDone, setRecordingDone] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [countdown, setCountdown] = useState(null)
   const [cameraActive, setCameraActive] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
@@ -89,36 +90,54 @@ export default function Teleprompter() {
         setCountdown(null)
         chunksRef.current = []
         const mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 'video/webm'
+        const ext = mimeType.includes('mp4') ? 'mp4' : 'webm'
         const recorder = new MediaRecorder(streamRef.current, { mimeType })
         mediaRecorderRef.current = recorder
-        recorder.ondataavailable = e => chunksRef.current.push(e.data)
+        recorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunksRef.current.push(e.data) }
+        recorder.onerror = (e) => {
+          console.error('MediaRecorder error:', e.error)
+          setIsSaving(false)
+          alert('Recording error: ' + (e.error?.message || 'unknown error') + '. Please try again.')
+        }
         recorder.onstop = async () => {
-          const blob = new Blob(chunksRef.current, { type: mimeType })
-          
-          // Try Web Share API first (saves to Photos on iPhone)
-          if (navigator.canShare && navigator.canShare({ files: [new File([blob], 'recording.mp4', { type: 'video/mp4' })] })) {
-            try {
-              await navigator.share({
-                files: [new File([blob], 'NillaFlow-recording.mp4', { type: 'video/mp4' })],
-                title: 'NillaFlowRecording',
-              })
-            } catch (err) {
-              // User cancelled share - fall back to download
+          setIsSaving(true)
+          try {
+            if (chunksRef.current.length === 0) throw new Error('No video data was captured')
+            const blob = new Blob(chunksRef.current, { type: mimeType })
+            const filename = 'NillaFlow-recording.' + ext
+            const file = new File([blob], filename, { type: mimeType })
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              try {
+                await navigator.share({ files: [file], title: 'NillaFlowRecording' })
+              } catch (shareErr) {
+                if (shareErr.name !== 'AbortError') {
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement('a')
+                  a.href = url
+                  a.download = filename
+                  document.body.appendChild(a)
+                  a.click()
+                  document.body.removeChild(a)
+                  URL.revokeObjectURL(url)
+                }
+              }
+            } else {
               const url = URL.createObjectURL(blob)
               const a = document.createElement('a')
               a.href = url
-              a.download = 'NillaFlow-recording.mp4'
+              a.download = filename
+              document.body.appendChild(a)
               a.click()
+              document.body.removeChild(a)
               URL.revokeObjectURL(url)
             }
-          } else {
-            // Desktop - regular download
-            const url = URL.createObjectURL(blob)
-            const a = document.createElement('a')
-            a.href = url
-            a.download = 'NillaFlow-recording.mp4'
-            a.click()
-            URL.revokeObjectURL(url)
+            setRecordingDone(true)
+          } catch (err) {
+            console.error('Save failed:', err)
+            alert('Save failed: ' + err.message + '. Please try recording again.')
+          } finally {
+            setIsSaving(false)
           }
         }
         recorder.start(100) // collect data every 100ms for smoother recording
@@ -129,10 +148,11 @@ export default function Teleprompter() {
   }
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current) mediaRecorderRef.current.stop()
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.stop()
+    }
     setIsRecording(false)
     setIsPlaying(false)
-    setRecordingDone(true)
     if (script) localStorage.setItem('caption_script', script)
   }
 
@@ -249,8 +269,17 @@ export default function Teleprompter() {
             </div>
           </div>
         )}
+      {/* SAVING OVERLAY */}
+        {isSaving && (
+          <div style={{position:'absolute',inset:0,zIndex:25,background:'rgba(0,0,0,0.92)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'32px'}}>
+            <div style={{width:'48px',height:'48px',border:'4px solid rgba(59,130,246,0.3)',borderTopColor:'#3b82f6',borderRadius:'50%',animation:'spin 0.8s linear infinite',marginBottom:'20px'}} />
+            <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+            <h2 style={{color:'white',fontSize:'20px',fontWeight:'600',textAlign:'center'}}>Saving your video...</h2>
+            <p style={{color:'#888',fontSize:'13px',marginTop:'8px',textAlign:'center'}}>Please don't close or leave this screen</p>
+          </div>
+        )}
       {/* POST RECORDING SCREEN */}
-        {recordingDone && (
+        {recordingDone && !isSaving && (
           <div style={{position:'absolute',inset:0,zIndex:20,background:'rgba(0,0,0,0.92)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'32px'}}>
             <div style={{fontSize:'48px',marginBottom:'16px'}}>🎬</div>
             <h2 style={{color:'white',fontSize:'24px',fontWeight:'600',marginBottom:'8px',textAlign:'center'}}>Recording Saved!</h2>
