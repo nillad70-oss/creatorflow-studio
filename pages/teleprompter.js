@@ -91,7 +91,7 @@ export default function Teleprompter() {
         chunksRef.current = []
         const mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 'video/webm'
         const ext = mimeType.includes('mp4') ? 'mp4' : 'webm'
-        const recorder = new MediaRecorder(streamRef.current, { mimeType })
+        const recorder = new MediaRecorder(streamRef.current, { mimeType, videoBitsPerSecond: 4000000, audioBitsPerSecond: 128000 })
         mediaRecorderRef.current = recorder
         recorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunksRef.current.push(e.data) }
         recorder.onerror = (e) => {
