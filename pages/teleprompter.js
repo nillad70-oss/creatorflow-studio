@@ -74,6 +74,12 @@ export default function Teleprompter() {
   }
 
   const stopCamera = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.onstop = null
+      mediaRecorderRef.current.ondataavailable = null
+      try { mediaRecorderRef.current.stop() } catch (e) {}
+      mediaRecorderRef.current = null
+    }
     if (streamRef.current) { streamRef.current.getTracks().forEach(t => t.stop()); streamRef.current = null }
     setCameraActive(false)
     setIsRecording(false)
@@ -81,6 +87,13 @@ export default function Teleprompter() {
   }
 
   const startRecording = () => {
+    // Kill any lingering recorder from a previous attempt before starting fresh
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      mediaRecorderRef.current.onstop = null
+      mediaRecorderRef.current.ondataavailable = null
+      try { mediaRecorderRef.current.stop() } catch (e) {}
+      mediaRecorderRef.current = null
+    }
     let count = 3
     setCountdown(count)
     const timer = setInterval(() => {
