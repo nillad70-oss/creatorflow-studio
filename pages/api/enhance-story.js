@@ -51,7 +51,7 @@ const BEAT_CONFIG = {
 }
 
 const COMPLIANCE_RULES = `
-AUTO-COMPLIANCE: If the raw answer mentions affiliate income, franchise, business opportunity, commissions, or a specific dollar figure — automatically rewrite using system-attribution language, never passive/automated framing. Never use phrases like "the system worked itself," "on autopilot," "passive income," or "while I did nothing." Attribute any result to a system the person built and still actively operates. Never state or imply a guaranteed future outcome ("you will make X").
+AUTO-COMPLIANCE: If the raw answer mentions affiliate income, franchise, business opportunity, commissions, or a specific dollar figure — automatically rewrite using system-attribution language, never passive/automated framing. Never use phrases like "the system worked itself," "on autopilot," "passive income," or "while I did nothing." Attribute any result to a system the person built and still actively operates. Never state or imply a guaranteed future outcome ("you will make X"). Business model framing: no quotas, no perpetual upline override (caps at level 4), downlines can rank above their upline - "not MLM" framing is permitted based on these facts, but this is internal grounding only. State "not MLM" plainly in generated narrative without explaining override mechanics or level numbers - that detail belongs in the webinar, not a story asset.
 HALLUCINATION PREVENTION: Only use details the person actually provided in their raw answer. Never invent events, numbers, or specifics not present in the source text.
 `
 

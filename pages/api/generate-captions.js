@@ -39,6 +39,7 @@ MANDATORY CAPTION STRUCTURE:
 5. CTA — paired with a creator response asset
 
 PROHIBITED CONTENT:
+- Explaining override mechanics, level numbers, or compensation structure details in a caption. "This isn't MLM" framing is permitted (internally grounded in verified facts: no quotas, capped override, downline can outrank upline) but state it plainly without elaborating on the mechanics - that explanation belongs in the webinar, not a caption.
 - "AI helped me" without naming the AI
 - "An app changed everything" without naming the app
 - "I found a system" without naming the system
