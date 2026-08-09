@@ -199,7 +199,7 @@ export default function BuildStory() {
       </Head>
 
       <div className="min-h-screen bg-void flex flex-col">
-        <div className="fixed inset-0 bg-electric-glow pointer-events-none" />
+        <div className="fixed inset-0 bg-glow-radial pointer-events-none" />
 
         {/* Progress bar */}
         <div className="fixed top-0 left-0 right-0 z-50 h-0.5 bg-border">

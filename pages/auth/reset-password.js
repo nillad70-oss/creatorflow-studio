@@ -71,7 +71,7 @@ export default function ResetPassword() {
       </Head>
 
       <div className="min-h-screen bg-void flex flex-col">
-        <div className="fixed inset-0 bg-electric-glow pointer-events-none" />
+        <div className="fixed inset-0 bg-glow-radial pointer-events-none" />
 
         {/* Nav */}
         <nav className="relative z-10 px-6 py-5">

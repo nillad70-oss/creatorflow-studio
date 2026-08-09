@@ -36,7 +36,7 @@ module.exports = {
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'electric-glow': 'radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.15) 0%, transparent 70%)',
+        'glow-radial': 'radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.15) 0%, transparent 70%)',
         'gold-glow': 'radial-gradient(ellipse at 50% 100%, rgba(212,168,83,0.08) 0%, transparent 60%)',
       },
       animation: {

@@ -166,7 +166,7 @@ export default function Landing() {
           <div className="relative max-w-4xl mx-auto text-center">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-electric/20 bg-electric/5 text-electric-glow text-xs font-medium mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-electric-glow animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-glow-radial animate-pulse" />
               AI-Powered Content Operating System
             </div>
 
@@ -645,7 +645,7 @@ export default function Landing() {
 
         {/* ── Final CTA ── */}
         <section className="py-24 px-6 relative overflow-hidden">
-          <div className="absolute inset-0 bg-electric-glow pointer-events-none" />
+          <div className="absolute inset-0 bg-glow-radial pointer-events-none" />
           <div className="relative max-w-3xl mx-auto text-center">
             <h2 style={{fontFamily: 'var(--font-display)'}} className="text-4xl md:text-6xl text-primary font-light mb-6 leading-tight">
               You already know what to say.

@@ -78,7 +78,7 @@ export default function MyStory() {
       </Head>
 
       <div className="min-h-screen bg-void">
-        <div className="fixed inset-0 bg-electric-glow pointer-events-none" />
+        <div className="fixed inset-0 bg-glow-radial pointer-events-none" />
 
         <nav className="relative z-10 px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
