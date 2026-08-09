@@ -1,3 +1,5 @@
+import { getStoryContext, buildStoryPromptBlock } from '../../lib/storyContext'
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
@@ -9,7 +11,14 @@ export default async function handler(req, res) {
     offer_types, audience_problems, cta_objectives,
     format_context, hook_context, cta_context,
     competitors, strategy, day_number, week_number,
+    user_id, story_objective,
   } = req.body
+
+  // Pull the creator's current story if they have one. Falls through
+  // silently to existing niche/audience-only generation if not - this
+  // never blocks a user who hasn't built a story yet.
+  const story = await getStoryContext(user_id)
+  const storyBlock = buildStoryPromptBlock(story, story_objective || 'full_story')
 
   if (!topic) return res.status(400).json({ error: 'Topic is required' })
 
@@ -64,7 +73,7 @@ Each agent has a distinct thinking framework:
 - Content Strategist: Topic angles, content planning, audience journey
 
 Apply the ${activeAgent} thinking framework to every creative decision in this script.
-
+${storyBlock ? `\n${storyBlock}\nWrite this script grounded in the creator's real story above, not generic language. Use the usable assets as raw material, not as text to copy verbatim.\n` : ''}
 CREATOR CONTEXT:
 - Niche: ${niche || 'General'}
 - Audience: ${audience || 'Professional women'}

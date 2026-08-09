@@ -1,11 +1,15 @@
+import { getStoryContext } from '../../lib/storyContext'
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { niche, audience, tone, platform, days } = req.body
+  const { niche, audience, tone, platform, days, user_id } = req.body
   const platformList = Array.isArray(platform) ? platform.join(', ') : platform || 'Instagram'
   const dayCount = Math.min(days || 7, 30)
+
+  const story = await getStoryContext(user_id)
 
   const nicheIntelligence = {
     'Nursing & Healthcare': {
@@ -130,6 +134,25 @@ export default async function handler(req, res) {
   }
 
   const intelligence = nicheIntelligence[niche] || defaultIntelligence
+
+  // Fold the creator's own real pain points and doubts into the pool so
+  // generated ideas draw from their actual story, not just niche defaults.
+  // Falls through silently if they haven't built a story yet.
+  if (story?.story_beats?.rupture?.derived_assets?.pain_point_tags) {
+    intelligence.painPoints = [
+      ...story.story_beats.rupture.derived_assets.pain_point_tags,
+      ...intelligence.painPoints,
+    ]
+  }
+  if (story?.story_beats?.doubt?.derived_assets?.objection_reply_library) {
+    const doubtTopics = story.story_beats.doubt.derived_assets.objection_reply_library
+      .map(o => o.objection_type?.replace(/_/g, ' '))
+      .filter(Boolean)
+    intelligence.conversationTopics = [
+      ...doubtTopics,
+      ...intelligence.conversationTopics,
+    ]
+  }
 
   const systemPrompt = `You are NillaFlow Studio™ — a premier AI content intelligence engine.
 

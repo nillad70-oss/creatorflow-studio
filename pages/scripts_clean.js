@@ -126,6 +126,7 @@ export default function Scripts() {
           script_mode: scriptMode, content_goal: contentGoal,
           creator_agent: selectedAgent, offer_types: offerTypes,
           audience_problems: audienceProblems, cta_objectives: ctaObjectives,
+          user_id: user?.id,
         }),
       })
       const data = await response.json()

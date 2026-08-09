@@ -146,6 +146,7 @@ export default function Scripts() {
           offer_types: offerTypes,
           audience_problems: audienceProblems,
           cta_objectives: ctaObjectives,
+          user_id: user?.id,
         }),
       })
       const data = await response.json()

@@ -66,6 +66,7 @@ export default function Planner() {
           tone: profile?.tone,
           platform: profile?.preferred_platform,
           days: daysCount,
+          user_id: user?.id,
         }),
       })
 

@@ -62,6 +62,7 @@ export default function Captions() {
           style: captionStyle,
           niche: profile?.niche,
           platform: profile?.preferred_platform,
+          user_id: user?.id,
         }),
       })
 
