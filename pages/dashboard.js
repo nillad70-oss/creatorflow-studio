@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: '/my-story', label: 'My Story', icon: '✦' },
   { href: '/planner', label: 'Content Planner', icon: '◉' },
   { href: '/scripts', label: 'Scripts', icon: '❋' },
+  { href: '/adcopy', label: 'Ad Copy', icon: '▣' },
   { href: '/teleprompter', label: 'Teleprompter', icon: '▶' },
   { href: '/captions', label: 'Captions', icon: '◇' },
   { href: '/library', label: 'Library', icon: '◆' },
@@ -43,6 +44,13 @@ const QUICK_ACTIONS = [
     icon: '▶',
     href: '/teleprompter',
     color: 'electric',
+  },
+  {
+    title: 'Write Ad Copy',
+    desc: 'Headlines, primary text, and descriptions built for Meta ads',
+    icon: '▣',
+    href: '/adcopy',
+    color: 'gold',
   },
   {
     title: 'Generate Captions',
