@@ -83,6 +83,9 @@ export default function Scripts() {
   const [savedScripts, setSavedScripts] = useState([])
   const [copied, setCopied] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [editingContext, setEditingContext] = useState(false)
+  const [customNiche, setCustomNiche] = useState('')
+  const [customAudience, setCustomAudience] = useState('')
   const [topic, setTopic] = useState("")
   const [selectedAgent, setSelectedAgent] = useState("viral_creator")
   const [scriptMode, setScriptMode] = useState("promotional")
@@ -136,8 +139,8 @@ export default function Scripts() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           topic,
-          niche: profile?.niche,
-          audience: profile?.audience,
+          niche: customNiche.trim() || profile?.niche,
+          audience: customAudience.trim() || profile?.audience,
           tone: profile?.tone,
           platform: profile?.preferred_platform,
           script_mode: scriptMode,
@@ -338,10 +341,61 @@ export default function Scripts() {
                 ) : "✦ Generate Script"}
               </button>
 
-              {profile?.niche && (
-                <p className="text-tertiary text-xs text-center mt-3">
-                  Generating for {profile.niche} · {profile.audience}
-                </p>
+              {profile?.niche && !editingContext && (
+                <div className="text-center mt-3">
+                  <p className="text-tertiary text-xs">
+                    Generating for {customNiche.trim() || profile.niche} · {customAudience.trim() || profile.audience}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setCustomNiche(customNiche || profile.niche || '')
+                      setCustomAudience(customAudience || profile.audience || '')
+                      setEditingContext(true)
+                    }}
+                    className="text-electric-glow text-xs underline mt-1"
+                  >
+                    Change for this script
+                  </button>
+                </div>
+              )}
+
+              {editingContext && (
+                <div className="glass rounded-xl p-4 mt-3 space-y-3">
+                  <div>
+                    <label className="text-secondary text-xs block mb-1">Topic / niche for this script</label>
+                    <input
+                      type="text"
+                      value={customNiche}
+                      onChange={(e) => setCustomNiche(e.target.value)}
+                      placeholder="e.g. digital business, nursing career, AI tools"
+                      className="w-full px-3 py-2 rounded-lg bg-void border border-border text-primary text-sm focus:outline-none focus:border-electric"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-secondary text-xs block mb-1">Audience for this script</label>
+                    <input
+                      type="text"
+                      value={customAudience}
+                      onChange={(e) => setCustomAudience(e.target.value)}
+                      placeholder="e.g. busy professionals, working parents"
+                      className="w-full px-3 py-2 rounded-lg bg-void border border-border text-primary text-sm focus:outline-none focus:border-electric"
+                    />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setEditingContext(false)}
+                      className="text-xs px-4 py-2 rounded-lg bg-electric text-white"
+                    >
+                      Done
+                    </button>
+                    <button
+                      onClick={() => { setCustomNiche(''); setCustomAudience(''); setEditingContext(false) }}
+                      className="text-xs text-tertiary underline"
+                    >
+                      Reset to my default profile
+                    </button>
+                  </div>
+                </div>
               )}
 
               {savedScripts.length > 0 && (
