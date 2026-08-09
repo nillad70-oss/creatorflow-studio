@@ -6,7 +6,7 @@ import { createClient } from '../lib/supabase/client'
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Home', icon: '◈' },
-  { href: '/build-story', label: 'My Story', icon: '✦' },
+  { href: '/my-story', label: 'My Story', icon: '✦' },
   { href: '/planner', label: 'Content Planner', icon: '◉' },
   { href: '/scripts', label: 'Scripts', icon: '❋' },
   { href: '/teleprompter', label: 'Teleprompter', icon: '▶' },
@@ -16,10 +16,10 @@ const NAV_ITEMS = [
 
 const QUICK_ACTIONS = [
   {
-    title: 'Build Your Story',
-    desc: 'Answer 6 questions once — power every piece of content after',
+    title: 'My Story',
+    desc: 'View, update, or build a new version of your story',
     icon: '✦',
-    href: '/build-story',
+    href: '/my-story',
     color: 'gold',
     featured: true,
   },
