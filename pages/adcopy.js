@@ -209,7 +209,12 @@ export default function AdCopy() {
                       </div>
 
                       <div className="mb-3">
-                        <p className="text-tertiary text-xs uppercase tracking-widest mb-1">Primary Text</p>
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-tertiary text-xs uppercase tracking-widest">Primary Text</p>
+                          <span className={`text-xs ${v.primary_text?.length > 200 ? 'text-red-400' : 'text-tertiary'}`}>
+                            {v.primary_text?.length || 0} chars
+                          </span>
+                        </div>
                         <p className="text-secondary text-sm">{v.primary_text}</p>
                       </div>
 

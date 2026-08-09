@@ -46,11 +46,13 @@ RETENTION MECHANICS after the hook: use pattern interrupts every 2-3 sentences (
 
 COPYWRITING FORMULA: structure the primary text using Problem-Agitate-Solution or a comparable proven direct-response structure - name the problem specifically, agitate why it actually hurts (not generically, tied to the real audience pain points above), then position the solution as the natural next step, not a hard pitch.
 
-META AD FORMAT - strict limits, not suggestions:
+META AD FORMAT - these are HARD LIMITS, not aspirational targets. Primary Text that runs to full paragraphs is a FAILED output, even if the content is good - long text kills scroll-stopping performance, which defeats the entire purpose of this tool:
 - Video Hook: the first spoken/on-screen line only, under 15 words, this is what plays in the first 3 seconds
-- Primary Text: under 125 characters ideal (hard cap 2200)
+- Primary Text: 2-3 SHORT sentences MAXIMUM, targeting 125 characters, absolute hard cap 200 characters. If you cannot say it in 2-3 short sentences, cut content, do not run longer. This is ad copy, not a script - every unnecessary word costs performance.
 - Headline: under 40 characters
 - Description: under 30 characters
+
+Before finalizing each variant, count the primary_text length. If any variant exceeds 200 characters, rewrite it shorter before returning your answer - do not return long-form copy.
 
 Generate 3 DISTINCT hook mechanics (not 3 versions of the same angle - use 3 different mechanics from the list above), each with its own matching primary text and headline, so each variant is a complete, internally consistent ad concept, not mixed-and-matched pieces.
 
