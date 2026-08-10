@@ -344,9 +344,17 @@ export default function AdCopy() {
                   {result.variants?.map((v, i) => (
                     <div key={i} className="bg-surface border border-border rounded-xl p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <span className="px-2 py-0.5 rounded-full bg-electric/20 text-electric-glow text-xs uppercase tracking-wide">
-                          {v.hook_mechanic}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded-full bg-electric/20 text-electric-glow text-xs uppercase tracking-wide">
+                            {v.hook_mechanic}
+                          </span>
+                          {v.visually_grounded === true && (
+                            <span className="px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 text-xs">✓ Uses your images</span>
+                          )}
+                          {v.visually_grounded === false && (
+                            <span className="px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 text-xs">Generic - not visually grounded</span>
+                          )}
+                        </div>
                         <button
                           onClick={() => copyText(`${v.video_hook}\n\n${v.primary_text}\n\n${v.headline}`, `v-${i}`)}
                           className="text-tertiary text-xs"

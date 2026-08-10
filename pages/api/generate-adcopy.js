@@ -129,10 +129,11 @@ Return ONLY a raw JSON object, no markdown, no backticks:
       "hook_mechanic": "which mechanic this uses (contradiction / cold-open / direct-callout / curiosity-gap)",
       "video_hook": "the first 3-second line",
       "primary_text": "full primary text using this hook",
-      "headline": "matching headline"
+      "headline": "matching headline"${assetAnalyses.length > 0 ? `,
+      "visual_element_used": "name the ONE specific, concrete visual element from visual_story_synthesis that THIS variant's video_hook or primary_text actually uses (e.g. 'the blue dress', 'the garden path', 'the plated meal'). If you cannot name one because this variant doesn't actually use any visual detail, you must go back and rewrite video_hook/primary_text before answering - do not leave this vague or generic."` : ''}
     },
-    { "hook_mechanic": "...", "video_hook": "...", "primary_text": "...", "headline": "..." },
-    { "hook_mechanic": "...", "video_hook": "...", "primary_text": "...", "headline": "..." }
+    { "hook_mechanic": "...", "video_hook": "...", "primary_text": "...", "headline": "..."${assetAnalyses.length > 0 ? `, "visual_element_used": "..."` : ''} },
+    { "hook_mechanic": "...", "video_hook": "...", "primary_text": "...", "headline": "..."${assetAnalyses.length > 0 ? `, "visual_element_used": "..."` : ''} }
   ],
   "description": "...",
   "recommended_pairing": "one sentence on which full variant to test first and why, specifically what makes its hook mechanic strongest for this audience"
@@ -183,10 +184,25 @@ Return ONLY a raw JSON object, no markdown, no backticks:
     }
 
     if (Array.isArray(result.variants)) {
-      result.variants = result.variants.map(v => ({
-        ...v,
-        primary_text: enforceLength(v.primary_text),
-      }))
+      result.variants = result.variants.map(v => {
+        const updated = { ...v, primary_text: enforceLength(v.primary_text) }
+
+        // Don't just trust the model's self-report - actually check whether
+        // the visual element it claims to use shows up in the copy. This is
+        // what caught the earlier inconsistency (model said it was grounded
+        // when only 1 of 3 variants actually was).
+        if (assetAnalyses.length > 0) {
+          const claimedElement = (v.visual_element_used || '').toLowerCase().trim()
+          const copyText = `${v.video_hook || ''} ${v.primary_text || ''}`.toLowerCase()
+          const keyWords = claimedElement.split(/\s+/).filter(w => w.length > 3)
+          const actuallyGrounded = claimedElement.length > 0 &&
+            claimedElement !== 'n/a' &&
+            keyWords.some(word => copyText.includes(word))
+          updated.visually_grounded = actuallyGrounded
+        }
+
+        return updated
+      })
     }
 
     return res.status(200).json({
