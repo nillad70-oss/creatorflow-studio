@@ -94,12 +94,14 @@ ${offerText ? `WHAT'S BEING PROMOTED: ${offerText}\n` : ''}${problemText ? `AUDI
 ${storyBlock}${assetBlock}
 ${(storyBlock && assetBlock) ? `CONNECT THE STORY AND THE IMAGES - THIS IS NOT OPTIONAL: The story context and the uploaded images are about the SAME PERSON'S SAME LIFE. Read them together the way an attentive friend would, not as two separate inputs. If the story describes a "before" (missed time, no room for herself, working shifts that ate every hour) and the images show a "now" (leisure, family meals, flowers, free time), that contrast IS the visual story - connect it yourself, automatically, the way a person naturally would. Do not wait for an explicit note spelling out the connection before you're willing to make it. If a story note is also provided above, treat it as confirmation and extra specificity, not as the only source of the connection - you should already be seeing it from the story and images alone.` : ''}
 
-THE FIRST 3 SECONDS DECIDE EVERYTHING. Before writing anything else, engineer the video hook using ONE of these proven pattern-interrupt mechanics - pick whichever fits the topic and story context best:
-- Contradiction hook: state something that seems to contradict itself or common belief ("I spent 27 years becoming an expert, then quit using any of it")
-- Cold-open mid-story: drop the viewer into the middle of a specific moment, no setup ("The day I almost didn't take the shift...")
-- Direct callout + confession: name the exact viewer, then admit something unexpected ("If you're a nurse reading this at 2am between patients — here's what I wish someone told me")
-- Curiosity gap: promise a specific reveal without giving it away yet ("There's one number my old paycheck could never hit. Here's what changed.")
-A hook that could apply to any creator in any niche is a FAILED hook. It must be impossible to write without this specific person's story.
+THE FIRST 3 SECONDS DECIDE EVERYTHING. Before writing anything else, engineer the video hook using ONE of these proven pattern-interrupt mechanics - pick whichever fits the topic and story context best. These examples are from an UNRELATED field (woodworking) purely to illustrate the MECHANIC, not the content - do not adapt, echo, or lightly reword these examples for this person's actual hook. If your hook shares more than one or two words with these examples, you have failed this instruction and must write a different one:
+- Contradiction hook: state something that seems to contradict itself or common belief (e.g. "I spent a decade perfecting dovetail joints. Then I started using screws.")
+- Cold-open mid-story: drop the viewer into the middle of a specific moment, no setup (e.g. "The chisel slipped an inch from my thumb, and that's when it clicked.")
+- Direct callout + confession: name the exact viewer, then admit something unexpected (e.g. "If you've got sawdust in your coffee right now - I used to think that was normal too.")
+- Curiosity gap: promise a specific reveal without giving it away yet (e.g. "There's one tool I never touch anymore. Here's what replaced it.")
+A hook that could apply to any creator in any niche is a FAILED hook. It must be impossible to write without THIS specific person's story and images.
+
+VARIETY REQUIREMENT: This person has generated ad copy multiple times before. A hook opening with "If you're a nurse reading this between shifts" (or close variations of it) has already been used repeatedly and is now BANNED - do not use it again in any form. Push for a genuinely different specific detail from their story or images each time, not the same safe default.
 
 RETENTION MECHANICS after the hook: use pattern interrupts every 2-3 sentences (a stat, a contradiction, a direct question, a tonal shift) - viral video ads lose viewers to flat, unbroken paragraphs. Build genuine emotional escalation: tension/pain first, then the turn, then the proof, then the invitation. This is not a features list - it's a felt experience compressed into seconds.
 
