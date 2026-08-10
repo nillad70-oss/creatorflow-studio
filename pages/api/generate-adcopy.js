@@ -207,7 +207,41 @@ Return ONLY a raw JSON object, no markdown, no backticks:
       })
     }
 
+    // Phase 2: create a session so this generation can be refined
+    // conversationally afterward. Wrapped so any failure here never breaks
+    // the existing generation response - this is purely additive.
+    let session_id = null
+    if (user_id) {
+      try {
+        const supabase = getServiceClient()
+        const { data: session } = await supabase
+          .from('creative_sessions')
+          .insert({
+            user_id,
+            session_type: 'adcopy',
+            context_snapshot: {
+              topic, niche, audience, platform, objective,
+              offer_types, audience_problems, cta_objectives,
+              story_objective, asset_ids, asset_story_note,
+            },
+          })
+          .select()
+          .single()
+
+        if (session) {
+          session_id = session.id
+          await supabase.from('session_messages').insert([
+            { session_id, role: 'user', content: `Generate ad copy for: ${topic}` },
+            { session_id, role: 'assistant', content: JSON.stringify(result) },
+          ])
+        }
+      } catch (sessionError) {
+        console.error('Session creation failed (non-blocking):', sessionError)
+      }
+    }
+
     return res.status(200).json({
+      session_id,
       ...result,
       ad_boost_warning: adBoostWarning,
     })

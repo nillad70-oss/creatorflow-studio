@@ -34,6 +34,11 @@ export default function AdCopy() {
   const [assetStoryNote, setAssetStoryNote] = useState('')
   const MAX_ASSETS = 6
 
+  const [sessionId, setSessionId] = useState(null)
+  const [refining, setRefining] = useState(false)
+  const [refineInput, setRefineInput] = useState('')
+  const [refineHistory, setRefineHistory] = useState([]) // [{role, text}]
+
   useEffect(() => {
     const load = async () => {
       const supabase = createClient()
@@ -144,11 +149,44 @@ export default function AdCopy() {
         setError(data.error || 'Failed to generate ad copy.')
       } else {
         setResult(data)
+        setSessionId(data.session_id || null)
+        setRefineHistory([])
       }
     } catch (e) {
       setError('Something went wrong. Please try again.')
     }
     setGenerating(false)
+  }
+
+  const handleRefine = async () => {
+    if (!refineInput.trim() || !sessionId) return
+    setRefining(true)
+    setError('')
+    const feedbackText = refineInput.trim()
+    setRefineHistory(prev => [...prev, { role: 'user', text: feedbackText }])
+    setRefineInput('')
+
+    try {
+      const response = await fetch('/api/session-refine', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id: sessionId,
+          user_id: user?.id,
+          feedback_message: feedbackText,
+        }),
+      })
+      const data = await response.json()
+      if (!response.ok) {
+        setError(data.error || 'Failed to revise.')
+      } else {
+        setResult(data)
+        setRefineHistory(prev => [...prev, { role: 'assistant', text: 'Updated the copy above based on your feedback.' }])
+      }
+    } catch (e) {
+      setError('Something went wrong revising. Please try again.')
+    }
+    setRefining(false)
   }
 
   const copyText = (text, idx) => {
@@ -399,6 +437,41 @@ export default function AdCopy() {
 
                   {result.recommended_pairing && (
                     <p className="text-tertiary text-xs italic">💡 {result.recommended_pairing}</p>
+                  )}
+
+                  {sessionId && (
+                    <div className="border-t border-border pt-4 mt-2">
+                      <p className="text-secondary text-xs mb-2">Not quite right? Tell Nilla what to change - it'll revise this, not start over.</p>
+
+                      {refineHistory.length > 0 && (
+                        <div className="space-y-2 mb-3">
+                          {refineHistory.map((m, i) => (
+                            <p key={i} className={`text-xs ${m.role === 'user' ? 'text-primary' : 'text-tertiary italic'}`}>
+                              {m.role === 'user' ? `You: ${m.text}` : m.text}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={refineInput}
+                          onChange={(e) => setRefineInput(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && !refining && handleRefine()}
+                          placeholder="e.g. make the hook stronger, less about career more about family"
+                          disabled={refining}
+                          className="flex-1 px-3 py-2 rounded-lg bg-void border border-border text-primary text-sm focus:outline-none focus:border-electric"
+                        />
+                        <button
+                          onClick={handleRefine}
+                          disabled={refining || !refineInput.trim()}
+                          className="px-4 py-2 rounded-lg text-xs font-medium bg-electric text-white disabled:opacity-50 shrink-0"
+                        >
+                          {refining ? 'Revising...' : 'Revise'}
+                        </button>
+                      </div>
+                    </div>
                   )}
                 </div>
               )}
