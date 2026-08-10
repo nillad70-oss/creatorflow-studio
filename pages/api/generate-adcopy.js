@@ -1,4 +1,34 @@
 import { getStoryContext, buildStoryPromptBlock } from '../../lib/storyContext'
+import { createClient } from '@supabase/supabase-js'
+
+function getServiceClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  )
+}
+
+// Fetches an asset's cached analysis if one is provided. Returns null if no
+// asset_id was passed, or if the asset/analysis isn't found - callers must
+// treat this as fully optional, never required, so existing single-shot
+// generation with no asset continues to behave exactly as before.
+async function getAssetContext(asset_id, user_id) {
+  if (!asset_id) return null
+  const supabase = getServiceClient()
+  const { data, error } = await supabase
+    .from('assets')
+    .select('ai_analysis')
+    .eq('id', asset_id)
+    .eq('user_id', user_id)
+    .single()
+  if (error || !data?.ai_analysis) return null
+  return data.ai_analysis
+}
+
+function buildAssetPromptBlock(analysis) {
+  if (!analysis) return ''
+  return `\nUPLOADED IMAGE CONTEXT (use this to ground the ad copy in what's actually shown):\n${analysis.description}\nSubject: ${analysis.subject}\nMood: ${analysis.mood}\n`
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -8,13 +38,16 @@ export default async function handler(req, res) {
   const {
     topic, niche, audience, platform, objective,
     offer_types, audience_problems, cta_objectives,
-    user_id, story_objective,
+    user_id, story_objective, asset_id,
   } = req.body
 
   if (!topic) return res.status(400).json({ error: 'Topic is required' })
 
   const story = await getStoryContext(user_id)
   const storyBlock = buildStoryPromptBlock(story, story_objective || 'close_cta')
+
+  const assetAnalysis = await getAssetContext(asset_id, user_id)
+  const assetBlock = buildAssetPromptBlock(assetAnalysis)
 
   // This is the exact case the ad-boost warning was built for - surface it
   // to the user before they spend budget, not as a gate, just a heads-up.
@@ -33,7 +66,7 @@ NICHE: ${niche || 'not specified'}
 AUDIENCE: ${audience || 'not specified'}
 OBJECTIVE: ${objective || 'conversions'}
 ${offerText ? `WHAT'S BEING PROMOTED: ${offerText}\n` : ''}${problemText ? `AUDIENCE PAIN POINTS: ${problemText}\n` : ''}DESIRED ACTION: ${ctaText}
-${storyBlock}
+${storyBlock}${assetBlock}
 
 THE FIRST 3 SECONDS DECIDE EVERYTHING. Before writing anything else, engineer the video hook using ONE of these proven pattern-interrupt mechanics - pick whichever fits the topic and story context best:
 - Contradiction hook: state something that seems to contradict itself or common belief ("I spent 27 years becoming an expert, then quit using any of it")
@@ -48,7 +81,7 @@ COPYWRITING FORMULA: structure the primary text using Problem-Agitate-Solution o
 
 META AD FORMAT - these are HARD LIMITS, not aspirational targets. Primary Text that runs to full paragraphs is a FAILED output, even if the content is good - long text kills scroll-stopping performance, which defeats the entire purpose of this tool:
 - Video Hook: the first spoken/on-screen line only, under 15 words, this is what plays in the first 3 seconds
-- Primary Text: 2-3 SHORT sentences MAXIMUM, targeting 125 characters, absolute hard cap 200 characters. If you cannot say it in 2-3 short sentences, cut content, do not run longer. This is ad copy, not a script - every unnecessary word costs performance.
+- Primary Text: 2 SHORT sentences MAXIMUM, targeting 100 characters, absolute hard cap 200 characters. If you cannot say it in 2 short sentences, cut content, do not run longer. This is ad copy, not a script - every unnecessary word costs performance.
 - Headline: under 40 characters
 - Description: under 30 characters
 
@@ -105,6 +138,28 @@ Return ONLY a raw JSON object, no markdown, no backticks:
     }
 
     const result = JSON.parse(jsonMatch[0])
+
+    // Server-side enforcement, not just prompt instruction - the model doesn't
+    // reliably self-police its own length. Truncate at the last sentence
+    // boundary under 200 chars if possible, otherwise hard-cut with ellipsis.
+    const enforceLength = (text) => {
+      if (!text || text.length <= 200) return text
+      const truncated = text.slice(0, 200)
+      const lastSentenceEnd = Math.max(
+        truncated.lastIndexOf('. '),
+        truncated.lastIndexOf('! '),
+        truncated.lastIndexOf('? ')
+      )
+      if (lastSentenceEnd > 100) return truncated.slice(0, lastSentenceEnd + 1)
+      return truncated.slice(0, 197).trim() + '...'
+    }
+
+    if (Array.isArray(result.variants)) {
+      result.variants = result.variants.map(v => ({
+        ...v,
+        primary_text: enforceLength(v.primary_text),
+      }))
+    }
 
     return res.status(200).json({
       ...result,
