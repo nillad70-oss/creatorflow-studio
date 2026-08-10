@@ -27,6 +27,12 @@ export default function AdCopy() {
   const [customNiche, setCustomNiche] = useState('')
   const [customAudience, setCustomAudience] = useState('')
 
+  const [uploading, setUploading] = useState(false)
+  const [asset, setAsset] = useState(null) // { id, storage_path, ... }
+  const [assetPreviewUrl, setAssetPreviewUrl] = useState(null)
+  const [assetError, setAssetError] = useState('')
+  const [isPro, setIsPro] = useState(false)
+
   useEffect(() => {
     const load = async () => {
       const supabase = createClient()
@@ -35,10 +41,75 @@ export default function AdCopy() {
       setUser(user)
       const { data: profileData } = await supabase.from('users').select('*').eq('id', user.id).single()
       setProfile(profileData)
+      setIsPro(profileData?.subscription_tier === 'pro')
       setLoading(false)
     }
     load()
   }, [router])
+
+  const handleAssetUpload = async (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setAssetError('')
+
+    const ALLOWED = ['image/jpeg', 'image/png', 'image/webp']
+    if (!ALLOWED.includes(file.type)) {
+      setAssetError('Please upload a JPEG, PNG, or WebP image.')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setAssetError('Image must be under 5 MB.')
+      return
+    }
+
+    setUploading(true)
+    try {
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result.split(',')[1])
+        reader.onerror = reject
+        reader.readAsDataURL(file)
+      })
+
+      const uploadRes = await fetch('/api/upload-asset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: user.id,
+          file_base64: base64,
+          mime_type: file.type,
+          file_size_bytes: file.size,
+          filename: file.name,
+          asset_type: 'product_image',
+        }),
+      })
+      const uploadData = await uploadRes.json()
+      if (!uploadRes.ok) {
+        setAssetError(uploadData.error || 'Upload failed.')
+        setUploading(false)
+        return
+      }
+
+      setAsset(uploadData.asset)
+      setAssetPreviewUrl(URL.createObjectURL(file))
+
+      // Kick off analysis immediately so it's cached before generation runs
+      await fetch('/api/analyze-asset', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ asset_id: uploadData.asset.id, user_id: user.id }),
+      })
+    } catch (err) {
+      setAssetError('Something went wrong uploading the image.')
+    }
+    setUploading(false)
+  }
+
+  const removeAsset = () => {
+    setAsset(null)
+    setAssetPreviewUrl(null)
+    setAssetError('')
+  }
 
   const handleGenerate = async () => {
     if (!topic.trim()) { setError('Please enter a topic.'); return }
@@ -56,6 +127,7 @@ export default function AdCopy() {
           platform: profile?.preferred_platform,
           objective,
           user_id: user?.id,
+          asset_id: asset?.id || null,
         }),
       })
       const data = await response.json()
@@ -107,6 +179,40 @@ export default function AdCopy() {
                 rows={3}
                 className="w-full px-4 py-3 rounded-xl bg-surface border border-border text-primary text-sm resize-none focus:outline-none focus:border-electric mb-4"
               />
+
+              <div className="mb-4">
+                {!isPro ? (
+                  <div className="bg-surface border border-border rounded-xl px-4 py-3 flex items-center justify-between">
+                    <p className="text-tertiary text-xs">✦ Add Asset — analyze a product image (Pro feature)</p>
+                    <span className="text-electric-glow text-xs">Upgrade to unlock</span>
+                  </div>
+                ) : asset ? (
+                  <div className="bg-surface border border-border rounded-xl p-3 flex items-center gap-3">
+                    {assetPreviewUrl && (
+                      <img src={assetPreviewUrl} alt="Uploaded asset" className="w-14 h-14 rounded-lg object-cover" />
+                    )}
+                    <div className="flex-1">
+                      <p className="text-primary text-xs font-medium">Image attached</p>
+                      <p className="text-tertiary text-xs">Ad copy will reference this image</p>
+                    </div>
+                    <button onClick={removeAsset} className="text-tertiary text-xs underline">Remove</button>
+                  </div>
+                ) : (
+                  <label className="bg-surface border border-dashed border-border rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer">
+                    <span className="text-secondary text-xs">
+                      {uploading ? 'Uploading & analyzing...' : '✦ Add Asset — attach a product image (JPEG/PNG/WebP, max 5MB)'}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleAssetUpload}
+                      disabled={uploading}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+                {assetError && <p className="text-red-400 text-xs mt-1">{assetError}</p>}
+              </div>
 
               <div className="mb-4">
                 <label className="text-secondary text-xs block mb-2">Ad Objective</label>
