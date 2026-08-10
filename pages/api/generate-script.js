@@ -1,4 +1,13 @@
 import { getStoryContext, buildStoryPromptBlock } from '../../lib/storyContext'
+import { getAssetContext, buildAssetPromptBlock, buildStoryImageSynthesisInstruction } from '../../lib/assetContext'
+import { createClient } from '@supabase/supabase-js'
+
+function getServiceClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  )
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -11,7 +20,7 @@ export default async function handler(req, res) {
     offer_types, audience_problems, cta_objectives,
     format_context, hook_context, cta_context,
     competitors, strategy, day_number, week_number,
-    user_id, story_objective,
+    user_id, story_objective, asset_ids, asset_story_note,
   } = req.body
 
   // Pull the creator's current story if they have one. Falls through
@@ -19,6 +28,10 @@ export default async function handler(req, res) {
   // never blocks a user who hasn't built a story yet.
   const story = await getStoryContext(user_id)
   const storyBlock = buildStoryPromptBlock(story, story_objective || 'full_story')
+
+  const assetAnalyses = await getAssetContext(asset_ids, user_id)
+  const assetBlock = buildAssetPromptBlock(assetAnalyses, asset_story_note, 'script')
+  const synthesisInstruction = buildStoryImageSynthesisInstruction(storyBlock, assetBlock)
 
   if (!topic) return res.status(400).json({ error: 'Topic is required' })
 
@@ -73,7 +86,7 @@ Each agent has a distinct thinking framework:
 - Content Strategist: Topic angles, content planning, audience journey
 
 Apply the ${activeAgent} thinking framework to every creative decision in this script.
-${storyBlock ? `\n${storyBlock}\nWrite this script grounded in the creator's real story above, not generic language. Use the usable assets as raw material, not as text to copy verbatim.\n` : ''}
+${storyBlock ? `\n${storyBlock}\nWrite this script grounded in the creator's real story above, not generic language. Use the usable assets as raw material, not as text to copy verbatim.\n` : ''}${assetBlock}${synthesisInstruction}
 CREATOR CONTEXT:
 - Niche: ${niche || 'General'}
 - Audience: ${audience || 'Professional women'}
@@ -213,7 +226,9 @@ CREATOR RESPONSE: Exact warm conversational message creator sends when someone e
 
 You MUST return ONLY a raw JSON object. No markdown. No backticks. No explanation. No text before or after.
 Response must start with { and end with }
-Required keys: title, hook, body, cta, hashtags, solution_stack, creator_response`
+Required keys: title, hook, body, cta, hashtags, solution_stack, creator_response${assetAnalyses.length > 0 ? `, visual_story_synthesis, visual_element_used
+- visual_story_synthesis: 2-3 sentences on what the visual story is across the uploaded image(s)
+- visual_element_used: name the ONE specific visual element this script's hook or body actually uses. If you can't name one, rewrite the script before answering.` : ''}`
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -270,7 +285,49 @@ Platform: ${platform || 'Instagram'}. Keep total body under 600 characters.`
     }
 
     const script = JSON.parse(jsonMatch[0])
-    return res.status(200).json({ script })
+
+    // Real verification, not trusting the model's self-report - check
+    // whether the claimed visual element actually appears in the copy.
+    if (assetAnalyses.length > 0) {
+      const claimed = (script.visual_element_used || '').toLowerCase().trim()
+      const copyText = `${script.hook || ''} ${script.body || ''}`.toLowerCase()
+      const keyWords = claimed.split(/\s+/).filter(w => w.length > 3)
+      script.visually_grounded = claimed.length > 0 && claimed !== 'n/a' && keyWords.some(w => copyText.includes(w))
+    }
+
+    // Phase 2: create a session for conversational refinement, wrapped so
+    // failure here never breaks the existing generation response.
+    let session_id = null
+    if (user_id) {
+      try {
+        const supabase = getServiceClient()
+        const { data: session } = await supabase
+          .from('creative_sessions')
+          .insert({
+            user_id,
+            session_type: 'script',
+            context_snapshot: {
+              topic, niche, audience, tone, platform, script_mode,
+              content_goal, creator_agent, offer_types, audience_problems,
+              cta_objectives, format_context, hook_context, cta_context,
+              story_objective, asset_ids, asset_story_note,
+            },
+          })
+          .select()
+          .single()
+        if (session) {
+          session_id = session.id
+          await supabase.from('session_messages').insert([
+            { session_id, role: 'user', content: `Generate a script for: ${topic}` },
+            { session_id, role: 'assistant', content: JSON.stringify(script) },
+          ])
+        }
+      } catch (sessionError) {
+        console.error('Session creation failed (non-blocking):', sessionError)
+      }
+    }
+
+    return res.status(200).json({ script, session_id })
 
   } catch (error) {
     console.error('Generate script error:', error)
