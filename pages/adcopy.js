@@ -28,10 +28,10 @@ export default function AdCopy() {
   const [customAudience, setCustomAudience] = useState('')
 
   const [uploading, setUploading] = useState(false)
-  const [asset, setAsset] = useState(null) // { id, storage_path, ... }
-  const [assetPreviewUrl, setAssetPreviewUrl] = useState(null)
+  const [assets, setAssets] = useState([]) // array of { id, previewUrl }
   const [assetError, setAssetError] = useState('')
   const [isPro, setIsPro] = useState(false)
+  const MAX_ASSETS = 6
 
   useEffect(() => {
     const load = async () => {
@@ -48,66 +48,73 @@ export default function AdCopy() {
   }, [router])
 
   const handleAssetUpload = async (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const files = Array.from(e.target.files || [])
+    if (!files.length) return
     setAssetError('')
 
+    if (assets.length + files.length > MAX_ASSETS) {
+      setAssetError(`You can attach up to ${MAX_ASSETS} images per ad.`)
+      return
+    }
+
     const ALLOWED = ['image/jpeg', 'image/png', 'image/webp']
-    if (!ALLOWED.includes(file.type)) {
-      setAssetError('Please upload a JPEG, PNG, or WebP image.')
-      return
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      setAssetError('Image must be under 5 MB.')
-      return
-    }
-
     setUploading(true)
-    try {
-      const base64 = await new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.onload = () => resolve(reader.result.split(',')[1])
-        reader.onerror = reject
-        reader.readAsDataURL(file)
-      })
 
-      const uploadRes = await fetch('/api/upload-asset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: user.id,
-          file_base64: base64,
-          mime_type: file.type,
-          file_size_bytes: file.size,
-          filename: file.name,
-          asset_type: 'product_image',
-        }),
-      })
-      const uploadData = await uploadRes.json()
-      if (!uploadRes.ok) {
-        setAssetError(uploadData.error || 'Upload failed.')
-        setUploading(false)
-        return
+    for (const file of files) {
+      if (!ALLOWED.includes(file.type)) {
+        setAssetError('Please upload only JPEG, PNG, or WebP images.')
+        continue
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setAssetError('Each image must be under 5 MB.')
+        continue
       }
 
-      setAsset(uploadData.asset)
-      setAssetPreviewUrl(URL.createObjectURL(file))
+      try {
+        const base64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result.split(',')[1])
+          reader.onerror = reject
+          reader.readAsDataURL(file)
+        })
 
-      // Kick off analysis immediately so it's cached before generation runs
-      await fetch('/api/analyze-asset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ asset_id: uploadData.asset.id, user_id: user.id }),
-      })
-    } catch (err) {
-      setAssetError('Something went wrong uploading the image.')
+        const uploadRes = await fetch('/api/upload-asset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: user.id,
+            file_base64: base64,
+            mime_type: file.type,
+            file_size_bytes: file.size,
+            filename: file.name,
+            asset_type: 'product_image',
+          }),
+        })
+        const uploadData = await uploadRes.json()
+        if (!uploadRes.ok) {
+          setAssetError(uploadData.error || 'Upload failed.')
+          continue
+        }
+
+        const previewUrl = URL.createObjectURL(file)
+        setAssets(prev => [...prev, { id: uploadData.asset.id, previewUrl }])
+
+        // Analyze in the background - don't block subsequent uploads on this
+        fetch('/api/analyze-asset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ asset_id: uploadData.asset.id, user_id: user.id }),
+        }).catch(() => {})
+      } catch (err) {
+        setAssetError('Something went wrong uploading one of the images.')
+      }
     }
     setUploading(false)
+    e.target.value = '' // allow re-selecting the same file(s) later if removed and re-added
   }
 
-  const removeAsset = () => {
-    setAsset(null)
-    setAssetPreviewUrl(null)
+  const removeAsset = (assetId) => {
+    setAssets(prev => prev.filter(a => a.id !== assetId))
     setAssetError('')
   }
 
@@ -127,7 +134,7 @@ export default function AdCopy() {
           platform: profile?.preferred_platform,
           objective,
           user_id: user?.id,
-          asset_id: asset?.id || null,
+          asset_ids: assets.map(a => a.id),
         }),
       })
       const data = await response.json()
@@ -183,35 +190,51 @@ export default function AdCopy() {
               <div className="mb-4">
                 {!isPro ? (
                   <div className="bg-surface border border-border rounded-xl px-4 py-3 flex items-center justify-between">
-                    <p className="text-tertiary text-xs">✦ Add Asset — analyze a product image (Pro feature)</p>
+                    <p className="text-tertiary text-xs">✦ Add Assets — analyze images from your video or photos (Pro feature)</p>
                     <span className="text-electric-glow text-xs">Upgrade to unlock</span>
                   </div>
-                ) : asset ? (
-                  <div className="bg-surface border border-border rounded-xl p-3 flex items-center gap-3">
-                    {assetPreviewUrl && (
-                      <img src={assetPreviewUrl} alt="Uploaded asset" className="w-14 h-14 rounded-lg object-cover" />
-                    )}
-                    <div className="flex-1">
-                      <p className="text-primary text-xs font-medium">Image attached</p>
-                      <p className="text-tertiary text-xs">Ad copy will reference this image</p>
-                    </div>
-                    <button onClick={removeAsset} className="text-tertiary text-xs underline">Remove</button>
-                  </div>
                 ) : (
-                  <label className="bg-surface border border-dashed border-border rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer">
-                    <span className="text-secondary text-xs">
-                      {uploading ? 'Uploading & analyzing...' : '✦ Add Asset — attach a product image (JPEG/PNG/WebP, max 5MB)'}
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={handleAssetUpload}
-                      disabled={uploading}
-                      className="hidden"
-                    />
-                  </label>
+                  <div>
+                    {assets.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {assets.map((a) => (
+                          <div key={a.id} className="relative">
+                            <img src={a.previewUrl} alt="Uploaded asset" className="w-16 h-16 rounded-lg object-cover" />
+                            <button
+                              onClick={() => removeAsset(a.id)}
+                              className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-void border border-border text-tertiary text-xs flex items-center justify-center"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {assets.length < MAX_ASSETS && (
+                      <label className="bg-surface border border-dashed border-border rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer">
+                        <span className="text-secondary text-xs">
+                          {uploading
+                            ? 'Uploading & analyzing...'
+                            : assets.length === 0
+                              ? `✦ Add Assets — attach stills from your video or photos (up to ${MAX_ASSETS}, JPEG/PNG/WebP, max 5MB each)`
+                              : `Add another still (${assets.length}/${MAX_ASSETS})`}
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          multiple
+                          onChange={handleAssetUpload}
+                          disabled={uploading}
+                          className="hidden"
+                        />
+                      </label>
+                    )}
+                  </div>
                 )}
                 {assetError && <p className="text-red-400 text-xs mt-1">{assetError}</p>}
+                {assets.length > 1 && (
+                  <p className="text-tertiary text-xs mt-1">Ad copy will draw on all {assets.length} images together, as one continuous story.</p>
+                )}
               </div>
 
               <div className="mb-4">

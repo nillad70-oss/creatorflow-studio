@@ -12,22 +12,36 @@ function getServiceClient() {
 // asset_id was passed, or if the asset/analysis isn't found - callers must
 // treat this as fully optional, never required, so existing single-shot
 // generation with no asset continues to behave exactly as before.
-async function getAssetContext(asset_id, user_id) {
-  if (!asset_id) return null
+// Fetches cached analyses for multiple assets, in the order provided, so they
+// can be read as a sequence (e.g. stills from one video) rather than isolated
+// images. Returns an empty array if no asset_ids were passed - callers must
+// treat this as fully optional, same as story context.
+async function getAssetContext(asset_ids, user_id) {
+  if (!asset_ids || asset_ids.length === 0) return []
   const supabase = getServiceClient()
   const { data, error } = await supabase
     .from('assets')
-    .select('ai_analysis')
-    .eq('id', asset_id)
+    .select('id, ai_analysis')
+    .in('id', asset_ids)
     .eq('user_id', user_id)
-    .single()
-  if (error || !data?.ai_analysis) return null
-  return data.ai_analysis
+  if (error || !data) return []
+  // Preserve the order the user attached them in, not the DB return order
+  return asset_ids
+    .map(id => data.find(d => d.id === id))
+    .filter(d => d?.ai_analysis)
+    .map(d => d.ai_analysis)
 }
 
-function buildAssetPromptBlock(analysis) {
-  if (!analysis) return ''
-  return `\nUPLOADED IMAGE CONTEXT (use this to ground the ad copy in what's actually shown):\n${analysis.description}\nSubject: ${analysis.subject}\nMood: ${analysis.mood}\n`
+function buildAssetPromptBlock(analyses) {
+  if (!analyses || analyses.length === 0) return ''
+  if (analyses.length === 1) {
+    const a = analyses[0]
+    return `\nUPLOADED IMAGE CONTEXT (use this to ground the ad copy in what's actually shown):\n${a.description}\nSubject: ${a.subject}\nMood: ${a.mood}\n`
+  }
+  const sequence = analyses.map((a, i) =>
+    `Still ${i + 1}: ${a.description} (Subject: ${a.subject}, Mood: ${a.mood})`
+  ).join('\n')
+  return `\nUPLOADED IMAGE SEQUENCE (these are stills from the SAME video/story, in order - read them as one continuous narrative arc, not separate unrelated images. The ad copy should reflect the full arc across all stills, not just the first one):\n${sequence}\n`
 }
 
 export default async function handler(req, res) {
@@ -38,7 +52,7 @@ export default async function handler(req, res) {
   const {
     topic, niche, audience, platform, objective,
     offer_types, audience_problems, cta_objectives,
-    user_id, story_objective, asset_id,
+    user_id, story_objective, asset_ids,
   } = req.body
 
   if (!topic) return res.status(400).json({ error: 'Topic is required' })
@@ -46,8 +60,8 @@ export default async function handler(req, res) {
   const story = await getStoryContext(user_id)
   const storyBlock = buildStoryPromptBlock(story, story_objective || 'close_cta')
 
-  const assetAnalysis = await getAssetContext(asset_id, user_id)
-  const assetBlock = buildAssetPromptBlock(assetAnalysis)
+  const assetAnalyses = await getAssetContext(asset_ids, user_id)
+  const assetBlock = buildAssetPromptBlock(assetAnalyses)
 
   // This is the exact case the ad-boost warning was built for - surface it
   // to the user before they spend budget, not as a gate, just a heads-up.
