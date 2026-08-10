@@ -31,6 +31,7 @@ export default function AdCopy() {
   const [assets, setAssets] = useState([]) // array of { id, previewUrl }
   const [assetError, setAssetError] = useState('')
   const [isPro, setIsPro] = useState(false)
+  const [assetStoryNote, setAssetStoryNote] = useState('')
   const MAX_ASSETS = 6
 
   useEffect(() => {
@@ -135,6 +136,7 @@ export default function AdCopy() {
           objective,
           user_id: user?.id,
           asset_ids: assets.map(a => a.id),
+          asset_story_note: assetStoryNote.trim() || null,
         }),
       })
       const data = await response.json()
@@ -232,6 +234,20 @@ export default function AdCopy() {
                   </div>
                 )}
                 {assetError && <p className="text-red-400 text-xs mt-1">{assetError}</p>}
+                {assets.length > 0 && (
+                  <div className="mt-3">
+                    <label className="text-secondary text-xs block mb-1">
+                      Anything specific about these images? <span className="text-tertiary">(optional - Nilla will connect them to your story automatically, this just adds detail)</span>
+                    </label>
+                    <textarea
+                      value={assetStoryNote}
+                      onChange={(e) => setAssetStoryNote(e.target.value)}
+                      placeholder="e.g. Two years ago I never had time for this - not the flowers, not cooking a real Sunday dinner. This is what building this business actually bought me."
+                      rows={2}
+                      className="w-full px-3 py-2 rounded-lg bg-void border border-border text-primary text-sm resize-none focus:outline-none focus:border-electric"
+                    />
+                  </div>
+                )}
                 {assets.length > 1 && (
                   <p className="text-tertiary text-xs mt-1">Ad copy will draw on all {assets.length} images together, as one continuous story.</p>
                 )}
@@ -312,6 +328,13 @@ export default function AdCopy() {
 
               {result && (
                 <div className="mt-8 space-y-5">
+                  {result.visual_story_synthesis && (
+                    <div className="bg-electric/10 border border-electric/30 rounded-xl px-4 py-3">
+                      <p className="text-electric-glow text-xs uppercase tracking-widest mb-1">What Nilla saw in your images</p>
+                      <p className="text-primary text-sm">{result.visual_story_synthesis}</p>
+                    </div>
+                  )}
+
                   {result.ad_boost_warning && (
                     <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl px-4 py-3">
                       <p className="text-yellow-200 text-xs">⚠ {result.ad_boost_warning}</p>

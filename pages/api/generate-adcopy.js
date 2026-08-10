@@ -32,16 +32,27 @@ async function getAssetContext(asset_ids, user_id) {
     .map(d => d.ai_analysis)
 }
 
-function buildAssetPromptBlock(analyses) {
+function buildAssetPromptBlock(analyses, storyNote) {
   if (!analyses || analyses.length === 0) return ''
+
+  const describeOne = (a) =>
+    `Description: ${a.description}\nSetting: ${a.setting || 'not specified'}\nWardrobe/styling: ${a.wardrobe_or_styling || 'n/a'}\nMood: ${a.mood}\nLifestyle signals: ${a.lifestyle_signals || 'not specified'}\nNotable details: ${(a.notable_details || []).join(', ')}`
+
+  const noteBlock = storyNote
+    ? `\nTHE CREATOR TOLD YOU DIRECTLY WHAT THESE IMAGES MEAN - THIS TAKES PRIORITY OVER YOUR OWN VISUAL READ:\n"${storyNote}"\nUse this as the primary lens for interpreting the images. If an image seems visually unrelated to the others (different setting, different subject), do NOT flag it as an outlier or exclude it - the creator has already told you why it belongs. Ground the copy in the meaning they gave you, using the visual details below as supporting texture, not as the thing you're guessing the connection from.\n`
+    : ''
+
   if (analyses.length === 1) {
     const a = analyses[0]
-    return `\nUPLOADED IMAGE CONTEXT (use this to ground the ad copy in what's actually shown):\n${a.description}\nSubject: ${a.subject}\nMood: ${a.mood}\n`
+    return `\nUPLOADED IMAGE - REQUIRED CREATIVE CONTEXT:\n${describeOne(a)}\n${noteBlock}\nVISUAL GROUNDING REQUIREMENT: The ad copy MUST reference at least one concrete visual detail from this image (setting, styling, mood, or a notable detail) - not just a generic theme that could apply to any photo. Write as if you are looking directly at this image.\n`
   }
-  const sequence = analyses.map((a, i) =>
-    `Still ${i + 1}: ${a.description} (Subject: ${a.subject}, Mood: ${a.mood})`
-  ).join('\n')
-  return `\nUPLOADED IMAGE SEQUENCE (these are stills from the SAME video/story, in order - read them as one continuous narrative arc, not separate unrelated images. The ad copy should reflect the full arc across all stills, not just the first one):\n${sequence}\n`
+
+  const sequence = analyses.map((a, i) => `--- Still ${i + 1} ---\n${describeOne(a)}`).join('\n\n')
+  const outlierInstruction = storyNote
+    ? `Since the creator already explained what connects these images, treat all ${analyses.length} as one story per their explanation above - do not second-guess it with your own outlier detection.`
+    : `FIRST, determine the visual story: do these stills form ONE coherent narrative/theme, or does one or more stand apart from the rest? Be honest - do not force a false connection between images that don't actually belong together. If most stills share a clear theme but one is a clear outlier, name that explicitly rather than pretending they're all one story.`
+
+  return `\nUPLOADED IMAGE SEQUENCE - REQUIRED CREATIVE CONTEXT (${analyses.length} stills, in the order uploaded):\n${sequence}\n${noteBlock}\n${outlierInstruction}\n\nVISUAL GROUNDING REQUIREMENT: The ad copy MUST reference concrete visual details from the images (setting, styling, mood, specific actions or objects) - not a generic theme that ignores what's actually shown. State your approach in visual_story_synthesis below.\n`
 }
 
 export default async function handler(req, res) {
@@ -52,7 +63,7 @@ export default async function handler(req, res) {
   const {
     topic, niche, audience, platform, objective,
     offer_types, audience_problems, cta_objectives,
-    user_id, story_objective, asset_ids,
+    user_id, story_objective, asset_ids, asset_story_note,
   } = req.body
 
   if (!topic) return res.status(400).json({ error: 'Topic is required' })
@@ -61,7 +72,7 @@ export default async function handler(req, res) {
   const storyBlock = buildStoryPromptBlock(story, story_objective || 'close_cta')
 
   const assetAnalyses = await getAssetContext(asset_ids, user_id)
-  const assetBlock = buildAssetPromptBlock(assetAnalyses)
+  const assetBlock = buildAssetPromptBlock(assetAnalyses, asset_story_note)
 
   // This is the exact case the ad-boost warning was built for - surface it
   // to the user before they spend budget, not as a gate, just a heads-up.
@@ -81,6 +92,7 @@ AUDIENCE: ${audience || 'not specified'}
 OBJECTIVE: ${objective || 'conversions'}
 ${offerText ? `WHAT'S BEING PROMOTED: ${offerText}\n` : ''}${problemText ? `AUDIENCE PAIN POINTS: ${problemText}\n` : ''}DESIRED ACTION: ${ctaText}
 ${storyBlock}${assetBlock}
+${(storyBlock && assetBlock) ? `CONNECT THE STORY AND THE IMAGES - THIS IS NOT OPTIONAL: The story context and the uploaded images are about the SAME PERSON'S SAME LIFE. Read them together the way an attentive friend would, not as two separate inputs. If the story describes a "before" (missed time, no room for herself, working shifts that ate every hour) and the images show a "now" (leisure, family meals, flowers, free time), that contrast IS the visual story - connect it yourself, automatically, the way a person naturally would. Do not wait for an explicit note spelling out the connection before you're willing to make it. If a story note is also provided above, treat it as confirmation and extra specificity, not as the only source of the connection - you should already be seeing it from the story and images alone.` : ''}
 
 THE FIRST 3 SECONDS DECIDE EVERYTHING. Before writing anything else, engineer the video hook using ONE of these proven pattern-interrupt mechanics - pick whichever fits the topic and story context best:
 - Contradiction hook: state something that seems to contradict itself or common belief ("I spent 27 years becoming an expert, then quit using any of it")
@@ -109,7 +121,8 @@ NEVER use a specific dollar income figure in ad copy, even a true one - this is 
 NEVER guarantee a specific future outcome. A pattern-interrupt hook must never cross into shock content, fear-mongering, or misleading clickbait that the body copy doesn't deliver on.
 
 Return ONLY a raw JSON object, no markdown, no backticks:
-{
+{${assetAnalyses.length > 0 ? `
+  "visual_story_synthesis": "2-3 sentences: what is the visual story across the uploaded image(s)? Name the actual coherent theme (setting, styling, mood, activity). If one image is an outlier that doesn't fit, say so explicitly and explain how you handled it in the copy below.",` : ''}
   "variants": [
     {
       "hook_mechanic": "which mechanic this uses (contradiction / cold-open / direct-callout / curiosity-gap)",
