@@ -12,3 +12,5 @@ for f in supabase/migrations/*.sql; do psql -v ON_ERROR_STOP=1 -q -d "$DB" -f "$
 echo "migrations apply cleanly and are idempotent"
 out=$(psql -v ON_ERROR_STOP=1 -d "$DB" -f supabase/tests/phase0_billing_integrity.test.sql 2>&1) || { echo "$out"; exit 1; }
 echo "$out" | grep -oE "(PASS|FAIL)[^\"]*"
+out=$(psql -v ON_ERROR_STOP=1 -d "$DB" -f supabase/tests/definer_functions.test.sql 2>&1) || { echo "$out"; exit 1; }
+echo "$out" | grep -oE "(PASS|FAIL)[^\"]*"
