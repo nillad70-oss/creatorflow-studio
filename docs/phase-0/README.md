@@ -10,7 +10,7 @@ Nothing here is merged, deployed or applied to the production database.
 | 1. Safe dev environment | 🟡 Mostly complete | Branch ✅ · dev Supabase `nillaflow-dev` ✅ · production secrets made Production-only in Vercel ✅ · Preview → dev database ⏳ (branch-scoped Preview variables) · production schema export ⏳ · backup procedure ⏳ |
 | 2. Authentication fixes | ✅ Complete (in branch) | All acceptance criteria covered by tests below |
 | 3. Regression tests | ✅ API layer complete | 16 baseline workflow tests pass before and after; UI flows to be verified manually on the preview |
-| 4. Schema reconciliation | ⛔ Blocked | Needs the read-only production schema export; nothing will be reconstructed from assumptions |
+| 4. Schema reconciliation | ✅ Complete (migration awaiting approval) | Production export received; baseline + Phase 0 migrations tested locally (7/7). **Two critical findings** (payment upgrades failing silently; users can self-upgrade to Pro). See `schema-reconciliation.md` |
 | 5. Billing & usage | ✅ Prepared (in branch) | Pricing, trial and products unchanged; usage enforcement OFF by default |
 | 6. Repo maintenance | ✅ Partial | Stray files removed, CI added; remaining items need approval (below) |
 | 7. AI Twin readiness | ✅ Documented | See the Current-State Audit report §5; no AI Twin code written |
@@ -64,7 +64,8 @@ Moving to cookie sessions (`@supabase/ssr`) would allow true server-side page pr
 1. `INTENT_ENGINE_SERVICE_KEY` set in Vercel (Production) and in ReplyRush, if ReplyRush calls the intent engine today.
 2. Stripe webhook endpoint: add events `customer.subscription.created`, `customer.subscription.updated`, `invoice.payment_failed`, `invoice.paid` (existing: `checkout.session.completed`, `customer.subscription.deleted`).
 3. Stripe Customer Portal enabled (Settings → Billing → Customer portal).
-4. Production schema confirmed for `users.subscription_status`, `stripe_subscription_id`, `trial_ends_at` (Step 4).
+4. Verified backup taken, then migration `20261115000100_phase0_billing_integrity.sql` applied to production (approval required).
+6. One-time correction for paying customers who were never upgraded (Finding 1), matched from Stripe (approval required).
 5. Users with an open tab will need one page refresh after release (old JavaScript does not send the token; first API call returns "Please sign in").
 
 ## Awaiting approval
@@ -79,5 +80,5 @@ Moving to cookie sessions (`@supabase/ssr`) would allow true server-side page pr
 
 - Rate limits are per server instance; a shared store (e.g. Upstash Redis) is needed for global limits before paid AI Twin features.
 - Upload: Vercel caps request bodies at ~4.5 MB, below the 5 MB image limit once base64-encoded (pre-existing; consider direct-to-storage signed uploads).
-- Schema drift unresolved until the production export (Step 4).
+- Paying customers may currently be on the free tier because of Finding 1; impact not yet measured.
 - No automated UI tests yet; UI flows must be clicked through on the isolated preview.

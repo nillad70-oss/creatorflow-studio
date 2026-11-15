@@ -1,0 +1,250 @@
+kind,name,definition
+bucket,user-assets,"public=false | size_limit=5242880 | types=image/jpeg,image/png,image/webp"
+column,assets.ai_analysis,jsonb | nullable=YES | default=
+column,assets.analyzed_at,timestamp with time zone | nullable=YES | default=
+column,assets.asset_type,text | nullable=YES | default='image'::text
+column,assets.created_at,timestamp with time zone | nullable=YES | default=now()
+column,assets.file_size_bytes,integer | nullable=NO | default=
+column,assets.id,uuid | nullable=NO | default=gen_random_uuid()
+column,assets.mime_type,text | nullable=NO | default=
+column,assets.storage_path,text | nullable=NO | default=
+column,assets.user_id,uuid | nullable=NO | default=
+column,captions.created_at,timestamp with time zone | nullable=YES | default=now()
+column,captions.export_format,text | nullable=YES | default='plain'::text
+column,captions.id,uuid | nullable=NO | default=gen_random_uuid()
+column,captions.script_id,uuid | nullable=YES | default=
+column,captions.subtitle_text,text | nullable=YES | default=
+column,captions.user_id,uuid | nullable=NO | default=
+column,comment_intent_log.classified_intent,text | nullable=YES | default=
+column,comment_intent_log.comment_id,text | nullable=YES | default=
+column,comment_intent_log.comment_text,text | nullable=NO | default=
+column,comment_intent_log.confidence,numeric | nullable=YES | default=
+column,comment_intent_log.created_at,timestamp with time zone | nullable=YES | default=now()
+column,comment_intent_log.human_reply_sent,text | nullable=YES | default=
+column,comment_intent_log.id,uuid | nullable=NO | default=gen_random_uuid()
+column,comment_intent_log.needs_human_reply,boolean | nullable=YES | default=false
+column,comment_intent_log.objection_type,text | nullable=YES | default=
+column,comment_intent_log.platform,text | nullable=YES | default=
+column,comment_intent_log.reply_text,text | nullable=YES | default=
+column,comment_intent_log.user_id,uuid | nullable=NO | default=
+column,content_calendar.category,text | nullable=YES | default=
+column,content_calendar.content_type,text | nullable=YES | default=
+column,content_calendar.created_at,timestamp with time zone | nullable=YES | default=now()
+column,content_calendar.hook,text | nullable=YES | default=
+column,content_calendar.id,uuid | nullable=NO | default=gen_random_uuid()
+column,content_calendar.is_completed,boolean | nullable=YES | default=false
+column,content_calendar.platform,text | nullable=YES | default=
+column,content_calendar.publish_date,date | nullable=YES | default=
+column,content_calendar.topic,text | nullable=NO | default=
+column,content_calendar.user_id,uuid | nullable=NO | default=
+column,creative_sessions.context_snapshot,jsonb | nullable=NO | default='{}'::jsonb
+column,creative_sessions.created_at,timestamp with time zone | nullable=YES | default=now()
+column,creative_sessions.id,uuid | nullable=NO | default=gen_random_uuid()
+column,creative_sessions.session_type,text | nullable=YES | default='adcopy'::text
+column,creative_sessions.updated_at,timestamp with time zone | nullable=YES | default=now()
+column,creative_sessions.user_id,uuid | nullable=NO | default=
+column,scripts.body,text | nullable=YES | default=
+column,scripts.created_at,timestamp with time zone | nullable=YES | default=now()
+column,scripts.cta,text | nullable=YES | default=
+column,scripts.hook,text | nullable=YES | default=
+column,scripts.id,uuid | nullable=NO | default=gen_random_uuid()
+column,scripts.is_favorite,boolean | nullable=YES | default=false
+column,scripts.pacing,text | nullable=YES | default=
+column,scripts.platform,text | nullable=YES | default=
+column,scripts.script_mode,text | nullable=YES | default='educational'::text
+column,scripts.title,text | nullable=NO | default=
+column,scripts.topic,text | nullable=YES | default=
+column,scripts.updated_at,timestamp with time zone | nullable=YES | default=now()
+column,scripts.user_id,uuid | nullable=NO | default=
+column,session_messages.content,text | nullable=NO | default=
+column,session_messages.created_at,timestamp with time zone | nullable=YES | default=now()
+column,session_messages.id,uuid | nullable=NO | default=gen_random_uuid()
+column,session_messages.role,text | nullable=NO | default=
+column,session_messages.session_id,uuid | nullable=NO | default=
+column,story_profiles.compliance_flags,jsonb | nullable=NO | default='{}'::jsonb
+column,story_profiles.created_at,timestamp with time zone | nullable=YES | default=now()
+column,story_profiles.goal_type,text | nullable=YES | default=
+column,story_profiles.id,uuid | nullable=NO | default=gen_random_uuid()
+column,story_profiles.is_current,boolean | nullable=YES | default=false
+column,story_profiles.note,text | nullable=YES | default=
+column,story_profiles.story_beats,jsonb | nullable=NO | default='{}'::jsonb
+column,story_profiles.updated_at,timestamp with time zone | nullable=YES | default=now()
+column,story_profiles.user_id,uuid | nullable=NO | default=
+column,story_profiles.version,integer | nullable=NO | default=1
+column,story_profiles.voice_track,text | nullable=YES | default='personal'::text
+column,usage.captions_count,integer | nullable=YES | default=0
+column,usage.id,uuid | nullable=NO | default=gen_random_uuid()
+column,usage.ideas_count,integer | nullable=YES | default=0
+column,usage.month,text | nullable=NO | default=
+column,usage.scripts_count,integer | nullable=YES | default=0
+column,usage.user_id,uuid | nullable=NO | default=
+column,users.audience,text | nullable=YES | default=
+column,users.content_category,text | nullable=YES | default=
+column,users.content_goals,text | nullable=YES | default=
+column,users.created_at,timestamp with time zone | nullable=YES | default=now()
+column,users.creator_level,text | nullable=YES | default='beginner'::text
+column,users.email,text | nullable=NO | default=
+column,users.handles,jsonb | nullable=YES | default='{}'::jsonb
+column,users.id,uuid | nullable=NO | default=
+column,users.niche,text | nullable=YES | default=
+column,users.onboarding_complete,boolean | nullable=YES | default=false
+column,users.preferred_platform,text | nullable=YES | default='instagram'::text
+column,users.stripe_customer_id,text | nullable=YES | default=
+column,users.stripe_subscription_id,text | nullable=YES | default=
+column,users.subscription_tier,text | nullable=YES | default='free'::text
+column,users.tone,text | nullable=YES | default=
+column,users.trial_ends_at,timestamp with time zone | nullable=YES | default=
+column,users.updated_at,timestamp with time zone | nullable=YES | default=now()
+constraint,assets.assets_asset_type_check,"CHECK ((asset_type = ANY (ARRAY['image'::text, 'screenshot'::text, 'product_image'::text, 'brand_graphic'::text])))"
+constraint,assets.assets_pkey,PRIMARY KEY (id)
+constraint,assets.assets_user_id_fkey,FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+constraint,captions.captions_pkey,PRIMARY KEY (id)
+constraint,captions.captions_script_id_fkey,FOREIGN KEY (script_id) REFERENCES scripts(id) ON DELETE SET NULL
+constraint,captions.captions_user_id_fkey,FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+constraint,comment_intent_log.comment_intent_log_pkey,PRIMARY KEY (id)
+constraint,comment_intent_log.comment_intent_log_user_id_fkey,FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+constraint,content_calendar.content_calendar_pkey,PRIMARY KEY (id)
+constraint,content_calendar.content_calendar_user_id_fkey,FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+constraint,creative_sessions.creative_sessions_pkey,PRIMARY KEY (id)
+constraint,creative_sessions.creative_sessions_session_type_check,"CHECK ((session_type = ANY (ARRAY['adcopy'::text, 'script'::text, 'captions'::text])))"
+constraint,creative_sessions.creative_sessions_user_id_fkey,FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+constraint,scripts.scripts_pkey,PRIMARY KEY (id)
+constraint,scripts.scripts_user_id_fkey,FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+constraint,session_messages.session_messages_pkey,PRIMARY KEY (id)
+constraint,session_messages.session_messages_role_check,"CHECK ((role = ANY (ARRAY['user'::text, 'assistant'::text])))"
+constraint,session_messages.session_messages_session_id_fkey,FOREIGN KEY (session_id) REFERENCES creative_sessions(id) ON DELETE CASCADE
+constraint,story_profiles.story_profiles_goal_type_check,"CHECK ((goal_type = ANY (ARRAY['income_replacement'::text, 'education_savings'::text, 'career_freedom'::text, 'legacy'::text, 'debt_freedom'::text, 'other'::text])))"
+constraint,story_profiles.story_profiles_pkey,PRIMARY KEY (id)
+constraint,story_profiles.story_profiles_user_id_fkey,FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+constraint,story_profiles.story_profiles_voice_track_check,"CHECK ((voice_track = ANY (ARRAY['personal'::text, 'brand_joint'::text, 'other'::text])))"
+constraint,usage.usage_pkey,PRIMARY KEY (id)
+constraint,usage.usage_user_id_fkey,FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+constraint,usage.usage_user_id_month_key,"UNIQUE (user_id, month)"
+constraint,users.users_id_fkey,FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE
+constraint,users.users_pkey,PRIMARY KEY (id)
+constraint,users.users_stripe_customer_id_key,UNIQUE (stripe_customer_id)
+constraint,users.users_subscription_tier_check,"CHECK ((subscription_tier = ANY (ARRAY['free'::text, 'pro'::text])))"
+function,check_usage_limit,"CREATE OR REPLACE FUNCTION public.check_usage_limit(p_user_id uuid, p_type text)
+ RETURNS boolean
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  v_tier TEXT;
+  v_count INTEGER;
+  v_month TEXT := TO_CHAR(NOW(), 'YYYY-MM');
+BEGIN
+  SELECT subscription_tier INTO v_tier FROM public.users WHERE id = p_user_id;
+
+  -- Pro users have unlimited access
+  IF v_tier = 'pro' THEN RETURN TRUE; END IF;
+
+  -- Free tier limits
+  SELECT
+    CASE p_type
+      WHEN 'scripts' THEN scripts_count
+      WHEN 'ideas'   THEN ideas_count
+      WHEN 'captions' THEN captions_count
+    END
+  INTO v_count
+  FROM public.usage
+  WHERE user_id = p_user_id AND month = v_month;
+
+  IF v_count IS NULL THEN RETURN TRUE; END IF; -- No usage yet
+
+  -- Free limits: 5 scripts, 5 ideas, 3 captions per month
+  CASE p_type
+    WHEN 'scripts'  THEN RETURN v_count < 5;
+    WHEN 'ideas'    THEN RETURN v_count < 5;
+    WHEN 'captions' THEN RETURN v_count < 3;
+  END CASE;
+
+  RETURN FALSE;
+END;
+$function$
+"
+function,get_current_story,"CREATE OR REPLACE FUNCTION public.get_current_story(p_user_id uuid)
+ RETURNS TABLE(id uuid, goal_type text, voice_track text, story_beats jsonb, compliance_flags jsonb)
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+BEGIN
+  RETURN QUERY
+  SELECT sp.id, sp.goal_type, sp.voice_track, sp.story_beats, sp.compliance_flags
+  FROM public.story_profiles sp
+  WHERE sp.user_id = p_user_id AND sp.is_current = TRUE
+  LIMIT 1;
+END;
+$function$
+"
+function,handle_new_user,"CREATE OR REPLACE FUNCTION public.handle_new_user()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+BEGIN
+  INSERT INTO public.users (id, email)
+  VALUES (NEW.id, NEW.email)
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$function$
+"
+function,set_current_story,"CREATE OR REPLACE FUNCTION public.set_current_story(p_user_id uuid, p_story_id uuid)
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+BEGIN
+  UPDATE public.story_profiles
+  SET is_current = FALSE
+  WHERE user_id = p_user_id AND is_current = TRUE;
+
+  UPDATE public.story_profiles
+  SET is_current = TRUE
+  WHERE id = p_story_id AND user_id = p_user_id;
+END;
+$function$
+"
+function,update_updated_at,"CREATE OR REPLACE FUNCTION public.update_updated_at()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$function$
+"
+policy,public.assets.assets_all_own,"ALL | USING (auth.uid() = user_id) | CHECK "
+policy,public.captions.captions_all_own,"ALL | USING (auth.uid() = user_id) | CHECK "
+policy,public.comment_intent_log.comment_intent_log_all_own,"ALL | USING (auth.uid() = user_id) | CHECK "
+policy,public.content_calendar.calendar_all_own,"ALL | USING (auth.uid() = user_id) | CHECK "
+policy,public.creative_sessions.creative_sessions_all_own,"ALL | USING (auth.uid() = user_id) | CHECK "
+policy,public.scripts.scripts_all_own,"ALL | USING (auth.uid() = user_id) | CHECK "
+policy,public.session_messages.session_messages_all_via_session,"ALL | USING (session_id IN ( SELECT creative_sessions.id
+   FROM creative_sessions
+  WHERE (creative_sessions.user_id = auth.uid()))) | CHECK "
+policy,public.story_profiles.story_profiles_all_own,"ALL | USING (auth.uid() = user_id) | CHECK "
+policy,public.usage.usage_all_own,"ALL | USING (auth.uid() = user_id) | CHECK "
+policy,public.users.users_insert_own,INSERT | USING  | CHECK (auth.uid() = id)
+policy,public.users.users_select_own,"SELECT | USING (auth.uid() = id) | CHECK "
+policy,public.users.users_update_own,"UPDATE | USING (auth.uid() = id) | CHECK "
+policy,storage.objects.user_assets_delete_own,"DELETE | USING ((bucket_id = 'user-assets'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text)) | CHECK "
+policy,storage.objects.user_assets_insert_own,INSERT | USING  | CHECK ((bucket_id = 'user-assets'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))
+policy,storage.objects.user_assets_select_own,"SELECT | USING ((bucket_id = 'user-assets'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text)) | CHECK "
+rls_enabled,assets,true
+rls_enabled,captions,true
+rls_enabled,comment_intent_log,true
+rls_enabled,content_calendar,true
+rls_enabled,creative_sessions,true
+rls_enabled,scripts,true
+rls_enabled,session_messages,true
+rls_enabled,story_profiles,true
+rls_enabled,usage,true
+rls_enabled,users,true
+trigger,auth.users.on_auth_user_created,AFTER INSERT EXECUTE FUNCTION handle_new_user()
+trigger,public.creative_sessions.creative_sessions_updated_at,BEFORE UPDATE EXECUTE FUNCTION update_updated_at()
+trigger,public.scripts.scripts_updated_at,BEFORE UPDATE EXECUTE FUNCTION update_updated_at()
+trigger,public.story_profiles.story_profiles_updated_at,BEFORE UPDATE EXECUTE FUNCTION update_updated_at()
+trigger,public.users.users_updated_at,BEFORE UPDATE EXECUTE FUNCTION update_updated_at()
