@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { createClient } from '../lib/supabase/client'
+import { authFetch } from '../lib/authFetch'
 
 const CREATOR_AGENTS = [
   { id: 'marketing_director', label: 'Marketing Director', desc: 'Campaign strategy & positioning' },
@@ -117,7 +118,7 @@ export default function Scripts() {
     if (!topic.trim()) { setError("Please enter a topic."); return }
     setError(""); setGenerating(true); setGeneratedScript(null)
     try {
-      const response = await fetch("/api/generate-script", {
+      const response = await authFetch("/api/generate-script", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

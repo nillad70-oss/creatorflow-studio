@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { createClient } from '../lib/supabase/client'
+import { authFetch } from '../lib/authFetch'
 
 export default function Captions() {
   const router = useRouter()
@@ -69,7 +70,7 @@ export default function Captions() {
     setCaptions('')
 
     try {
-      const response = await fetch('/api/generate-captions', {
+      const response = await authFetch('/api/generate-captions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -118,7 +119,7 @@ export default function Captions() {
           reader.onerror = reject
           reader.readAsDataURL(file)
         })
-        const uploadRes = await fetch('/api/upload-asset', {
+        const uploadRes = await authFetch('/api/upload-asset', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -130,7 +131,7 @@ export default function Captions() {
         if (!uploadRes.ok) { setAssetError(uploadData.error || 'Upload failed.'); continue }
         const previewUrl = URL.createObjectURL(file)
         setAssets(prev => [...prev, { id: uploadData.asset.id, previewUrl }])
-        fetch('/api/analyze-asset', {
+        authFetch('/api/analyze-asset', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ asset_id: uploadData.asset.id, user_id: user.id }),
@@ -156,7 +157,7 @@ export default function Captions() {
     setRefineHistory(prev => [...prev, { role: 'user', text: feedbackText }])
     setRefineInput('')
     try {
-      const response = await fetch('/api/session-refine', {
+      const response = await authFetch('/api/session-refine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ session_id: sessionId, user_id: user?.id, feedback_message: feedbackText }),

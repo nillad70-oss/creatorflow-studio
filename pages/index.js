@@ -268,7 +268,7 @@ export default function Landing() {
           <Link href="/signup" className="btn-electric px-10 py-4 rounded-xl text-base font-medium inline-block">
             Start Creating With Your AI Team →
           </Link>
-          <p className="text-tertiary text-xs mt-4">3-day free trial. No credit card required. Cancel anytime.</p>
+          <p className="text-tertiary text-xs mt-4">3-day free trial. Card required to start — you won’t be charged if you cancel before the trial ends.</p>
         </section>
 
         {/* ── Pain Points ── */}

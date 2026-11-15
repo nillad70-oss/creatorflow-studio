@@ -60,9 +60,26 @@ export default function Signup() {
     }
 
     if (data.session) {
-      // Redirect to Stripe checkout to collect card before onboarding
-      console.log('Redirecting to Stripe:', data.user?.id, form.email)
-      window.location.href = '/api/stripe/checkout-signup?priceId=price_1TZdETLtci79J0RjR1JnKafJ&userId=' + data.user.id + '&email=' + encodeURIComponent(form.email)
+      // Redirect to Stripe checkout to collect card before onboarding.
+      // The server takes the user's identity from this session token only.
+      try {
+        const checkoutRes = await fetch('/api/stripe/checkout-signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${data.session.access_token}`,
+          },
+          body: JSON.stringify({}),
+        })
+        const checkout = await checkoutRes.json()
+        if (checkout.url) {
+          window.location.href = checkout.url
+          return
+        }
+      } catch (checkoutError) {
+        console.error('Checkout start failed:', checkoutError)
+      }
+      router.push('/onboarding')
     } else if (data.user) {
       router.push('/login?email=' + encodeURIComponent(form.email))
     } else {

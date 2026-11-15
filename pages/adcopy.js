@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { createClient } from '../lib/supabase/client'
+import { authFetch } from '../lib/authFetch'
 
 const OBJECTIVES = [
   { id: 'conversions', label: 'Conversions' },
@@ -84,7 +85,7 @@ export default function AdCopy() {
           reader.readAsDataURL(file)
         })
 
-        const uploadRes = await fetch('/api/upload-asset', {
+        const uploadRes = await authFetch('/api/upload-asset', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -106,7 +107,7 @@ export default function AdCopy() {
         setAssets(prev => [...prev, { id: uploadData.asset.id, previewUrl }])
 
         // Analyze in the background - don't block subsequent uploads on this
-        fetch('/api/analyze-asset', {
+        authFetch('/api/analyze-asset', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ asset_id: uploadData.asset.id, user_id: user.id }),
@@ -130,7 +131,7 @@ export default function AdCopy() {
     setGenerating(true)
     setResult(null)
     try {
-      const response = await fetch('/api/generate-adcopy', {
+      const response = await authFetch('/api/generate-adcopy', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -167,7 +168,7 @@ export default function AdCopy() {
     setRefineInput('')
 
     try {
-      const response = await fetch('/api/session-refine', {
+      const response = await authFetch('/api/session-refine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
