@@ -1,15 +1,9 @@
-import { createClient } from '@supabase/supabase-js'
+import { requireUser, getServiceClient } from '../../lib/server/auth'
+import { rateLimit, isUuidLike } from '../../lib/server/guard'
 
-// Service-role client — this route runs after the user already saved their
-// own story via build-story.js (RLS-protected insert). This job only ever
-// touches the story_id it's handed, so service role here is scoped by logic,
-// not by trusting arbitrary input.
-function getServiceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  )
-}
+// Service-role client — used only after the caller's identity is verified, and
+// every query is scoped to story_id AND the verified user's id, so a user can
+// only ever enhance their own story.
 
 const BEAT_CONFIG = {
   origin: {
@@ -114,8 +108,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
+  const user = await requireUser(req, res)
+  if (!user) return
+  if (!rateLimit(req, res, { key: `story:${user.id}`, limit: 5 })) return
+
   const { story_id } = req.body
   if (!story_id) return res.status(400).json({ error: 'story_id is required' })
+  if (!isUuidLike(story_id)) return res.status(400).json({ error: 'Invalid story_id' })
 
   const supabase = getServiceClient()
 
@@ -123,6 +122,7 @@ export default async function handler(req, res) {
     .from('story_profiles')
     .select('*')
     .eq('id', story_id)
+    .eq('user_id', user.id) // ownership check
     .single()
 
   if (fetchError || !story) {
@@ -165,6 +165,7 @@ export default async function handler(req, res) {
         updated_at: new Date().toISOString(),
       })
       .eq('id', story_id)
+      .eq('user_id', user.id)
 
     if (updateError) {
       return res.status(500).json({ error: updateError.message })

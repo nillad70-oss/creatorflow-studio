@@ -4,6 +4,7 @@
 // - Anthropic -> global fetch stub that returns a canned JSON reply
 import { vi, beforeEach } from 'vitest'
 import { makeClient, resetState } from './fakeSupabase'
+import { resetRateLimits } from '../../lib/server/guard'
 
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://supabase.test'
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'anon-test'
@@ -53,6 +54,7 @@ export const ai = { reply: {}, calls: [] }
 
 beforeEach(() => {
   resetState()
+  resetRateLimits()
   stripeCalls.checkout.length = 0
   stripeCalls.portal.length = 0
   for (const k of Object.keys(stripeSubscriptions)) delete stripeSubscriptions[k]

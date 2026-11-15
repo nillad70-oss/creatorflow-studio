@@ -1,13 +1,18 @@
-import { createClient } from '@supabase/supabase-js'
+import { requireUser, getServiceClient } from '../../lib/server/auth'
+import { rateLimit } from '../../lib/server/guard'
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5 MB
+// base64 inflates by ~4/3; allow a little JSON overhead, refuse anything larger
+const MAX_BODY_BYTES = Math.ceil(MAX_FILE_SIZE * 4 / 3) + 64 * 1024
 
-function getServiceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  )
+// Checks the file's real leading bytes, so a renamed HTML/script file can't be
+// stored under an image MIME type.
+function sniffImageType(buf) {
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'image/jpeg'
+  if (buf.length >= 8 && buf.slice(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return 'image/png'
+  if (buf.length >= 12 && buf.slice(0, 4).toString('ascii') === 'RIFF' && buf.slice(8, 12).toString('ascii') === 'WEBP') return 'image/webp'
+  return null
 }
 
 export const config = {
@@ -19,21 +24,35 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  // Body is expected as JSON: { user_id, file_base64, mime_type, file_size_bytes, filename, asset_type }
-  // (bodyParser disabled above, so parse manually to support larger payloads cleanly)
+  // Identity comes from the verified session token, checked BEFORE the body is read.
+  const user = await requireUser(req, res)
+  if (!user) return
+  const user_id = user.id
+  if (!rateLimit(req, res, { key: `upload:${user_id}`, limit: 20 })) return
+
+  // Body is expected as JSON: { file_base64, mime_type, filename, asset_type }
+  // (bodyParser disabled above, so parse manually; any user_id or
+  // file_size_bytes sent by the client is ignored)
   let body
   try {
     const chunks = []
-    for await (const chunk of req) chunks.push(chunk)
+    let total = 0
+    for await (const chunk of req) {
+      total += chunk.length
+      if (total > MAX_BODY_BYTES) {
+        return res.status(400).json({ error: 'File exceeds the 5 MB limit.' })
+      }
+      chunks.push(chunk)
+    }
     body = JSON.parse(Buffer.concat(chunks).toString())
   } catch {
     return res.status(400).json({ error: 'Invalid request body' })
   }
 
-  const { user_id, file_base64, mime_type, file_size_bytes, filename, asset_type } = body
+  const { file_base64, mime_type, asset_type } = body
 
-  if (!user_id || !file_base64 || !mime_type) {
-    return res.status(400).json({ error: 'user_id, file_base64, and mime_type are required' })
+  if (!file_base64 || !mime_type) {
+    return res.status(400).json({ error: 'file_base64 and mime_type are required' })
   }
 
   const supabase = getServiceClient()
@@ -59,16 +78,24 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Unsupported file type. Please upload JPEG, PNG, or WebP.' })
   }
 
-  if (file_size_bytes > MAX_FILE_SIZE) {
+  const fileBuffer = Buffer.from(file_base64, 'base64')
+  const file_size_bytes = fileBuffer.length // real size, never the client's claim
+
+  if (file_size_bytes === 0 || file_size_bytes > MAX_FILE_SIZE) {
     return res.status(400).json({ error: 'File exceeds the 5 MB limit.' })
   }
+
+  if (sniffImageType(fileBuffer) !== mime_type) {
+    return res.status(400).json({ error: 'That file is not a valid JPEG, PNG, or WebP image.' })
+  }
+
+  const ALLOWED_ASSET_TYPES = ['image', 'screenshot', 'product_image', 'brand_graphic']
+  const safeAssetType = ALLOWED_ASSET_TYPES.includes(asset_type) ? asset_type : 'image'
 
   // ── STORE — path scoped to the user's own folder, matching Storage RLS policy ──
   const extension = mime_type.split('/')[1]
   const safeFilename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${extension}`
   const storagePath = `${user_id}/${safeFilename}`
-
-  const fileBuffer = Buffer.from(file_base64, 'base64')
 
   const { error: uploadError } = await supabase.storage
     .from('user-assets')
@@ -84,7 +111,7 @@ export default async function handler(req, res) {
     .insert({
       user_id,
       storage_path: storagePath,
-      asset_type: asset_type || 'image',
+      asset_type: safeAssetType,
       mime_type,
       file_size_bytes,
     })
