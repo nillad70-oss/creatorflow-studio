@@ -13,6 +13,8 @@ const NAV_ITEMS = [
   { href: '/teleprompter', label: 'Teleprompter', icon: '▶' },
   { href: '/captions', label: 'Captions', icon: '◇' },
   { href: '/library', label: 'Library', icon: '◆' },
+  // AI Twin™ appears only when the feature is switched on for this deployment.
+  ...(process.env.NEXT_PUBLIC_AI_TWIN_ENABLED === 'true' ? [{ href: '/twin', label: 'AI Twin™', icon: '◐' }] : []),
 ]
 
 const QUICK_ACTIONS = [

@@ -1,5 +1,6 @@
 import Stripe from 'stripe'
 import { getServiceClient } from '../../../lib/server/auth'
+import { applyCredit, findPack } from '../../../lib/server/credits'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
@@ -78,6 +79,20 @@ export default async function handler(req, res) {
         const userId = session.metadata?.userId || session.client_reference_id
         if (!userId) {
           console.error('checkout.session.completed without userId', session.id)
+          break
+        }
+
+        // One-time AI Twin credit pack purchase: add credits, never change the plan.
+        if (session.mode === 'payment') {
+          const pack = findPack(session.metadata?.credit_pack)
+          if (!pack) {
+            console.error('Paid checkout with unknown credit pack', session.id, session.metadata?.credit_pack)
+            break
+          }
+          if (session.payment_status !== 'paid') break
+          // Credits come from the server's pack config, not from session metadata.
+          // The session id makes this idempotent: Stripe retries never double-grant.
+          await applyCredit(userId, pack.credits, 'purchase', session.id, `Credit pack: ${pack.id}`)
           break
         }
         let status = 'active'

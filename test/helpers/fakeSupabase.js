@@ -38,6 +38,8 @@ class Query {
   }
   select() { this.wantSelect = true; return this }
   eq(col, val) { this.filters.push((r) => r[col] === val); return this }
+  gte(col, val) { this.filters.push((r) => r[col] >= val); return this }
+  lt(col, val) { this.filters.push((r) => r[col] < val); return this }
   in(col, vals) { this.filters.push((r) => vals.includes(r[col])); return this }
   order(col, opts = {}) { this.orderBy = { col, asc: opts.ascending !== false }; return this }
   limit(n) { this.limitN = n; return this }
@@ -127,6 +129,12 @@ export function makeClient() {
           return { data: { path }, error: null }
         },
         createSignedUrl: async (path) => ({ data: { signedUrl: `https://signed.test/${bucket}/${path}` }, error: null }),
+        createSignedUploadUrl: async (path) => ({ data: { path, token: `upload-token:${path}`, signedUrl: `https://upload.test/${bucket}/${path}` }, error: null }),
+        download: async (path) => {
+          const buf = state.storage[bucket]?.[path]
+          if (!buf) return { data: null, error: { message: 'Object not found' } }
+          return { data: { arrayBuffer: async () => buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) }, error: null }
+        },
         remove: async (paths) => {
           paths.forEach((p) => { if (state.storage[bucket]) delete state.storage[bucket][p] })
           return { data: null, error: null }
