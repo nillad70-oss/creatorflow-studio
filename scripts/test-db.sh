@@ -14,3 +14,5 @@ out=$(psql -v ON_ERROR_STOP=1 -d "$DB" -f supabase/tests/phase0_billing_integrit
 echo "$out" | grep -oE "(PASS|FAIL)[^\"]*"
 out=$(psql -v ON_ERROR_STOP=1 -d "$DB" -f supabase/tests/definer_functions.test.sql 2>&1) || { echo "$out"; exit 1; }
 echo "$out" | grep -oE "(PASS|FAIL)[^\"]*"
+out=$(psql -v ON_ERROR_STOP=1 -d "$DB" -f supabase/tests/ai_twin_foundation.test.sql 2>&1) || { echo "$out"; exit 1; }
+echo "$out" | grep -oE "(PASS|FAIL)[^\"]*"

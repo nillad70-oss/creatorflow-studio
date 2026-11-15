@@ -127,6 +127,12 @@ export function makeClient() {
           return { data: { path }, error: null }
         },
         createSignedUrl: async (path) => ({ data: { signedUrl: `https://signed.test/${bucket}/${path}` }, error: null }),
+        createSignedUploadUrl: async (path) => ({ data: { path, token: `upload-token:${path}`, signedUrl: `https://upload.test/${bucket}/${path}` }, error: null }),
+        download: async (path) => {
+          const buf = state.storage[bucket]?.[path]
+          if (!buf) return { data: null, error: { message: 'Object not found' } }
+          return { data: { arrayBuffer: async () => buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) }, error: null }
+        },
         remove: async (paths) => {
           paths.forEach((p) => { if (state.storage[bucket]) delete state.storage[bucket][p] })
           return { data: null, error: null }
