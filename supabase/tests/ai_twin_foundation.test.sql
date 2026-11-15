@@ -107,3 +107,16 @@ DO $$ BEGIN
   END IF;
   RAISE NOTICE 'PASS: AI Twin storage buckets exist and are private';
 END $$;
+
+-- ── Phase 2 ── (earlier test files grant everything, like Supabase's defaults; re-apply to prove the migration locks it down)
+\i supabase/migrations/20261117000000_ai_twin_generation.sql
+DO $$ BEGIN
+  BEGIN
+    INSERT INTO public.generation_jobs (user_id, job_type, status) VALUES ((SELECT id FROM public.users LIMIT 1), 'image', 'bogus');
+    RAISE NOTICE 'FAIL: unknown job status accepted';
+  EXCEPTION WHEN check_violation THEN RAISE NOTICE 'PASS: job status is restricted'; END;
+  IF has_table_privilege('authenticated', 'public.twin_creations', 'INSERT') OR has_table_privilege('anon', 'public.twin_creations', 'INSERT') THEN RAISE NOTICE 'FAIL: clients can insert creations';
+  ELSE RAISE NOTICE 'PASS: clients cannot write creations'; END IF;
+  IF (SELECT relrowsecurity FROM pg_class WHERE oid = 'public.twin_creations'::regclass) THEN RAISE NOTICE 'PASS: creations RLS on';
+  ELSE RAISE NOTICE 'FAIL: creations RLS off'; END IF;
+END $$;

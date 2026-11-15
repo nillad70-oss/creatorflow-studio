@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { createClient } from '../lib/supabase/client'
 import { authFetch } from '../lib/authFetch'
 import { CONSENT_VERSION, CONSENT_SCOPE_LABELS, CONSENT_POINTS, CONSENT_STATEMENT } from '../lib/twinConsent'
+import { STYLES, ENGINE_MODES, TIERS, ASPECTS, MAX_DESCRIPTION } from '../lib/twinStudio'
 
 const AVAILABLE_SCOPES = ['professional', 'fashion_lifestyle'] // video/voice arrive in later phases
 const BUCKET = 'twin-references'
@@ -34,6 +35,47 @@ export default function AiTwinPage() {
   // photo step
   const [uploadNotes, setUploadNotes] = useState([])
 
+  // studio step
+  const [style, setStyle] = useState('headshot')
+  const [mode, setMode] = useState('best')
+  const [tier, setTier] = useState('standard')
+  const [aspect, setAspect] = useState('4:5')
+  const [description, setDescription] = useState('')
+  const [creation, setCreation] = useState(null)
+  const [gallery, setGallery] = useState([])
+  const pollRef = useRef(null)
+
+  const loadGallery = useCallback(async () => {
+    const r = await authFetch('/api/twin/gallery')
+    if (r.ok) setGallery((await r.json()).images || [])
+  }, [])
+
+  async function pollCreation(id) {
+    const r = await authFetch(`/api/twin/generate?id=${encodeURIComponent(id)}`)
+    const d = await r.json()
+    if (!r.ok) { setError(d.error || 'Could not check progress.'); return }
+    setCreation(d)
+    if (d.status === 'running') pollRef.current = setTimeout(() => pollCreation(id), 4000)
+    else { await load(); await loadGallery() }
+  }
+
+  async function createImages() {
+    setError(''); setCreation(null)
+    const r = await authFetch('/api/twin/generate', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ style, mode, tier, aspect, description }),
+    })
+    const d = await r.json()
+    if (!r.ok) return setError(d.error || 'Could not start.')
+    setCreation({ id: d.creation_id, status: 'running', round: 1, max_rounds: 2, progress: { candidates: 0, checked: 0 }, images: [] })
+    pollRef.current = setTimeout(() => pollCreation(d.creation_id), 3000)
+  }
+
+  async function deleteImage(id) {
+    await authFetch('/api/twin/gallery', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
+    loadGallery()
+  }
+
   const load = useCallback(async () => {
     setError('')
     const res = await authFetch('/api/twin')
@@ -44,6 +86,8 @@ export default function AiTwinPage() {
   }, [])
 
   useEffect(() => { load() }, [load])
+  useEffect(() => () => clearTimeout(pollRef.current), [])
+  useEffect(() => { if (state.twin?.status === 'ready') loadGallery() }, [state.twin?.status, loadGallery])
   useEffect(() => () => streamRef.current?.getTracks().forEach((t) => t.stop()), [])
 
   async function startRecording() {
@@ -158,7 +202,8 @@ export default function AiTwinPage() {
   }
 
   const twin = state.twin
-  const consented = state.consent?.recording_on_file
+  const consented = state.consent?.recording_on_file && state.consent?.version === CONSENT_VERSION
+  const allowedStyles = Object.entries(STYLES).filter(([, v]) => state.consent?.scopes?.includes(v.scope))
   const photoCount = state.photos?.length || 0
 
   return (
@@ -264,8 +309,91 @@ export default function AiTwinPage() {
                   </div>
 
                   {twin?.status === 'ready' && (
-                    <p className="text-success text-sm mt-4">Your AI Twin is set up. Image creation arrives in the next update.</p>
+                    <p className="text-success text-sm mt-4">Your AI Twin is ready ✓</p>
                   )}
+                </section>
+              )}
+
+              {consented && twin?.status === 'ready' && (
+                <section className="glass rounded-2xl p-6 mb-6">
+                  <h2 className="text-primary text-lg font-medium mb-1">Step 3 · Create</h2>
+                  <p className="text-tertiary text-xs mb-5">
+                    We create several candidates on the leading image models, check each one against your photos, and only show you the ones that look like you. You only pay when you get an image you can use.
+                  </p>
+
+                  <p className="text-primary text-sm mb-2">Style</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-5">
+                    {allowedStyles.map(([key, v]) => (
+                      <button key={key} onClick={() => setStyle(key)}
+                        className={`rounded-xl px-3 py-2.5 text-sm text-left ${style === key ? 'btn-electric' : 'btn-ghost'}`}>{v.label}</button>
+                    ))}
+                  </div>
+
+                  <p className="text-primary text-sm mb-2">Your direction (optional)</p>
+                  <textarea value={description} maxLength={MAX_DESCRIPTION} onChange={(e) => setDescription(e.target.value)}
+                    placeholder="e.g. navy blazer, warm smile, city skyline behind me" rows={2}
+                    className="input-field w-full rounded-xl px-4 py-3 text-sm mb-5" />
+
+                  <div className="grid md:grid-cols-3 gap-4 mb-6">
+                    <label className="text-secondary text-xs">Engine
+                      <select value={mode} onChange={(e) => setMode(e.target.value)} className="input-field w-full rounded-lg px-3 py-2 mt-1 text-sm">
+                        {Object.entries(ENGINE_MODES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                      </select>
+                    </label>
+                    <label className="text-secondary text-xs">Quality
+                      <select value={tier} onChange={(e) => setTier(e.target.value)} className="input-field w-full rounded-lg px-3 py-2 mt-1 text-sm">
+                        {Object.entries(TIERS).map(([k, v]) => <option key={k} value={k}>{v.label} · {v.creditsPerImage} credit{v.creditsPerImage > 1 ? 's' : ''}</option>)}
+                      </select>
+                    </label>
+                    <label className="text-secondary text-xs">Shape
+                      <select value={aspect} onChange={(e) => setAspect(e.target.value)} className="input-field w-full rounded-lg px-3 py-2 mt-1 text-sm">
+                        {ASPECTS.map((a) => <option key={a} value={a}>{a}</option>)}
+                      </select>
+                    </label>
+                  </div>
+
+                  <button onClick={createImages} disabled={creation?.status === 'running' || !allowedStyles.length}
+                    className="btn-electric w-full py-3 rounded-xl text-sm font-medium disabled:opacity-50">
+                    {creation?.status === 'running' ? 'Creating…' : `Create · ${TIERS[tier].creditsPerImage} credit${TIERS[tier].creditsPerImage > 1 ? 's' : ''} if delivered`}
+                  </button>
+
+                  {creation?.status === 'running' && (
+                    <p className="text-secondary text-sm mt-4">
+                      {creation.round > 1 ? 'Refining for a closer likeness' : 'Creating and checking candidates'}
+                      {creation.progress?.candidates ? ` · ${creation.progress.checked}/${creation.progress.candidates} checked` : ''}… usually under a minute.
+                    </p>
+                  )}
+                  {creation?.status === 'failed' || creation?.status === 'blocked' ? (
+                    <p className="text-red-300 text-sm mt-4">{creation.failure_reason}</p>
+                  ) : null}
+                  {creation?.status === 'succeeded' && (
+                    <div className="grid grid-cols-2 gap-3 mt-5">
+                      {creation.images.map((img) => (
+                        <figure key={img.id} className="relative">
+                          <img src={img.url} alt="AI-generated image of you" className="w-full rounded-xl" />
+                          {img.is_best && <span className="absolute top-2 left-2 btn-electric text-xs rounded px-2 py-0.5">Best match</span>}
+                          <figcaption className="text-tertiary text-xs mt-1">AI-generated · likeness {img.likeness}/100</figcaption>
+                        </figure>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              )}
+
+              {gallery.length > 0 && (
+                <section className="glass rounded-2xl p-6 mb-6">
+                  <h2 className="text-primary text-base font-medium mb-4">Your images</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {gallery.map((img) => (
+                      <div key={img.id} className="relative">
+                        <a href={img.url} target="_blank" rel="noreferrer"><img src={img.url} alt="AI-generated image of you" className="w-full aspect-[4/5] object-cover rounded-lg" /></a>
+                        <div className="flex justify-between items-center mt-1">
+                          <span className="text-tertiary text-[11px]">AI-generated</span>
+                          <button onClick={() => deleteImage(img.id)} className="text-tertiary text-[11px] hover:text-red-300">Delete</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </section>
               )}
 

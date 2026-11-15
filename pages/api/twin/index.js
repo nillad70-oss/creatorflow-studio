@@ -1,6 +1,6 @@
 import { requireUser, getServiceClient } from '../../../lib/server/auth'
 import { rateLimit } from '../../../lib/server/guard'
-import { getBalance } from '../../../lib/server/credits'
+import { getBalance, applyCredit } from '../../../lib/server/credits'
 import {
   requireTwinEnabled, getTwin, getActiveConsent, audit,
   REFERENCE_BUCKET, GENERATED_BUCKET, CONSENT_VERSION, CONSENT_SCOPES, MIN_REFERENCES, MAX_REFERENCES,
@@ -74,7 +74,14 @@ export default async function handler(req, res) {
     consent_records: consents?.length || 0,
     generated_assets: generated?.length || 0,
   }
-  // Deleting the twin cascades to consent records, reference photos and generated assets.
+  // Return credits held by any creation still in progress, then remove job records.
+  const { data: running } = await supabase.from('twin_creations').select('id, credits_held')
+    .eq('user_id', user.id).eq('twin_id', twin.id).eq('status', 'running')
+  for (const c of running || []) {
+    await applyCredit(user.id, c.credits_held, 'release', `creation:${c.id}`, 'AI Twin deleted')
+  }
+  await supabase.from('generation_jobs').delete().eq('user_id', user.id).eq('twin_id', twin.id)
+  // Deleting the twin cascades to consent records, reference photos, creations and generated assets.
   const { error: deleteError } = await supabase.from('twin_profiles').delete().eq('id', twin.id).eq('user_id', user.id)
   if (deleteError) failed = true
 

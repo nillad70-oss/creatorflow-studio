@@ -38,6 +38,8 @@ class Query {
   }
   select() { this.wantSelect = true; return this }
   eq(col, val) { this.filters.push((r) => r[col] === val); return this }
+  gte(col, val) { this.filters.push((r) => r[col] >= val); return this }
+  lt(col, val) { this.filters.push((r) => r[col] < val); return this }
   in(col, vals) { this.filters.push((r) => vals.includes(r[col])); return this }
   order(col, opts = {}) { this.orderBy = { col, asc: opts.ascending !== false }; return this }
   limit(n) { this.limitN = n; return this }
