@@ -1,21 +1,21 @@
-import { createClient } from '@supabase/supabase-js'
-
-function getServiceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  )
-}
+import { requireUser, getServiceClient } from '../../lib/server/auth'
+import { rateLimit, isUuidLike } from '../../lib/server/guard'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { asset_id, user_id } = req.body
-  if (!asset_id || !user_id) {
-    return res.status(400).json({ error: 'asset_id and user_id are required' })
+  const user = await requireUser(req, res)
+  if (!user) return
+  const user_id = user.id // identity from the verified session only
+  if (!rateLimit(req, res, { key: `analyze:${user_id}`, limit: 30 })) return
+
+  const { asset_id } = req.body
+  if (!asset_id) {
+    return res.status(400).json({ error: 'asset_id is required' })
   }
+  if (!isUuidLike(asset_id)) return res.status(400).json({ error: 'Invalid asset_id' })
 
   const supabase = getServiceClient()
 
@@ -110,6 +110,7 @@ Return ONLY a raw JSON object, no markdown, no backticks:
       .from('assets')
       .update({ ai_analysis: analysis, analyzed_at: new Date().toISOString() })
       .eq('id', asset_id)
+      .eq('user_id', user_id)
 
     return res.status(200).json({ analysis, cached: false })
 

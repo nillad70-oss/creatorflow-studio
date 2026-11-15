@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { createClient } from '../lib/supabase/client'
+import { authFetch } from '../lib/authFetch'
 
 const GOAL_TYPES = [
   { id: "income_replacement", label: "Income Replacement" },
@@ -182,7 +183,7 @@ export default function BuildStory() {
 
     // Kick off server-side enhancement (fills enhanced_narrative +
     // derived_assets per beat) - fire and forget, UI moves on
-    fetch('/api/enhance-story', {
+    authFetch('/api/enhance-story', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ story_id: inserted.id }),

@@ -1,0 +1,75 @@
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-ideas: no token -> 401, no AI call 5ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-ideas: invalid token -> 401 1ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-script: no token -> 401, no AI call 1ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-script: invalid token -> 401 0ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-captions: no token -> 401, no AI call 1ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-captions: invalid token -> 401 0ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-adcopy: no token -> 401, no AI call 1ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-adcopy: invalid token -> 401 1ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > enhance-story: no token -> 401, no AI call 1ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > enhance-story: invalid token -> 401 1ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > intent-engine: no token -> 401, no AI call 1ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > intent-engine: invalid token -> 401 0ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > session-refine: no token -> 401, no AI call 1ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > session-refine: invalid token -> 401 0ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > analyze-asset: no token -> 401, no AI call 0ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > analyze-asset: invalid token -> 401 0ms
+ ✓ test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > upload-asset: no token -> 401, nothing stored 1ms
+ ✓ test/api/security.test.js > 2. Client-supplied user_id is ignored; identity comes from the token > free user B cannot pass the Pro check by sending Pro user A's id (upload) 3ms
+ ✓ test/api/security.test.js > 2. Client-supplied user_id is ignored; identity comes from the token > free user B cannot use refinement by sending Pro user A's id 1ms
+ ✓ test/api/security.test.js > 2. Client-supplied user_id is ignored; identity comes from the token > user B cannot pull user A's private story into a generation 2ms
+ ✓ test/api/security.test.js > 2. Client-supplied user_id is ignored; identity comes from the token > sessions are recorded under the token owner, not the body user_id 1ms
+ ✓ test/api/security.test.js > 2. Client-supplied user_id is ignored; identity comes from the token > comment logs are recorded under the token owner 0ms
+ ✓ test/api/security.test.js > 3. Users cannot reach each other's resources > enhance-story: user B cannot enhance (or overwrite) user A's story 0ms
+ ✓ test/api/security.test.js > 3. Users cannot reach each other's resources > analyze-asset: user B cannot analyze user A's image 0ms
+ ✓ test/api/security.test.js > 3. Users cannot reach each other's resources > session-refine: Pro user B cannot read or extend user A's session 0ms
+ ✓ test/api/security.test.js > 3. Users cannot reach each other's resources > generate-adcopy: user B cannot attach user A's analyzed images 0ms
+ ✓ test/api/security.test.js > 4. Upload validation does not trust the client > rejects a file whose real size exceeds 5 MB even if the client claims it is small 45ms
+ ✓ test/api/security.test.js > 4. Upload validation does not trust the client > rejects a non-image file disguised with an image MIME type 1ms
+ ✓ test/api/security.test.js > 4. Upload validation does not trust the client > records the real byte size, not the client-claimed size 1ms
+ ✓ test/api/security.test.js > 5. Stripe identity and webhook integrity > checkout-signup: refuses to create checkout without a verified session 0ms
+ ✓ test/api/security.test.js > 5. Stripe identity and webhook integrity > checkout-signup: metadata userId comes from the token, never the request 0ms
+ ✓ test/api/security.test.js > 5. Stripe identity and webhook integrity > checkout: rejects price IDs that are not NillaFlow plans 0ms
+ ✓ test/api/security.test.js > 5. Stripe identity and webhook integrity > webhook: rejects an event with a bad signature 1ms
+ ✓ test/api/security.test.js > 5. Stripe identity and webhook integrity > webhook: accepts a correctly signed event 1ms
+ ✓ test/api/billing.test.js > Status -> entitlement mapping (preserves current behaviour) > trialing and active are Pro (same as before Phase 0) 2ms
+ ✓ test/api/billing.test.js > Status -> entitlement mapping (preserves current behaviour) > past_due keeps Pro during Stripe retries 0ms
+ ✓ test/api/billing.test.js > Status -> entitlement mapping (preserves current behaviour) > canceled / unpaid / incomplete_expired drop to free 0ms
+ ✓ test/api/billing.test.js > Status -> entitlement mapping (preserves current behaviour) > unknown statuses leave the tier unchanged 0ms
+ ✓ test/api/billing.test.js > Webhook lifecycle > checkout completed: Pro + trial end + subscription id recorded 6ms
+ ✓ test/api/billing.test.js > Webhook lifecycle > trial converts to paid: status active, still Pro 1ms
+ ✓ test/api/billing.test.js > Webhook lifecycle > failed renewal payment: marked past_due, access kept 1ms
+ ✓ test/api/billing.test.js > Webhook lifecycle > payment recovered: back to active 1ms
+ ✓ test/api/billing.test.js > Webhook lifecycle > Stripe gives up (unpaid): drops to free 1ms
+ ✓ test/api/billing.test.js > Webhook lifecycle > subscription cancelled: drops to free (unchanged behaviour) 1ms
+ ✓ test/api/billing.test.js > Webhook lifecycle > a database failure returns 500 so Stripe retries instead of losing the update 9ms
+ ✓ test/api/billing.test.js > Customer billing management (Stripe portal) > opens the portal for the signed-in user's own customer record 1ms
+ ✓ test/api/billing.test.js > Customer billing management (Stripe portal) > 404 when the user has no Stripe customer yet 1ms
+ ✓ test/api/billing.test.js > Customer billing management (Stripe portal) > 401 without a session 0ms
+ ✓ test/api/billing.test.js > Signup checkout keeps its existing behaviour > uses the same default plan and 3-day trial as before 0ms
+ ✓ test/api/billing.test.js > Signup checkout keeps its existing behaviour > old GET links no longer create a checkout; they redirect to billing 1ms
+ ✓ test/api/baseline.test.js > AI Idea Generator & content calendar > returns a calendar for a valid request 6ms
+ ✓ test/api/baseline.test.js > AI Idea Generator & content calendar > rejects non-POST 1ms
+ ✓ test/api/baseline.test.js > Script Generator > generates a script and opens a refinement session 2ms
+ ✓ test/api/baseline.test.js > Script Generator > includes the creator story in the prompt when one exists 1ms
+ ✓ test/api/baseline.test.js > Caption Generator > generates a caption 1ms
+ ✓ test/api/baseline.test.js > Caption Generator > requires a script 0ms
+ ✓ test/api/baseline.test.js > Ad Copy Generator > generates 3 variants and enforces the 200-character primary text cap 2ms
+ ✓ test/api/baseline.test.js > Ad Copy Generator > requires a topic 1ms
+ ✓ test/api/baseline.test.js > Storytelling & Story Enhancement > enhances the owner's story beats and sets compliance flags 1ms
+ ✓ test/api/baseline.test.js > Comment Intent Engine > classifies a comment and logs it 1ms
+ ✓ test/api/baseline.test.js > Image Asset Upload & Analysis > lets a Pro user upload a JPEG into their own folder 3ms
+ ✓ test/api/baseline.test.js > Image Asset Upload & Analysis > blocks free users from uploading 1ms
+ ✓ test/api/baseline.test.js > Image Asset Upload & Analysis > analyzes an owned asset with vision and caches the result 1ms
+ ✓ test/api/baseline.test.js > Conversational Refinement > revises the owner's session for a Pro user 1ms
+ ✓ test/api/baseline.test.js > Subscription Checkout > creates a Stripe checkout session for a signed-in user 1ms
+ ✓ test/api/baseline.test.js > Subscription Checkout > rejects a request with no session 0ms
+ ✓ test/api/guards.test.js > Free-tier usage limits > OFF by default: a free user over the limit is NOT blocked (entitlements preserved) 4ms
+ ✓ test/api/guards.test.js > Free-tier usage limits > usage is counted even while enforcement is off 1ms
+ ✓ test/api/guards.test.js > Free-tier usage limits > ON: free user at 5 scripts gets 402 and no AI call is made 1ms
+ ✓ test/api/guards.test.js > Free-tier usage limits > ON: free user under the limit can still generate 1ms
+ ✓ test/api/guards.test.js > Free-tier usage limits > ON: Pro users are never limited 1ms
+ ✓ test/api/guards.test.js > Rate limiting and input validation > story enhancement is limited to 5 per minute per user 1ms
+ ✓ test/api/guards.test.js > Rate limiting and input validation > one user hitting the limit does not affect another user 1ms
+ ✓ test/api/guards.test.js > Rate limiting and input validation > oversized prompt fields are rejected before reaching the AI 0ms
+      Tests  74 passed (74)

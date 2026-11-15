@@ -36,6 +36,28 @@ export default function Billing() {
     setLoading(false)
   }
 
+  const handleManageBilling = async () => {
+    setLoading(true)
+    try {
+      const supabase = createClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        router.push('/login')
+        return
+      }
+      const res = await fetch('/api/stripe/portal', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${session.access_token}` },
+      })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+      else alert(data.error || 'Could not open billing management.')
+    } catch (err) {
+      alert('Something went wrong')
+    }
+    setLoading(false)
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: '#050505', display: 'flex', flexDirection: 'column' }}>
       {isExpired && (
@@ -90,6 +112,15 @@ export default function Billing() {
               </button>
             </div>
           </div>
+          <p style={{ textAlign: 'center', marginTop: '28px' }}>
+            <button
+              onClick={handleManageBilling}
+              disabled={loading}
+              style={{ background: 'none', border: 'none', color: '#888', fontSize: '13px', textDecoration: 'underline', cursor: 'pointer' }}
+            >
+              Already subscribed? Manage billing, update your card, or cancel
+            </button>
+          </p>
         </div>
       </div>
     </div>

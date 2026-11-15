@@ -1,20 +1,22 @@
 import { getStoryContext, buildStoryPromptBlock } from '../../lib/storyContext'
 import { getAssetContext, buildAssetPromptBlock, buildStoryImageSynthesisInstruction } from '../../lib/assetContext'
-import { createClient } from '@supabase/supabase-js'
-
-function getServiceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  )
-}
+import { requireUser, getServiceClient } from '../../lib/server/auth'
+import { rateLimit, validateLengths } from '../../lib/server/guard'
+import { checkUsage, recordUsage } from '../../lib/server/usage'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { script, style, niche, platform, user_id, story_objective, asset_ids, asset_story_note } = req.body
+  const user = await requireUser(req, res)
+  if (!user) return
+  const user_id = user.id // identity from the verified session only
+  if (!rateLimit(req, res, { key: `captions:${user_id}`, limit: 20 })) return
+  if (!validateLengths(res, req.body, { script: 6000, style: 100, niche: 200, platform: 100, asset_story_note: 1000, asset_ids: 2000 })) return
+  if (!(await checkUsage(res, user_id, 'captions'))) return
+
+  const { script, style, niche, platform, story_objective, asset_ids, asset_story_note } = req.body
 
   if (!script) {
     return res.status(400).json({ error: 'Script is required' })
@@ -111,6 +113,7 @@ Return ONLY a JSON object with: caption, solution_stack, creator_response, hasht
       }
     }
 
+    await recordUsage(user_id, 'captions')
     return res.status(200).json({
       caption: result.caption + '\n\n' + (Array.isArray(result.hashtags) ? result.hashtags.join(' ') : result.hashtags),
       solution_stack: result.solution_stack,

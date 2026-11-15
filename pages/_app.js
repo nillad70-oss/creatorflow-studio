@@ -1,5 +1,6 @@
 import '../styles/globals.css'
 import Script from 'next/script'
+import AuthGate from '../lib/AuthGate'
 
 export default function App({ Component, pageProps }) {
   return (
@@ -19,7 +20,9 @@ export default function App({ Component, pageProps }) {
           `,
         }}
       />
-      <Component {...pageProps} />
+      <AuthGate>
+        <Component {...pageProps} />
+      </AuthGate>
     </>
   )
 }

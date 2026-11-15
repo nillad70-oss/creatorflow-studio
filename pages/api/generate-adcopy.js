@@ -1,12 +1,6 @@
 import { getStoryContext, buildStoryPromptBlock } from '../../lib/storyContext'
-import { createClient } from '@supabase/supabase-js'
-
-function getServiceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  )
-}
+import { requireUser, getServiceClient } from '../../lib/server/auth'
+import { rateLimit, validateLengths } from '../../lib/server/guard'
 
 // Fetches an asset's cached analysis if one is provided. Returns null if no
 // asset_id was passed, or if the asset/analysis isn't found - callers must
@@ -60,10 +54,16 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
+  const user = await requireUser(req, res)
+  if (!user) return
+  const user_id = user.id // identity from the verified session only
+  if (!rateLimit(req, res, { key: `adcopy:${user_id}`, limit: 20 })) return
+  if (!validateLengths(res, req.body, { topic: 1000, niche: 200, audience: 500, objective: 200, offer_types: 1000, audience_problems: 2000, cta_objectives: 1000, asset_story_note: 1000, asset_ids: 2000 })) return
+
   const {
     topic, niche, audience, platform, objective,
     offer_types, audience_problems, cta_objectives,
-    user_id, story_objective, asset_ids, asset_story_note,
+    story_objective, asset_ids, asset_story_note,
   } = req.body
 
   if (!topic) return res.status(400).json({ error: 'Topic is required' })

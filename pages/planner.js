@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { createClient } from '../lib/supabase/client'
+import { authFetch } from '../lib/authFetch'
 
 const CATEGORIES = [
   'Educational', 'Storytelling', 'Motivational', 
@@ -57,7 +58,7 @@ export default function Planner() {
     setIdeas([])
 
     try {
-      const response = await fetch('/api/generate-ideas', {
+      const response = await authFetch('/api/generate-ideas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

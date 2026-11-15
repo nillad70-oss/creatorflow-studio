@@ -1,11 +1,22 @@
 import { getStoryContext } from '../../lib/storyContext'
+import { requireUser } from '../../lib/server/auth'
+import { rateLimit, validateLengths } from '../../lib/server/guard'
+import { checkUsage, recordUsage } from '../../lib/server/usage'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { niche, audience, tone, platform, days, user_id } = req.body
+  const user = await requireUser(req, res)
+  if (!user) return
+  const user_id = user.id // identity from the verified session only
+  if (!rateLimit(req, res, { key: `ideas:${user_id}`, limit: 10 })) return
+  if (!validateLengths(res, req.body, { niche: 200, audience: 500, tone: 200, platform: 300 })) return
+
+  if (!(await checkUsage(res, user_id, 'ideas'))) return
+
+  const { niche, audience, tone, platform, days } = req.body
   const platformList = Array.isArray(platform) ? platform.join(', ') : platform || 'Instagram'
   const dayCount = Math.min(days || 7, 30)
 
@@ -232,6 +243,8 @@ Return this exact JSON structure:
     }
 
     const calendar = JSON.parse(jsonMatch[0])
+
+    await recordUsage(user_id, 'ideas')
 
     if (calendar.days && calendar.competitors) {
       return res.status(200).json({ calendar, mode: 'calendar' })

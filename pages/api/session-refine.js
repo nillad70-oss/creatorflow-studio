@@ -1,13 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
+import { requireUser, getServiceClient } from '../../lib/server/auth'
+import { rateLimit, validateLengths, isUuidLike } from '../../lib/server/guard'
 import { getStoryContext, buildStoryPromptBlock } from '../../lib/storyContext'
 import { getAssetContext, buildAssetPromptBlock } from '../../lib/assetContext'
 
-function getServiceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  )
-}
 
 const enforceLength = (text, max = 200) => {
   if (!text || text.length <= max) return text
@@ -47,11 +42,18 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { session_id, user_id, feedback_message } = req.body
+  const user = await requireUser(req, res)
+  if (!user) return
+  const user_id = user.id // identity from the verified session only
+  if (!rateLimit(req, res, { key: `refine:${user_id}`, limit: 20 })) return
 
-  if (!session_id || !user_id || !feedback_message) {
-    return res.status(400).json({ error: 'session_id, user_id, and feedback_message are required' })
+  const { session_id, feedback_message } = req.body
+
+  if (!session_id || !feedback_message) {
+    return res.status(400).json({ error: 'session_id and feedback_message are required' })
   }
+  if (!isUuidLike(session_id)) return res.status(400).json({ error: 'Invalid session_id' })
+  if (!validateLengths(res, req.body, { feedback_message: 2000 })) return
 
   const supabase = getServiceClient()
 

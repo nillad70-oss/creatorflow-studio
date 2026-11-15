@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { createClient } from '../lib/supabase/client'
+import { authFetch } from '../lib/authFetch'
 
 const CREATOR_AGENTS = [
   { id: 'marketing_director', label: 'Marketing Director', desc: 'Campaign strategy & positioning' },
@@ -147,7 +148,7 @@ export default function Scripts() {
     setGenerating(true)
     setGeneratedScript(null)
     try {
-      const response = await fetch("/api/generate-script", {
+      const response = await authFetch("/api/generate-script", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -206,7 +207,7 @@ export default function Scripts() {
           reader.onerror = reject
           reader.readAsDataURL(file)
         })
-        const uploadRes = await fetch('/api/upload-asset', {
+        const uploadRes = await authFetch('/api/upload-asset', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -218,7 +219,7 @@ export default function Scripts() {
         if (!uploadRes.ok) { setAssetError(uploadData.error || 'Upload failed.'); continue }
         const previewUrl = URL.createObjectURL(file)
         setAssets(prev => [...prev, { id: uploadData.asset.id, previewUrl }])
-        fetch('/api/analyze-asset', {
+        authFetch('/api/analyze-asset', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ asset_id: uploadData.asset.id, user_id: user.id }),
@@ -244,7 +245,7 @@ export default function Scripts() {
     setRefineHistory(prev => [...prev, { role: 'user', text: feedbackText }])
     setRefineInput('')
     try {
-      const response = await fetch('/api/session-refine', {
+      const response = await authFetch('/api/session-refine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ session_id: sessionId, user_id: user?.id, feedback_message: feedbackText }),

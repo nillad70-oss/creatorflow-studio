@@ -1,11 +1,31 @@
 import { getStoryContext } from '../../lib/storyContext'
-import { createClient } from '@supabase/supabase-js'
+import { requireUser, getServiceClient } from '../../lib/server/auth'
+import { rateLimit, validateLengths } from '../../lib/server/guard'
+import { timingSafeEqual } from 'crypto'
 
-function getServiceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  )
+// Server-to-server callers (ReplyRush) authenticate with a shared secret in the
+// x-nillaflow-service-key header (env INTENT_ENGINE_SERVICE_KEY). Only then is
+// the body's user_id accepted, and only for a user that exists. Browser callers
+// must send their own Supabase session token instead.
+function isTrustedServiceCaller(req) {
+  const expected = process.env.INTENT_ENGINE_SERVICE_KEY
+  const given = req.headers?.['x-nillaflow-service-key']
+  if (!expected || !given || typeof given !== 'string') return false
+  const a = Buffer.from(given)
+  const b = Buffer.from(expected)
+  return a.length === b.length && timingSafeEqual(a, b)
+}
+
+async function resolveCaller(req, res) {
+  if (isTrustedServiceCaller(req)) {
+    const claimed = req.body?.user_id
+    if (!claimed) { res.status(400).json({ error: 'user_id is required for service calls' }); return null }
+    const { data } = await getServiceClient().from('users').select('id').eq('id', claimed).single()
+    if (!data) { res.status(404).json({ error: 'User not found' }); return null }
+    return data.id
+  }
+  const user = await requireUser(req, res)
+  return user ? user.id : null
 }
 
 // Called by ReplyRush (or any Meta-comment webhook source) after it catches
@@ -66,10 +86,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { user_id, comment_text, comment_id, platform } = req.body
+  const user_id = await resolveCaller(req, res)
+  if (!user_id) return
+  if (!rateLimit(req, res, { key: `intent:${user_id}`, limit: 60 })) return
+  if (!validateLengths(res, req.body, { comment_text: 2000, comment_id: 200, platform: 50 })) return
 
-  if (!user_id || !comment_text) {
-    return res.status(400).json({ error: 'user_id and comment_text are required' })
+  const { comment_text, comment_id, platform } = req.body
+
+  if (!comment_text) {
+    return res.status(400).json({ error: 'comment_text is required' })
   }
 
   const story = await getStoryContext(user_id)
