@@ -55,6 +55,19 @@ describe('Webhook lifecycle', () => {
     await call(webhook, signed('invoice.paid', { id: 'in_2', customer: 'cus_a', subscription: 'sub_a' }))
     expect(userA().subscription_status).toBe('active')
   })
+  it('payment recovered on the current Stripe API version (subscription under invoice.parent)', async () => {
+    seedUsers()
+    userA().subscription_status = 'past_due'
+    await call(webhook, signed('invoice.paid', { id: 'in_3', customer: 'cus_a',
+      parent: { type: 'subscription_details', subscription_details: { subscription: 'sub_a' } } }))
+    expect(userA().subscription_status).toBe('active')
+  })
+  it('a one-off invoice with no subscription does not change status', async () => {
+    seedUsers()
+    userA().subscription_status = 'past_due'
+    await call(webhook, signed('invoice.paid', { id: 'in_4', customer: 'cus_a', parent: null }))
+    expect(userA().subscription_status).toBe('past_due')
+  })
   it('Stripe gives up (unpaid): drops to free', async () => {
     seedUsers()
     await call(webhook, signed('customer.subscription.updated', { id: 'sub_a', customer: 'cus_a', status: 'unpaid' }))

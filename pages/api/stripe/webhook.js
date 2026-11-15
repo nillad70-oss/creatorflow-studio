@@ -28,6 +28,13 @@ export function tierForStatus(status) {
   return null // 'incomplete', 'paused', unknown: leave the tier unchanged
 }
 
+// Newer Stripe API versions (this account's webhook uses 2026-04-22) moved the
+// invoice's subscription from invoice.subscription to
+// invoice.parent.subscription_details.subscription. Support both.
+export function invoiceSubscriptionId(invoice) {
+  return invoice?.subscription || invoice?.parent?.subscription_details?.subscription || null
+}
+
 const toIso = (unixSeconds) => (unixSeconds ? new Date(unixSeconds * 1000).toISOString() : null)
 
 // Writes to public.users. subscription_status is written by the original
@@ -123,7 +130,7 @@ export default async function handler(req, res) {
 
       case 'invoice.paid': {
         const invoice = event.data.object
-        if (invoice.subscription) {
+        if (invoiceSubscriptionId(invoice)) {
           await updateUser(['stripe_customer_id', invoice.customer], { subscription_status: 'active' })
         }
         break
