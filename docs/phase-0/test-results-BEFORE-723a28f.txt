@@ -1,0 +1,52 @@
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-ideas: no token -> 401, no AI call 14ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-ideas: invalid token -> 401 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-script: no token -> 401, no AI call 3ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-script: invalid token -> 401 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-captions: no token -> 401, no AI call 2ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-captions: invalid token -> 401 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-adcopy: no token -> 401, no AI call 2ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > generate-adcopy: invalid token -> 401 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > enhance-story: no token -> 401, no AI call 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > enhance-story: invalid token -> 401 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > intent-engine: no token -> 401, no AI call 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > intent-engine: invalid token -> 401 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > session-refine: no token -> 401, no AI call 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > session-refine: invalid token -> 401 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > analyze-asset: no token -> 401, no AI call 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > analyze-asset: invalid token -> 401 1ms
+ × test/api/security.test.js > 1. Unauthenticated requests are rejected with 401 and cost nothing > upload-asset: no token -> 401, nothing stored 3ms
+ × test/api/security.test.js > 2. Client-supplied user_id is ignored; identity comes from the token > free user B cannot pass the Pro check by sending Pro user A's id (upload) 1ms
+ × test/api/security.test.js > 2. Client-supplied user_id is ignored; identity comes from the token > free user B cannot use refinement by sending Pro user A's id 1ms
+ × test/api/security.test.js > 2. Client-supplied user_id is ignored; identity comes from the token > user B cannot pull user A's private story into a generation 14ms
+ × test/api/security.test.js > 2. Client-supplied user_id is ignored; identity comes from the token > sessions are recorded under the token owner, not the body user_id 2ms
+ × test/api/security.test.js > 2. Client-supplied user_id is ignored; identity comes from the token > comment logs are recorded under the token owner 1ms
+ × test/api/security.test.js > 3. Users cannot reach each other's resources > enhance-story: user B cannot enhance (or overwrite) user A's story 3ms
+ × test/api/security.test.js > 3. Users cannot reach each other's resources > analyze-asset: user B cannot analyze user A's image 1ms
+ × test/api/security.test.js > 3. Users cannot reach each other's resources > session-refine: Pro user B cannot read or extend user A's session 1ms
+ × test/api/security.test.js > 3. Users cannot reach each other's resources > generate-adcopy: user B cannot attach user A's analyzed images 4ms
+ × test/api/security.test.js > 4. Upload validation does not trust the client > rejects a file whose real size exceeds 5 MB even if the client claims it is small 63ms
+ × test/api/security.test.js > 4. Upload validation does not trust the client > rejects a non-image file disguised with an image MIME type 5ms
+ × test/api/security.test.js > 4. Upload validation does not trust the client > records the real byte size, not the client-claimed size 1ms
+ × test/api/security.test.js > 5. Stripe identity and webhook integrity > checkout-signup: refuses to create checkout without a verified session 2ms
+ × test/api/security.test.js > 5. Stripe identity and webhook integrity > checkout-signup: metadata userId comes from the token, never the request 1ms
+ × test/api/security.test.js > 5. Stripe identity and webhook integrity > checkout: rejects price IDs that are not NillaFlow plans 1ms
+ ✓ test/api/security.test.js > 5. Stripe identity and webhook integrity > webhook: rejects an event with a bad signature 2ms
+ ✓ test/api/security.test.js > 5. Stripe identity and webhook integrity > webhook: accepts a correctly signed event 1ms
+ ✓ test/api/baseline.test.js > AI Idea Generator & content calendar > returns a calendar for a valid request 3ms
+ ✓ test/api/baseline.test.js > AI Idea Generator & content calendar > rejects non-POST 0ms
+ ✓ test/api/baseline.test.js > Script Generator > generates a script and opens a refinement session 2ms
+ ✓ test/api/baseline.test.js > Script Generator > includes the creator story in the prompt when one exists 1ms
+ ✓ test/api/baseline.test.js > Caption Generator > generates a caption 1ms
+ ✓ test/api/baseline.test.js > Caption Generator > requires a script 0ms
+ ✓ test/api/baseline.test.js > Ad Copy Generator > generates 3 variants and enforces the 200-character primary text cap 1ms
+ ✓ test/api/baseline.test.js > Ad Copy Generator > requires a topic 0ms
+ ✓ test/api/baseline.test.js > Storytelling & Story Enhancement > enhances the owner's story beats and sets compliance flags 1ms
+ ✓ test/api/baseline.test.js > Comment Intent Engine > classifies a comment and logs it 1ms
+ ✓ test/api/baseline.test.js > Image Asset Upload & Analysis > lets a Pro user upload a JPEG into their own folder 2ms
+ ✓ test/api/baseline.test.js > Image Asset Upload & Analysis > blocks free users from uploading 0ms
+ ✓ test/api/baseline.test.js > Image Asset Upload & Analysis > analyzes an owned asset with vision and caches the result 1ms
+ ✓ test/api/baseline.test.js > Conversational Refinement > revises the owner's session for a Pro user 1ms
+ ✓ test/api/baseline.test.js > Subscription Checkout > creates a Stripe checkout session for a signed-in user 1ms
+ ✓ test/api/baseline.test.js > Subscription Checkout > rejects a request with no session 0ms
+⎯⎯⎯⎯⎯⎯ Failed Tests 32 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  32 failed | 18 passed (50)
