@@ -1,18 +1,20 @@
 import { getStoryContext, buildStoryPromptBlock } from '../../lib/storyContext'
 import { getAssetContext, buildAssetPromptBlock, buildStoryImageSynthesisInstruction } from '../../lib/assetContext'
-import { createClient } from '@supabase/supabase-js'
-
-function getServiceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  )
-}
+import { requireUser, getServiceClient } from '../../lib/server/auth'
+import { rateLimit, validateLengths } from '../../lib/server/guard'
+import { checkUsage, recordUsage } from '../../lib/server/usage'
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
+
+  const user = await requireUser(req, res)
+  if (!user) return
+  const user_id = user.id // identity from the verified session only
+  if (!rateLimit(req, res, { key: `script:${user_id}`, limit: 20 })) return
+  if (!validateLengths(res, req.body, { topic: 1000, niche: 200, audience: 500, hook_context: 1000, cta_context: 1000, format_context: 500, asset_story_note: 1000, asset_ids: 2000, competitors: 4000, strategy: 4000 })) return
+  if (!(await checkUsage(res, user_id, 'scripts'))) return
 
   const {
     topic, niche, audience, tone, platform, script_mode,
@@ -20,7 +22,7 @@ export default async function handler(req, res) {
     offer_types, audience_problems, cta_objectives,
     format_context, hook_context, cta_context,
     competitors, strategy, day_number, week_number,
-    user_id, story_objective, asset_ids, asset_story_note,
+    story_objective, asset_ids, asset_story_note,
   } = req.body
 
   // Pull the creator's current story if they have one. Falls through
@@ -327,6 +329,7 @@ Platform: ${platform || 'Instagram'}. Keep total body under 600 characters.`
       }
     }
 
+    await recordUsage(user_id, 'scripts')
     return res.status(200).json({ script, session_id })
 
   } catch (error) {
