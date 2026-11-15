@@ -82,3 +82,24 @@ Moving to cookie sessions (`@supabase/ssr`) would allow true server-side page pr
 - Upload: Vercel caps request bodies at ~4.5 MB, below the 5 MB image limit once base64-encoded (pre-existing; consider direct-to-storage signed uploads).
 - Paying customers may currently be on the free tier because of Finding 1; impact not yet measured.
 - No automated UI tests yet; UI flows must be clicked through on the isolated preview.
+
+## Live integration check against the isolated dev database (2026-11-15)
+
+The app was built from this branch and run against `nillaflow-dev` (real Supabase Auth, Postgres, RLS and Storage), using two throwaway test accounts. No production system was involved.
+
+| Check | Result |
+|---|---|
+| Dev schema = production baseline + Phase 0 migration | ✅ applied, all tables reachable |
+| Signup trigger creates a free profile | ✅ |
+| Free user sets own `subscription_tier='pro'` from the browser (the old exploit) | ✅ blocked; tier stays free, profile edit still saved |
+| User reads another user's account | ✅ returns nothing |
+| Server/webhook sets tier + `subscription_status` | ✅ works (column now exists) |
+| User resets own usage counter | ✅ blocked |
+| Upload with no login | ✅ 401 |
+| Free user uploads while claiming a Pro user's id | ✅ 403 |
+| Pro user uploads a real JPEG | ✅ 200; stored under their own folder |
+| User enhances another user's story | ✅ 404 |
+| AI route with a forged token | ✅ 401 |
+| Refinement as a free user | ✅ 403 |
+| Public pages `/`, `/login`, `/signup` | ✅ 200 |
+| Stray route `/.!42976!scripts` | ✅ gone (404) |
