@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, phase-0-security-hardening]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: 1
+      # Sentinel values only. CI never receives real credentials.
+      NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-anon-sentinel
+      SUPABASE_SERVICE_ROLE_KEY: ci-service-role-sentinel-7d1e
+      STRIPE_SECRET_KEY: sk_test_ci_sentinel_51c2
+      STRIPE_WEBHOOK_SECRET: whsec_ci_sentinel_88aa
+      ANTHROPIC_API_KEY: ci-anthropic-sentinel-3b9f
+      INTENT_ENGINE_SERVICE_KEY: ci-intent-sentinel-0c4d
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Unit, security and billing tests (all external services faked)
+        run: npm test
+      - name: Production build
+        run: npm run build
+      - name: Secret leak scan of browser bundles
+        run: ./scripts/check-no-secrets-in-bundle.sh
